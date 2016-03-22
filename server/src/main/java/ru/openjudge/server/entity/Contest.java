@@ -6,7 +6,7 @@ public class Contest implements Serializable {
 
     private static final long serialVersionUID = 5657856422377586257L;
 
-    Long id;
+    private Long id;
 
     public Long getId() {
         return id;

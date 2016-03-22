@@ -6,11 +6,19 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1039048539907870717L;
 
-    Long id;
+    private Long id;
 
-    String login;
+    private String login;
 
-    String password;
+    private String password;
+
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+    public User() {
+    }
 
     public Long getId() {
         return id;

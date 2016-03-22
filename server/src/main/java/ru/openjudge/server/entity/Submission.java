@@ -6,6 +6,13 @@ public class Submission implements Serializable {
 
     private static final long serialVersionUID = 6160046873027290025L;
 
-    Long id;
+    private Long id;
 
+    public Long getId() {
+        return id;
+    }
+
+    private void setId(Long id) {
+        this.id = id;
+    }
 }
