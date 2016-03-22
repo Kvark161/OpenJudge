@@ -1,4 +1,7 @@
 package ru.openjudge.server.dao;
 
-public interface UserDao {
+import ru.openjudge.server.entity.User;
+
+public interface UserDao extends BaseDao<User> {
+
 }
