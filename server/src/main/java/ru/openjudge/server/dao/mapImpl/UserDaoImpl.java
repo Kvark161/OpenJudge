@@ -19,7 +19,7 @@ public class UserDaoImpl implements UserDao {
 
     public UserDaoImpl() {
         data = new ConcurrentHashMap<>();
-        maxId.set(0);
+        maxId.set(1);
         {
             User admin = new User("admin", "admin");
             data.put(1L, admin);
