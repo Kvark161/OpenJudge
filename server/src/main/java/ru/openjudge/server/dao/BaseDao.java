@@ -6,6 +6,6 @@ interface BaseDao<T> {
 
     void remove(T t);
 
-    T get(Long id);
+    T getById(Long id) throws DaoException;
 
 }
