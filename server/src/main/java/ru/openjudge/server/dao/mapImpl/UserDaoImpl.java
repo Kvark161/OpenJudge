@@ -19,7 +19,7 @@ public class UserDaoImpl implements UserDao {
 
     public UserDaoImpl() {
         data = new ConcurrentHashMap<>();
-        maxId.set(1);
+        maxId = new AtomicLong(100);
         {
             User admin = new User("admin", "admin");
             data.put(1L, admin);
@@ -60,14 +60,15 @@ public class UserDaoImpl implements UserDao {
 
     private void generateUserId(User user) {
         Field field;
-        Long newId = maxId.get();
+        long newId = maxId.get();
         maxId.set(maxId.get() + 1);
         try {
             field = user.getClass().getDeclaredField("id");
             field.setAccessible(true);
-            field.set(user, newId);
+            field.setLong(user, newId);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
