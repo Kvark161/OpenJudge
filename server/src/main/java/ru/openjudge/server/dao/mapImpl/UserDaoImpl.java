@@ -1,13 +1,10 @@
 package ru.openjudge.server.dao.mapImpl;
 
-import javafx.util.Pair;
 import ru.openjudge.server.dao.DaoException;
 import ru.openjudge.server.dao.UserDao;
 import ru.openjudge.server.entity.User;
 
-import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,7 +26,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void save(User user) {
         if (data.get(user.getId()) == null) {
-            generateUserId(user);
+            Utils.generateObjectId(user, maxId);
         }
         data.put(user.getId(), user);
     }
@@ -56,20 +53,6 @@ public class UserDaoImpl implements UserDao {
             }
         }
         throw new DaoException(String.format("User with login = \"%s\" not found", login));
-    }
-
-    private void generateUserId(User user) {
-        Field field;
-        long newId = maxId.get();
-        maxId.set(maxId.get() + 1);
-        try {
-            field = user.getClass().getDeclaredField("id");
-            field.setAccessible(true);
-            field.setLong(user, newId);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
     }
 
 }
