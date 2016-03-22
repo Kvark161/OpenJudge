@@ -6,7 +6,7 @@ public class Problem implements Serializable {
 
     private static final long serialVersionUID = -1942757296232795347L;
 
-    private Long id;
+    private long id;
 
     public Long getId() {
         return id;
