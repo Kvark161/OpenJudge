@@ -1,5 +1,7 @@
 package ru.openjudge.server.dao;
 
+import java.util.List;
+
 interface BaseDao<T> {
 
     void save(T t);
@@ -7,5 +9,7 @@ interface BaseDao<T> {
     void remove(T t);
 
     T getById(Long id) throws DaoException;
+
+    List<T> getAll();
 
 }
