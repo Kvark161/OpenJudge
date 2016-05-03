@@ -4,12 +4,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>OpenJudge</title>
-    <link href="<c:url value='/static/css/style.css' />" rel="stylesheet"></link>
+    <link href="<c:url value='/static/css/style.css' />" rel="stylesheet"> />
 </head>
 
 <body>
 
-<jsp:include page="../fragments/mainHeader.jsp" />
+<jsp:include page="fragments/mainHeader.jsp" />
 
 <div style="margin-top:60px;">
     <h1>${message}</h1>
