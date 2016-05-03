@@ -62,18 +62,17 @@ public class User implements Serializable {
 
         User user = (User) o;
 
-        if (!Objects.equals(id, user.id)) return false;
-        if (!login.equals(user.login)) return false;
-        return password.equals(user.password);
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (login != null ? !login.equals(user.login) : user.login != null) return false;
+        return password != null ? password.equals(user.password) : user.password == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + login.hashCode();
-        result = 31 * result + password.hashCode();
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
         return result;
     }
-
 }

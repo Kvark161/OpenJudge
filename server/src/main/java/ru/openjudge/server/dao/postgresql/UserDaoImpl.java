@@ -2,19 +2,17 @@ package ru.openjudge.server.dao.postgresql;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.openjudge.server.dao.DaoException;
 import ru.openjudge.server.dao.UserDao;
 import ru.openjudge.server.entity.User;
-import ru.openjudge.server.util.HibernateSessionFactory;
 
+@Service
 public class UserDaoImpl implements UserDao {
 
+    @Autowired
     private SessionFactory sessionFactory;
-
-    public UserDaoImpl() {
-        sessionFactory = HibernateSessionFactory.getInstance();
-    }
 
     @Override
     public User getByLogin(String login) throws DaoException {
@@ -23,13 +21,8 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void save(User user) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-
+        Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(user);
-
-        session.getTransaction().commit();
-        session.close();
     }
 
     @Override
