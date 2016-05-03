@@ -1,15 +1,24 @@
 package ru.openjudge.server.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
+@Entity
+@Table(name = "USERS")
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1039048539907870717L;
+    private static final long serialVersionUID = -1570508578633857392L;
 
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "ID", unique = true, nullable = false)
+    private Long id;
 
+    @Column(name = "LOGIN", unique = true, nullable = false)
     private String login;
 
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
 
     public User(String login, String password) {
@@ -25,7 +34,7 @@ public class User implements Serializable {
         return id;
     }
 
-    private void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -45,6 +54,7 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,7 +62,7 @@ public class User implements Serializable {
 
         User user = (User) o;
 
-        if (id != user.id) return false;
+        if (!Objects.equals(id, user.id)) return false;
         if (!login.equals(user.login)) return false;
         return password.equals(user.password);
 
