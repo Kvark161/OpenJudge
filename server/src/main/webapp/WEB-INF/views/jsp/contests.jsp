@@ -22,7 +22,7 @@
             <th>Duration</th>
         </tr>
         <tr>
-            <td>Contest 1</td>
+            <td><a href="/contest/1/summary">Contest 1</a> </td>
             <td>123123</td>
             <td>300</td>
         </tr>
