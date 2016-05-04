@@ -4,7 +4,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "SUBMISSIONS")
+@Table(name = "SUBMISSIONS",
+        indexes = {@Index(columnList = "USER_ID", name = "user_id_idx")})
 public class Submission implements Serializable {
 
     private static final long serialVersionUID = -5547448500158392136L;
