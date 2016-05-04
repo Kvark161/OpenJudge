@@ -3,15 +3,13 @@ package ru.openjudge.server.dao.postgresql;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import ru.openjudge.server.dao.ContestDao;
-import ru.openjudge.server.dao.DaoException;
 import ru.openjudge.server.entity.Contest;
-import ru.openjudge.server.entity.User;
 
 import java.util.List;
 
-@Service
+@Repository("contestDao")
 public class ContestDaoImpl implements ContestDao {
 
     @Autowired

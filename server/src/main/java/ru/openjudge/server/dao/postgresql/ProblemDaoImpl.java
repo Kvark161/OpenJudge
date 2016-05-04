@@ -4,14 +4,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import ru.openjudge.server.dao.ProblemDao;
 import ru.openjudge.server.entity.Contest;
 import ru.openjudge.server.entity.Problem;
 
 import java.util.List;
 
-@Service
+@Repository("problemDao")
 public class ProblemDaoImpl implements ProblemDao {
 
     @Autowired

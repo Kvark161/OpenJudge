@@ -8,7 +8,7 @@ import ru.openjudge.server.entity.User;
 
 import java.util.List;
 
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     @Autowired

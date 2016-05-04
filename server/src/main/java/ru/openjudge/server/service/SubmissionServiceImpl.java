@@ -8,7 +8,7 @@ import ru.openjudge.server.entity.Submission;
 
 import java.util.List;
 
-@Service
+@Service("submissionService")
 public class SubmissionServiceImpl implements SubmissionService {
 
     @Autowired

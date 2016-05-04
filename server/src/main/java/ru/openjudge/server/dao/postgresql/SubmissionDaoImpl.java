@@ -3,13 +3,13 @@ package ru.openjudge.server.dao.postgresql;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import ru.openjudge.server.dao.SubmissionDao;
 import ru.openjudge.server.entity.Submission;
 
 import java.util.List;
 
-@Service
+@Repository("submissionDao")
 public class SubmissionDaoImpl implements SubmissionDao {
 
     @Autowired
@@ -39,6 +39,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
         return session.get(Submission.class, id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Submission> getAll() {
         Session session = sessionFactory.getCurrentSession();

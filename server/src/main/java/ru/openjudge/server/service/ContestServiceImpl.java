@@ -8,7 +8,7 @@ import ru.openjudge.server.entity.Contest;
 
 import java.util.List;
 
-@Service
+@Service("contestService")
 public class ContestServiceImpl implements ContestService {
 
     @Autowired

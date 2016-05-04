@@ -9,7 +9,7 @@ import ru.openjudge.server.entity.Problem;
 
 import java.util.List;
 
-@Service
+@Service("problemService")
 public class ProblemServiceImpl implements ProblemService {
 
     @Autowired

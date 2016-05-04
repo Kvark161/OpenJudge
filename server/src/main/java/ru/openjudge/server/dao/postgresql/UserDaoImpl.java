@@ -5,14 +5,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import ru.openjudge.server.dao.DaoException;
+import org.springframework.stereotype.Repository;
 import ru.openjudge.server.dao.UserDao;
 import ru.openjudge.server.entity.User;
 
 import java.util.List;
 
-@Service
+@Repository("userDao")
 public class UserDaoImpl implements UserDao {
 
     @Autowired
