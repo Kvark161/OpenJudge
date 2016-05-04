@@ -47,4 +47,11 @@ public class ContestDaoImpl implements ContestDao {
         Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(Contest.class).list();
     }
+
+    @Override
+    public Long getCount() {
+        Session session = sessionFactory.getCurrentSession();
+        return (Long)session.createQuery("select count(*) from Contest").uniqueResult();
+    }
+
 }

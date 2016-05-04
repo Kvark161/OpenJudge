@@ -33,14 +33,19 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Contest getById(Long id) {
         return contestDao.getById(id);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Contest> getAll() {
         return contestDao.getAll();
+    }
+
+    @Override
+    public Long getCount() {
+        return contestDao.getCount();
     }
 }

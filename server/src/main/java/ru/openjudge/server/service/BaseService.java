@@ -1,8 +1,8 @@
-package ru.openjudge.server.dao;
+package ru.openjudge.server.service;
 
 import java.util.List;
 
-interface BaseDao<T> {
+interface BaseService<T> {
 
     void insert(T t);
 

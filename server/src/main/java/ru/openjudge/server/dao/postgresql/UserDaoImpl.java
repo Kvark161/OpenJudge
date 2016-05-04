@@ -56,5 +56,10 @@ public class UserDaoImpl implements UserDao {
         return session.createCriteria(User.class).list();
     }
 
+    @Override
+    public Long getCount() {
+        Session session = sessionFactory.getCurrentSession();
+        return (Long)session.createQuery("select count(*) from User").uniqueResult();
+    }
 
 }

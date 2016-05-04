@@ -8,7 +8,6 @@ import ru.openjudge.server.entity.User;
 
 import java.util.List;
 
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -49,5 +48,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<User> getAll() {
         return userDao.getAll();
+    }
+
+    @Override
+    public Long getCount() {
+        return userDao.getCount();
     }
 }
