@@ -1,13 +1,12 @@
 package ru.openjudge.server.service;
 
+import ru.openjudge.server.entity.Contest;
 import ru.openjudge.server.entity.Problem;
 
-public interface ProblemService {
+import java.util.List;
 
-    void save(Problem problem);
+public interface ProblemService extends BaseService<Problem> {
 
-    void remove(Problem problem);
-
-    Problem get(Long id);
+    List<Problem> getByContest(Contest contest);
 
 }
