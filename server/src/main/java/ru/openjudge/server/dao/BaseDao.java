@@ -8,7 +8,7 @@ interface BaseDao<T> {
 
     void remove(T t);
 
-    T getById(Long id) throws DaoException;
+    T getById(Long id);
 
     List<T> getAll();
 

@@ -19,11 +19,10 @@ public class UserDaoImpl implements UserDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public User getByLogin(String login) throws DaoException {
+    public User getByLogin(String login) {
         Session session = sessionFactory.getCurrentSession();
         Criteria criteria = session.createCriteria(User.class);
-        User user = (User)criteria.add(Restrictions.eq("login", login)).uniqueResult();
-        return user;
+        return (User)criteria.add(Restrictions.eq("login", login)).uniqueResult();
     }
 
     @Override
@@ -39,17 +38,16 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public User getById(Long id) throws DaoException {
+    public User getById(Long id) {
         Session session = sessionFactory.getCurrentSession();
-        User user = (User)session.get(User.class, id);
-        return user;
+        return session.get(User.class, id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<User> getAll() {
         Session session = sessionFactory.getCurrentSession();
-        List<User> users = session.createCriteria(User.class).list();
-        return users;
+        return session.createCriteria(User.class).list();
     }
 
 

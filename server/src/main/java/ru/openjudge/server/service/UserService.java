@@ -2,12 +2,18 @@ package ru.openjudge.server.service;
 
 import ru.openjudge.server.entity.User;
 
+import java.util.List;
+
 public interface UserService {
 
     void save(User user);
 
     void remove(User user);
 
-    User get(Long id);
+    User getById(Long id);
+
+    User getByLogin(String login);
+
+    List<User> getAll();
 
 }
