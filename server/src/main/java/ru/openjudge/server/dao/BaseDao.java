@@ -4,7 +4,9 @@ import java.util.List;
 
 interface BaseDao<T> {
 
-    void save(T t);
+    void insert(T t);
+
+    void update(T t);
 
     void remove(T t);
 

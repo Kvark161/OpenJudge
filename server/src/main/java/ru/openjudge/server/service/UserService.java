@@ -6,7 +6,9 @@ import java.util.List;
 
 public interface UserService {
 
-    void save(User user);
+    void insert(User user);
+
+    void update(User user);
 
     void remove(User user);
 

@@ -26,9 +26,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void save(User user) {
+    public void insert(User user) {
         Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(user);
+        session.save(user);
+    }
+
+    @Override
+    public void update(User user) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(user);
     }
 
     @Override
