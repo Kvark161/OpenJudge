@@ -2,12 +2,10 @@ package ru.openjudge.server.service;
 
 import ru.openjudge.server.entity.Submission;
 
-public interface SubmissionService {
+import java.util.List;
 
-    void save(Submission submission);
+public interface SubmissionService extends BaseService<Submission> {
 
-    void remove(Submission submission);
-
-    Submission get(Long id);
+    void rejudge(Submission submission);
 
 }

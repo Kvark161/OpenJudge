@@ -1,12 +1,21 @@
 package ru.openjudge.server.entity;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Entity
+@Table(name = "SUBMISSIONS")
 public class Submission implements Serializable {
 
-    private static final long serialVersionUID = 6160046873027290025L;
+    private static final long serialVersionUID = -5547448500158392136L;
 
-    private long id;
+    @Id
+    @Column(name = "ID")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
     public Long getId() {
         return id;
@@ -14,5 +23,13 @@ public class Submission implements Serializable {
 
     private void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
