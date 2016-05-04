@@ -10,6 +10,7 @@ public class Submission implements Serializable {
     private static final long serialVersionUID = -5547448500158392136L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Long id;
 

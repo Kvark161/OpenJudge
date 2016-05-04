@@ -8,9 +8,10 @@ import java.io.Serializable;
 @Table(name = "PROBLEMS")
 public class Problem implements Serializable {
 
-    private static final long serialVersionUID = -321080827466439441L;
+    private static final long serialVersionUID = 693806016110792857L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     private Long id;
 
