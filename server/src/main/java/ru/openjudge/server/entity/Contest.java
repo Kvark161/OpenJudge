@@ -16,7 +16,7 @@ public class Contest implements Serializable {
     @Column(name = "ID")
     private long id;
 
-    @Column(name = "NAME", unique = true)
+    @Column(name = "NAME", unique = true, nullable = false)
     private String name;
 
     public long getId() {
