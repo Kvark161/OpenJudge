@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ru.openjudge</groupId>
+        <artifactId>openjudge-server</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>openjudge-server-datalayer</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <liquibase.version>3.5.1</liquibase.version>
+
+        <postgresql.db.url>jdbc:postgresql://localhost:5432/openjudge</postgresql.db.url>
+        <postgresql.db.driver>org.postgresql.Driver</postgresql.db.driver>
+        <postgresql.db.username>postgres</postgresql.db.username>
+        <postgresql.db.password>postgres</postgresql.db.password>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4-1206-jdbc42</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>4.3.1.RELEASE</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
+                <configuration>
+                    <changeLogFile>
+                        ${project.basedir}/src/main/resources/liquibase/db.changelog-master.xml
+                    </changeLogFile>
+                    <driver>${postgresql.db.driver}</driver>
+                    <url>${postgresql.db.url}</url>
+                    <username>${postgresql.db.username}</username>
+                    <password>${postgresql.db.password}</password>
+                    <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                    <dropFirst>true</dropFirst>
+                    <outputFileEncoding>UTF-8</outputFileEncoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -12,12 +12,7 @@
     </parent>
 
 
-    <artifactId>openjudge-server</artifactId>
+    <artifactId>openjudge-invoker</artifactId>
     <packaging>pom</packaging>
-
-    <modules>
-        <module>datalayer</module>
-        <module>web</module>
-    </modules>
 
 </project>
