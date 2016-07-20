@@ -5,11 +5,11 @@
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <changeSet id="create_contests" author="kvark161">
-        <createTable tableName="CONTESTS">
-            <column name="ID" type="bigint" autoIncrement="true">
+        <createTable tableName="contests">
+            <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="NAME" type="text">
+            <column name="name" type="text">
                 <constraints nullable="false"/>
             </column>
         </createTable>

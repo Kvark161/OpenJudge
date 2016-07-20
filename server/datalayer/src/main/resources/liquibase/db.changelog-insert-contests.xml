@@ -4,14 +4,14 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
     <changeSet id="insert_contests" author="kvark161">
-        <insert tableName="CONTESTS">
-            <column name="NAME" value="the first contest"/>
+        <insert tableName="contests">
+            <column name="name" value="the first contest"/>
         </insert>
-        <insert tableName="CONTESTS">
-            <column name="NAME" value="the second contest"/>
+        <insert tableName="contests">
+            <column name="name" value="the second contest"/>
         </insert>
-        <insert tableName="CONTESTS">
-            <column name="NAME" value="the third contest"/>
+        <insert tableName="contests">
+            <column name="name" value="the third contest"/>
         </insert>
     </changeSet>
 
