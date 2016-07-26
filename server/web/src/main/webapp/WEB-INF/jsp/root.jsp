@@ -15,5 +15,7 @@
 <div style="margin-top:60px;">
     <h1>${message}</h1>
 </div>
+
+<openjudge:footer/>
 </body>
 </html>
