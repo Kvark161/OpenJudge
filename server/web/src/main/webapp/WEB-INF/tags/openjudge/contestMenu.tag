@@ -1,4 +1,7 @@
-<%@ tag body-content="empty" pageEncoding="UTF-8"%>
+<%--suppress ALL --%>
+<%--suppress JspAbsolutePathInspection --%>
+<%--suppress HtmlUnknownAnchorTarget --%>
+<%@ tag body-content="empty" pageEncoding="UTF-8" %>
 <ul>
     <li><a class="active" href="/">Home</a></li>
     <li><a href="/contest/1/summary">Summary</a></li>

@@ -10,7 +10,7 @@
 
 <body>
 
-<openjudge:mainMenu />
+<openjudge:mainMenu/>
 
 <div style="margin-top:60px;">
     <h1>${message}</h1>

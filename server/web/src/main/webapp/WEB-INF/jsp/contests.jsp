@@ -11,7 +11,7 @@
 
 <body>
 
-<openjudge:mainMenu />
+<openjudge:mainMenu/>
 
 <div style="margin-top:60px;">
     <h2>Contests</h2>
