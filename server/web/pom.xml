@@ -15,7 +15,6 @@
     <packaging>war</packaging>
 
     <dependencies>
-
         <dependency>
             <groupId>ru.openjudge</groupId>
             <artifactId>openjudge-server-datalayer</artifactId>
@@ -46,6 +45,18 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.21</version>
         </dependency>
 
     </dependencies>

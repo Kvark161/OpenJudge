@@ -12,12 +12,16 @@
 
     <context:component-scan base-package="ru.openjudge.server.datalayer"/>
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:openjudge/openjudge.properties"/>
+    </bean>
+
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5432/openjudge"/>
-        <property name="username" value="postgres"/>
-        <property name="password" value="postgres"/>
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -29,6 +33,10 @@
 
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
         <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="storage" class="ru.openjudge.server.storage.Storage" init-method="init">
+        <property name="root" value="${openjudge.storage.root}"/>
     </bean>
 
 </beans>
