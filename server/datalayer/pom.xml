@@ -19,7 +19,7 @@
 
         <postgresql.db.url>jdbc:postgresql://localhost:5432/openjudge</postgresql.db.url>
         <postgresql.db.driver>org.postgresql.Driver</postgresql.db.driver>
-        <postgresql.db.username>postgres</postgresql.db.username>
+        <postgresql.db.name>postgres</postgresql.db.name>
         <postgresql.db.password>postgres</postgresql.db.password>
     </properties>
 
@@ -62,7 +62,7 @@
                     </changeLogFile>
                     <driver>${postgresql.db.driver}</driver>
                     <url>${postgresql.db.url}</url>
-                    <username>${postgresql.db.username}</username>
+                    <username>${postgresql.db.name}</username>
                     <password>${postgresql.db.password}</password>
                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                     <dropFirst>true</dropFirst>

@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+    <changeSet id="insert_users" author="kvark161">
+        <insert tableName="users">
+            <column name="name" value="admin"/>
+            <column name="password" value="admin"/>
+            <column name="is_admin" value="true"/>
+        </insert>
+        <insert tableName="users">
+            <column name="name" value="user"/>
+            <column name="password" value="user"/>
+            <column name="is_admin" value="false"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
