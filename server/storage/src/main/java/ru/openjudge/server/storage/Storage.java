@@ -58,11 +58,13 @@ public class Storage {
 		return result;
 	}
 
+	public boolean contestExists(long contestId) {
+		return new File(pathToContest(contestId)).exists();
+	}
+
 	@SuppressWarnings("WeakerAccess")
 	public StorageContest getContest(long contestId) {
-		String path = root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
-		return new StorageContest(new File(path));
+		return new StorageContest(new File(pathToContest(contestId)));
 	}
 
 	public StorageContest createContest(File contestRoot) throws StorageValidationException {
@@ -104,6 +106,11 @@ public class Storage {
 
 	public void setRoot(String root) {
 		this.root = root;
+	}
+
+	private String pathToContest(long contestId) {
+		return root + File.separator + StorageContest.FOLDER_NAME + File.separator +
+				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
 	}
 
 }

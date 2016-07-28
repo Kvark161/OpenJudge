@@ -48,7 +48,7 @@ public class AuthenticationService implements AuthenticationProvider {
 			if (user.isAdmin()) {
 				autorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 			}
-			return new UsernamePasswordAuthenticationToken(user.getName(), password, autorities);
+			return new UsernamePasswordAuthenticationToken(user, password, autorities);
 		} else {
 			throw new BadCredentialsException("Wrong password.");
 		}

@@ -43,9 +43,9 @@ public class StorageContest {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			xml = dBuilder.parse(fXmlFile);
-			Element elem = xml.getDocumentElement();
-			id = Long.valueOf(xml.getDocumentElement().getAttribute("id"));
-			name = xml.getDocumentElement().getAttribute("name");
+			Element contest = xml.getDocumentElement();
+			id = Long.valueOf(contest.getAttribute("id"));
+			name = contest.getAttribute("name");
 		} catch (IOException e) {
 			throw new StorageException("file contest.xml does not exists", e);
 		} catch (SAXException | ParserConfigurationException e) {

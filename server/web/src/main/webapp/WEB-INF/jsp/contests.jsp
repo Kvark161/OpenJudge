@@ -18,14 +18,14 @@
 
 	<table>
 		<tr>
-			<th>Contest</th>
-			<th>Start Time</th>
+			<th>Id</th>
+			<th>Name</th>
 			<th>Duration</th>
 		</tr>
 		<c:forEach var="contest" items="${contests}">
 			<tr>
 				<td>${contest.id}</td>
-				<td>${contest.name}</td>
+				<td><a href="<c:url value="/contest/${contest.id}/summary"/>">${contest.name}</a></td>
 				<td>Duration</td>
 			</tr>
 		</c:forEach>

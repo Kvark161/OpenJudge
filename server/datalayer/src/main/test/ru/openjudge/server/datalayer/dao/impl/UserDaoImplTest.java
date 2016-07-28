@@ -28,7 +28,7 @@ public class UserDaoImplTest {
 		assertTrue(2 <= users.size());
 		users.forEach(user -> {
 			assertNotNull(user.getId());
-			assertNotNull(user.getName());
+			assertNotNull(user.getUsername());
 			assertNotNull(user.getPassword());
 		});
 	}
@@ -37,7 +37,7 @@ public class UserDaoImplTest {
 	public void getUserById() throws Exception {
 		User user = userDao.getUserById(1L);
 		assertEquals(new Long(1L), user.getId());
-		assertEquals("admin", user.getName());
+		assertEquals("admin", user.getUsername());
 		assertEquals("admin", user.getPassword());
 		assertEquals(true, user.isAdmin());
 	}
@@ -46,7 +46,7 @@ public class UserDaoImplTest {
 	public void getUserByName() throws Exception {
 		User user = userDao.getUserByName("admin");
 		assertEquals(new Long(1L), user.getId());
-		assertEquals("admin", user.getName());
+		assertEquals("admin", user.getUsername());
 		assertEquals("admin", user.getPassword());
 		assertEquals(true, user.isAdmin());
 	}

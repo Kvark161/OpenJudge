@@ -22,6 +22,7 @@ http://www.springframework.org/schema/security/spring-security-4.1.xsd">
                 login-page="/login"
                 default-target-url="/"
                 authentication-failure-url="/login?error"
+
                 username-parameter="username"
                 password-parameter="password"
                 login-processing-url="/j_spring_security_check"/>

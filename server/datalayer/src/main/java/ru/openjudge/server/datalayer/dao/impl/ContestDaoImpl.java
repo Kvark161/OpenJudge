@@ -8,6 +8,7 @@ import ru.openjudge.server.datalayer.dao.ContestDao;
 import ru.openjudge.server.datalayer.domain.Contest;
 import ru.openjudge.server.storage.Storage;
 import ru.openjudge.server.storage.StorageContest;
+import ru.openjudge.server.storage.StorageException;
 import ru.openjudge.server.storage.StorageValidationException;
 
 import java.io.File;
@@ -35,6 +36,18 @@ public class ContestDaoImpl implements ContestDao {
 		return storageContests.stream()
 				.map(this::contestFromStorageContest)
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public Contest getContestById(long id) {
+		try {
+			if (storage.contestExists(id)) {
+				return contestFromStorageContest(storage.getContest(id));
+			}
+		} catch (StorageException e) {
+			logger.error("can not get contest by id=" + id, e);
+		}
+		return null;
 	}
 
 	@Override
