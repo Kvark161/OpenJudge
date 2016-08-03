@@ -16,7 +16,7 @@ import java.util.List;
  * Created by Stepan Klevleev on 20-Jul-16
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:/spring/root-spring.xml"})
+@ContextConfiguration(locations = {"classpath*:/spring/datalayer-spring-root.xml"})
 public class ContestDaoImplTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContestDaoImpl.class);

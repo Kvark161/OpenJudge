@@ -18,8 +18,13 @@ public class ContestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
 
+	private final ContestDao contestDao;
+
 	@Autowired
-	private ContestDao contestDao;
+	public ContestController(ContestDao contestDao) {
+		assert contestDao != null;
+		this.contestDao = contestDao;
+	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
 	public String contests(ModelMap model) {
@@ -29,8 +34,19 @@ public class ContestController {
 	}
 
 	@RequestMapping(value = "/contest/{contestId}", method = RequestMethod.GET)
-	public String getWelcome(@PathVariable Long contestId, ModelMap model) {
-		model.addAttribute("message", "I am contest #" + contestId);
+	public String redirect(@PathVariable Long contestId, ModelMap model) {
+		return "redirect:contest/" + contestId + "/summary";
+	}
+
+
+	@RequestMapping(value = "/contest/{contestId}/summary", method = RequestMethod.GET)
+	public String contestRoot(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestDao.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:contests";
+		}
+		model.addAttribute("contest", contest);
+		model.addAttribute("contestId", contestId);
 		return "contest/root";
 	}
 }

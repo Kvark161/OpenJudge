@@ -14,4 +14,6 @@ public interface ContestDao {
 
 	void updateContest(File contestDirectory);
 
+	Contest getContestById(long id);
+
 }
