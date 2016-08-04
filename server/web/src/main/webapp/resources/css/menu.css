@@ -1,0 +1,49 @@
+.header {
+	width: 100%;
+	height: 50px;
+	margin: 0;
+	padding: 0;
+	left: 0;
+	top: 0;
+	position: absolute;
+	background: navajowhite;
+}
+
+.menu {
+	width: 1000px;
+	height: 100%;
+	position: relative;
+	list-style-type: none;
+	margin: 0 auto;
+	padding: 0;
+	overflow: hidden;
+}
+
+.menu__link {
+	width: 120px;
+	height: 100%;
+	list-style-type: none;
+	margin: 0;
+	overflow: hidden;
+	display: block;
+	color: white;
+	text-align: center;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+.menu__link:hover {
+	background: black;
+}
+
+.menu__link_navigation {
+	float: left;
+}
+
+.menu__link_user-info {
+	float: right;
+}
+
+.menu__link_active {
+	background: green;
+}
