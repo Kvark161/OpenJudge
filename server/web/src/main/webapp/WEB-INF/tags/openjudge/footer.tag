@@ -1,9 +1,7 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <hr>
-<div style="text-align: center">
-	<%
-		out.print("Server time: ");
-		java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy.MM.dd HH:mm:ss zzz");
-		out.println(dateFormat.format(new java.util.Date()));
-	%>
+<div class="footer">
+    <jsp:useBean id="ololo" class="java.util.Date"/>
+    Server time: <fmt:formatDate type="time" value="${ololo}" pattern="dd.MM.yyyy HH:mm:ss"/>
 </div>
