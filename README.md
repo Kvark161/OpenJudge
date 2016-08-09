@@ -1,1 +1,0 @@
-# OpenJudge is The Future
