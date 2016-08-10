@@ -12,6 +12,7 @@
     <context:component-scan base-package="com.klevleev.eskimo.server.web"/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
+    <mvc:resources mapping="/bootstrap/**" location="/resources/"/>
     <mvc:annotation-driven/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
