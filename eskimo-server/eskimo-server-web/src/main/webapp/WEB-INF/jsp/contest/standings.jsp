@@ -3,9 +3,8 @@
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Contest</title>
 	<eskimo:globalHead/>
+	<title>Standings</title>
 </head>
 
 <body>

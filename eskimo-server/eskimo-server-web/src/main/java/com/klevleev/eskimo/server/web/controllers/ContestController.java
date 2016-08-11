@@ -34,19 +34,43 @@ public class ContestController {
 	}
 
 	@RequestMapping(value = "/contest/{contestId}", method = RequestMethod.GET)
-	public String redirect(@PathVariable Long contestId, ModelMap model) {
-		return "redirect:contest/" + contestId + "/summary";
-	}
-
-
-	@RequestMapping(value = "/contest/{contestId}/summary", method = RequestMethod.GET)
-	public String contestRoot(@PathVariable Long contestId, ModelMap model) {
+	public String summary(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:contests";
 		}
 		model.addAttribute("contest", contest);
-		model.addAttribute("contestId", contestId);
-		return "contest/root";
+		return "contest/summary";
 	}
+
+	@RequestMapping(value = "/contest/{contestId}/problems", method = RequestMethod.GET)
+	public String problems(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestDao.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:contests";
+		}
+		model.addAttribute("contest", contest);
+		return "contest/problems";
+	}
+
+	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.GET)
+	public String submit(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestDao.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:contests";
+		}
+		model.addAttribute("contest", contest);
+		return "contest/submit";
+	}
+
+	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
+	public String standings(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestDao.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:contests";
+		}
+		model.addAttribute("contest", contest);
+		return "contest/standings";
+	}
+
 }

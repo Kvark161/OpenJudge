@@ -4,15 +4,15 @@
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <html>
 <head>
-	<title>Log in</title>
 	<eskimo:globalHead/>
-	<c:url value="/j_spring_security_check" var="springSecurityCheck"/>
+	<title>Log in</title>
 </head>
 <body onload='document.loginForm.username.focus();'>
 
 <eskimo:mainMenu/>
 
 <c:url value="/signup" var="signupUrl"/>
+<c:url value="/j_spring_security_check" var="springSecurityCheckUrl"/>
 
 <div class="container">
 
@@ -21,7 +21,7 @@
 
 			<div class="panel-body">
 
-				<form name="form" id="form" class="form-horizontal" role="form" action="${springSecurityCheck}"
+				<form name="form" id="form" class="form-horizontal" role="form" action="${springSecurityCheckUrl}"
 				      method='POST'>
 
 					<c:if test="${not empty error}">

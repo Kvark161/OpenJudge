@@ -3,9 +3,8 @@
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Eskimo</title>
 	<eskimo:globalHead/>
+	<title>Eskimo</title>
 </head>
 
 <body>
@@ -25,7 +24,7 @@
 			<c:forEach var="contest" items="${contests}">
 				<tr>
 					<td>${contest.id}</td>
-					<td><a href="<c:url value="/contest/${contest.id}/summary"/>">${contest.name}</a></td>
+					<td><a href="<c:url value="/contest/${contest.id}"/>">${contest.name}</a></td>
 				</tr>
 			</c:forEach>
 			</tbody>
