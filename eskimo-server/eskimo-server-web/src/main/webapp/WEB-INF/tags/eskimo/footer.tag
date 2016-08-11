@@ -1,7 +1,19 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<hr>
-<div class="footer">
-    <jsp:useBean id="ololo" class="java.util.Date"/>
-    Server time: <fmt:formatDate type="time" value="${ololo}" pattern="dd.MM.yyyy HH:mm:ss"/>
+
+<jsp:useBean id="currentTime" class="java.util.Date"/>
+
+<div class="container">
+	<div class="row">
+		<hr>
+		<div class="col-lg-12">
+			<div class="col-md-8">
+				<a href="https://github.com/kvark161/eskimo">Eskimo</a>
+			</div>
+			<div class="col-md-4">
+				<p class="muted pull-right">Server time: <fmt:formatDate type="time" value="${currentTime}"
+				                                                         pattern="dd.MM.yyyy HH:mm:ss"/></p>
+			</div>
+		</div>
+	</div>
 </div>

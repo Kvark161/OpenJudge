@@ -18,21 +18,24 @@
 <c:url value="/" var="homeUrl"/>
 <c:url value="/contests" var="contestsUrl"/>
 <c:url value="/login" var="loginUrl"/>
-<c:url value="/logout" var="logoutUrl"/>
+<c:url value="/signup" var="signupUrl"/>
 
 <c:set var="currentUrl" value="${requestScope['javax.servlet.forward.request_uri']}"/>
-<div class="navbar navbar-default">
-	<div class="container-fluid">
+<div class="navbar navbar-default navnar-fixed-top">
+	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#">WebSiteName</a>
+			<a class="navbar-brand" href="${homeUrl}">Eskimo</a>
 		</div>
 		<ul class="nav navbar-nav">
-			<li class="active"><a href="${homeUrl}">Home</a></li>
-			<li><a href="${contestsUrl}">Contests</a></li>
+			<li class="${currentUrl == homeUrl ? "active" : ""}"><a href="${homeUrl}">Home</a></li>
+			<li class="${currentUrl == contestsUrl ? "active" : ""}"><a href="${contestsUrl}">Contests</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
-			<li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-			<li><a href="${loginUrl}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+			<li class="${currentUrl == signupUrl ? "active" : ""}"><a href="${signupUrl}"><span
+					class="glyphicon glyphicon-user"></span> Sign up</a></li>
+			<li class="${currentUrl == loginUrl ? "active" : ""}"><a href="${loginUrl}"><span
+					class="glyphicon glyphicon-log-in"></span> Log in</a></li>
+			<li><a href="javascript:logout()"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
 		</ul>
 	</div>
 

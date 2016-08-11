@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-public class RootController {
+public class HomeController {
 
-	private static final Logger logger = LoggerFactory.getLogger(RootController.class);
+	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String welcome(ModelMap model) {
-		model.addAttribute("message", "Welcome!");
-		return "root";
+		return "home";
 	}
 
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -29,12 +28,21 @@ public class RootController {
 			return "redirect:/";
 		}
 		if (error != null) {
-			model.addAttribute("error", "Invalid username and password!");
+			model.addAttribute("error", "Invalid username or password!");
 		}
 		if (logout != null) {
 			model.addAttribute("msg", "You've been logged out successfully.");
 		}
 		return "login";
+	}
+
+	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+	public String login(ModelMap model,
+	                    Authentication authentication) {
+		if (authentication != null) {
+			return "redirect:/";
+		}
+		return "signup";
 	}
 
 }

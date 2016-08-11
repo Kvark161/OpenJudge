@@ -5,31 +5,33 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<title>Eskimo</title>
-	<eskimo:includeCss/>
+	<eskimo:globalHead/>
 </head>
 
 <body>
 
 <eskimo:mainMenu/>
 
-<div style="margin-top:60px;">
-	<h2>Contests</h2>
-
-	<table>
-		<tr>
-			<th>Id</th>
-			<th>Name</th>
-			<th>Duration</th>
-		</tr>
-		<c:forEach var="contest" items="${contests}">
+<div>
+	<div class="container">
+		<table class="table table-striped table-bordered">
+			<thead>
 			<tr>
-				<td>${contest.id}</td>
-				<td><a href="<c:url value="/contest/${contest.id}/summary"/>">${contest.name}</a></td>
-				<td>Duration</td>
+				<th>ID</th>
+				<th>Name</th>
 			</tr>
-		</c:forEach>
-	</table>
-</div>
-<eskimo:footer/>
+			</thead>
+			<tbody>
+			<c:forEach var="contest" items="${contests}">
+				<tr>
+					<td>${contest.id}</td>
+					<td><a href="<c:url value="/contest/${contest.id}/summary"/>">${contest.name}</a></td>
+				</tr>
+			</c:forEach>
+			</tbody>
+		</table>
+	</div>
+
+	<eskimo:footer/>
 </body>
 </html>
