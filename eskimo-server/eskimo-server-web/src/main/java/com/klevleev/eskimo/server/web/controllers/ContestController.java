@@ -2,15 +2,18 @@ package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.storage.StorageValidationException;
+import com.klevleev.eskimo.server.web.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -20,10 +23,12 @@ public class ContestController {
 
 	private final ContestDao contestDao;
 
+	private final FileUtils fileUtils;
+
 	@Autowired
-	public ContestController(ContestDao contestDao) {
-		assert contestDao != null;
+	public ContestController(ContestDao contestDao, FileUtils fileUtils) {
 		this.contestDao = contestDao;
+		this.fileUtils = fileUtils;
 	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
@@ -73,4 +78,25 @@ public class ContestController {
 		return "contest/standings";
 	}
 
+	@RequestMapping(path = "/contests/new", method = RequestMethod.GET)
+	public String newContest() {
+		return "contest/new";
+	}
+
+	@RequestMapping(path = "/contests/new/zip", method = RequestMethod.POST)
+	public @ResponseBody
+	String uploadFileHandler(@RequestParam("file") MultipartFile multipartFile) {
+		try {
+			File contestZipFile = fileUtils.saveFile(multipartFile);
+			File contestFolder = fileUtils.unzip(contestZipFile);
+			contestDao.insertContest(contestFolder);
+		} catch (IOException e) {
+			logger.error("can not upload file " + multipartFile.getName(), e);
+			return "can not upload file";
+		} catch (StorageValidationException e) {
+			logger.info("can not parse contest " + multipartFile.getName(), e);
+			return "file is invalid";
+		}
+		return "redirect:/contests";
+	}
 }

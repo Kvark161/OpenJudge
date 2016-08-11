@@ -1,12 +1,11 @@
 <%--suppress ELValidationInJSP --%>
-<%--suppress HtmlUnknownTarget --%>
 <%@ tag body-content="empty" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
+
 <form action="<c:url value="/logout"/>" method="post" id="logoutForm">
-	<input type="hidden"
-	       name="${_csrf.parameterName}"
-	       value="${_csrf.token}"/>
+	<eskimo:csrf/>
 </form>
 
 <%--suppress JSUnusedLocalSymbols --%>

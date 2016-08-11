@@ -15,8 +15,10 @@ http://www.springframework.org/schema/security/spring-security.xsd">
 
     <http auto-config="true" use-expressions="true">
         <intercept-url pattern="/contest/*/submit" access="hasRole('ROLE_USER')"/>
-        <intercept-url pattern="/contests/new" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/contest/*/submissions" access="hasRole('ROLE_USER')"/>
+
         <intercept-url pattern="/contest/*/edit" access="hasRole('ROLE_ADMIN')"/>
+        <intercept-url pattern="/contests/new" access="hasRole('ROLE_ADMIN')"/>
 
         <form-login
                 login-page="/login"

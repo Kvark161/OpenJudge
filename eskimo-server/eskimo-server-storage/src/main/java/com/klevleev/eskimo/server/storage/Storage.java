@@ -68,7 +68,6 @@ public class Storage {
 	}
 
 	public StorageContest createContest(File contestRoot) throws StorageValidationException {
-		StorageContest.validate(contestRoot);
 		long contestId = contestIdGenerator.getAndIncrement();
 		String contestDirectoryPath = this.root + File.separator + StorageContest.FOLDER_NAME + File.separator +
 				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);

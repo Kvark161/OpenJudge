@@ -55,16 +55,6 @@ public class StorageContest {
 		}
 	}
 
-
-	static void validate(File contestRootFolder) throws StorageValidationException {
-		try {
-			StorageContest storageContest = new StorageContest(contestRootFolder);
-			storageContest.validate();
-		} catch (StorageException e) {
-			throw new StorageValidationException(e);
-		}
-	}
-
 	private void updateXml() {
 		try {
 			xml.getDocumentElement().setAttribute("id", getId().toString());
@@ -77,9 +67,6 @@ public class StorageContest {
 			logger.error("can not update contest.xml");
 			throw new StorageException("can not update contest.xml", e);
 		}
-	}
-
-	private void validate() throws StorageValidationException {
 	}
 
 	public File getRoot() {
