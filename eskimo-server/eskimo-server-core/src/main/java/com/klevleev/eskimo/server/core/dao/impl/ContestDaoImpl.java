@@ -56,14 +56,14 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
-	public void updateContest(File contestDirectory) {
-		storage.updateContest(contestDirectory);
+	public void updateContest(Long contestId, File contestDirectory) {
+		storage.updateContest(contestId, contestDirectory);
 	}
 
 	private Contest contestFromStorageContest(StorageContest storageContest) {
 		Contest contest = new Contest();
 		contest.setId(storageContest.getId());
-		contest.setName(storageContest.getName());
+		contest.setNames(storageContest.getNames());
 		return contest;
 	}
 }

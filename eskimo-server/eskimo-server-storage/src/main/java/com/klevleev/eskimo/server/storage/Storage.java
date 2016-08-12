@@ -3,6 +3,7 @@ package com.klevleev.eskimo.server.storage;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
  */
-public class Storage {
+public class Storage implements InitializingBean {
 
 	private static final Logger logger = LoggerFactory.getLogger(Storage.class);
 
@@ -24,7 +25,8 @@ public class Storage {
 	private String root;
 	private AtomicLong contestIdGenerator = new AtomicLong(1L);
 
-	public void init() {
+	@Override
+	public void afterPropertiesSet() throws Exception {
 		File file = new File(root);
 		root = file.getAbsolutePath();
 		logger.debug("initialize Storage with root=" + root);
@@ -36,7 +38,7 @@ public class Storage {
 		if (directoryListing != null) {
 			for (File child : directoryListing) {
 				long id = Long.valueOf(child.getName());
-				if (contestIdGenerator.get() < id) {
+				if (contestIdGenerator.get() <= id) {
 					contestIdGenerator.set(id + 1);
 				}
 			}
@@ -80,15 +82,12 @@ public class Storage {
 			logger.error("con not copy new contest", e);
 			throw new StorageException("can not copy new contest", e);
 		}
-		StorageContest result = getContest(contestId);
-		result.setId(contestId);
-		return result;
+		return getContest(contestId);
 	}
 
-	public void updateContest(File contestRoot) {
-		StorageContest contest = new StorageContest(contestRoot);
+	public void updateContest(Long contestId, File contestRoot) {
 		String contestDirectoryPath = this.root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contest.getId());
+				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
 		File contestDir = new File(contestDirectoryPath);
 		try {
 			FileUtils.deleteDirectory(contestDir);
@@ -97,10 +96,6 @@ public class Storage {
 			logger.error("can not update contest", e);
 			throw new StorageException("can not update contest", e);
 		}
-	}
-
-	public String getRoot() {
-		return root;
 	}
 
 	public void setRoot(String root) {

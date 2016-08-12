@@ -1,7 +1,7 @@
 <%@ tag body-content="empty" pageEncoding="UTF-8" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<jsp:useBean id="currentTime" class="java.util.Date"/>
+<jsp:useBean id="currentTime" class="java.util.Date" scope="request"/>
 
 <div class="container">
 	<div class="row">
@@ -12,7 +12,7 @@
 			</div>
 			<div class="col-md-4">
 				<p class="muted pull-right">Server time: <fmt:formatDate type="time" value="${currentTime}"
-				                                                         pattern="dd.MM.yyyy HH:mm:ss"/></p>
+				                                                         pattern="dd MMM yyyy HH:mm:ss"/></p>
 			</div>
 		</div>
 	</div>

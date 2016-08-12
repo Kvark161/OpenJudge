@@ -12,7 +12,7 @@ public interface ContestDao {
 
 	void insertContest(File contestDirectory) throws StorageValidationException;
 
-	void updateContest(File contestDirectory);
+	void updateContest(Long contestId, File contestDirectory);
 
 	Contest getContestById(long id);
 

@@ -24,7 +24,9 @@
 			<c:forEach var="contest" items="${contests}">
 				<tr>
 					<td>${contest.id}</td>
-					<td><a href="<c:url value="/contest/${contest.id}"/>">${contest.name}</a></td>
+					<td><a href="<c:url value="/contest/${contest.id}"/>">
+						${contest.getName(pageContext.response.locale)}
+					</a></td>
 				</tr>
 			</c:forEach>
 			</tbody>

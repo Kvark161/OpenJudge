@@ -4,18 +4,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
@@ -28,62 +26,65 @@ public class StorageContest {
 	private static final String CONTEST_XML_NAME = "contest.xml";
 
 	private File root = null;
-	private Document xml = null;
 	private Long id;
-	private String name;
+	private Map<Locale, String> names;
+	private List<StorageProblem> problems;
 
 	StorageContest(File contestRootFolder) {
 		this.root = contestRootFolder;
-		initContestXml();
+		id = Long.valueOf(contestRootFolder.getName());
+		parseContestXml();
 	}
 
-	private void initContestXml() {
+	private void parseContestXml() {
 		try {
 			File fXmlFile = new File(getContestXmlPath());
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			xml = dBuilder.parse(fXmlFile);
+			Document xml = dBuilder.parse(fXmlFile);
 			Element contest = xml.getDocumentElement();
-			id = Long.valueOf(contest.getAttribute("id"));
-			name = contest.getAttribute("name");
+			parseContestNames(contest);
+			parseProblems(contest);
 		} catch (IOException e) {
 			throw new StorageException("file contest.xml does not exists", e);
 		} catch (SAXException | ParserConfigurationException e) {
 			throw new StorageException("error in parsing context.xml: " + e.getMessage(), e);
-		} catch (NumberFormatException e) {
-			throw new StorageException("id should be a positive integer");
 		}
 	}
 
-	private void updateXml() {
-		try {
-			xml.getDocumentElement().setAttribute("id", getId().toString());
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(xml);
-			StreamResult result = new StreamResult(new File(getContestXmlPath()));
-			transformer.transform(source, result);
-		} catch (TransformerException e) {
-			logger.error("can not update contest.xml");
-			throw new StorageException("can not update contest.xml", e);
+	private void parseProblems(Element contest) {
+		this.problems = new ArrayList<>();
+		Element elementProblems = (Element) contest.getElementsByTagName("problems").item(0);
+		NodeList nodeProblems = elementProblems.getElementsByTagName("problem");
+		for (int i = 0; i < nodeProblems.getLength(); ++i) {
+			Node nodeProblem = nodeProblems.item(i);
+			Element elementName = (Element) nodeProblem;
+			String index = elementName.getAttribute("index");
+			StorageProblem problem = new StorageProblem(new File(this.root.getAbsolutePath() + File.separator +
+					StorageProblem.FOLDER_NAME + File.separator + index));
+			problems.add(problem);
 		}
 	}
 
-	public File getRoot() {
-		return root;
+	private void parseContestNames(Element contest) {
+		this.names = new HashMap<>();
+		Element elementNames = (Element) contest.getElementsByTagName("names").item(0);
+		NodeList nodeNames = elementNames.getElementsByTagName("name");
+		for (int i = 0; i < nodeNames.getLength(); ++i) {
+			Node nodeName = nodeNames.item(i);
+			Element elementName = (Element) nodeName;
+			String language = elementName.getAttribute("language");
+			String value = elementName.getAttribute("value");
+			this.names.put(new Locale(language), value);
+		}
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	void setId(long id) {
-		this.id = id;
-		updateXml();
+	public Map<Locale, String> getNames() {
+		return names;
 	}
 
 	private String getContestXmlPath() {

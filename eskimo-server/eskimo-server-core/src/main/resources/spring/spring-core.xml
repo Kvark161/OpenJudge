@@ -35,7 +35,7 @@
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
 
-	<bean id="storage" class="com.klevleev.eskimo.server.storage.Storage" init-method="init">
+	<bean id="storage" class="com.klevleev.eskimo.server.storage.Storage">
 		<property name="root" value="${eskimo.storage.root}"/>
 	</bean>
 
