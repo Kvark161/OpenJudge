@@ -2,10 +2,8 @@ package com.klevleev.eskimo.server.core.dao.impl;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
-import com.klevleev.eskimo.server.storage.Storage;
-import com.klevleev.eskimo.server.storage.StorageContest;
-import com.klevleev.eskimo.server.storage.StorageException;
-import com.klevleev.eskimo.server.storage.StorageValidationException;
+import com.klevleev.eskimo.server.core.domain.Problem;
+import com.klevleev.eskimo.server.storage.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -64,6 +62,17 @@ public class ContestDaoImpl implements ContestDao {
 		Contest contest = new Contest();
 		contest.setId(storageContest.getId());
 		contest.setNames(storageContest.getNames());
+		contest.setProblems(storageContest.getProblems().stream()
+				.map(this::problemFromStorageProblem)
+				.collect(Collectors.toList()));
 		return contest;
+	}
+
+	private Problem problemFromStorageProblem(StorageProblem storageProblem) {
+		Problem problem = new Problem();
+		problem.setId(storageProblem.getId());
+		problem.setIndex(storageProblem.getIndex());
+		problem.setNames(storageProblem.getNames());
+		return problem;
 	}
 }
