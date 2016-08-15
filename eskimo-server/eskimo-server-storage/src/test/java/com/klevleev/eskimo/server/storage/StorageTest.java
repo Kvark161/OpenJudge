@@ -24,7 +24,7 @@ public class StorageTest {
 
 	@Test
 	public void createContest() throws Exception {
-		URL url = ClassLoader.getSystemResource("data/new_contest");
+		URL url = ClassLoader.getSystemResource("data/template_contest");
 		Storage storage = new Storage();
 		storage.setRoot(STORAGE_TEST_DATA_PATH);
 		for (Long i = 1L; i < 101; ++i) {

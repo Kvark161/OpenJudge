@@ -59,7 +59,7 @@ public class StorageContest {
 		for (int i = 0; i < nodeProblems.getLength(); ++i) {
 			Node nodeProblem = nodeProblems.item(i);
 			Element elementName = (Element) nodeProblem;
-			String index = elementName.getAttribute("index");
+			String index = elementName.getAttribute("id");
 			StorageProblem problem = new StorageProblem(new File(this.root.getAbsolutePath() + File.separator +
 					StorageProblem.FOLDER_NAME + File.separator + index));
 			problems.add(problem);

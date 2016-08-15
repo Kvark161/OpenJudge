@@ -14,13 +14,13 @@ public class StorageProblem {
 
 	static final String FOLDER_NAME = "problems";
 
-	private String index;
+	private Long id;
 
 	StorageProblem(File problemRoot) {
-		index = problemRoot.getName();
+		id = Long.valueOf(problemRoot.getName());
 	}
 
-	public String getIndex() {
-		return this.index;
+	public Long getId() {
+		return id;
 	}
 }

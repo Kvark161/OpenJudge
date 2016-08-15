@@ -7,7 +7,7 @@
         <statement language="en" path="statements/english/statement.pdf"/>
     </statements>
     <problems>
-        <problem index="A"/>
-        <problem index="B"/>
+        <problem id="1"/>
+        <problem id="2"/>
     </problems>
 </contest>
