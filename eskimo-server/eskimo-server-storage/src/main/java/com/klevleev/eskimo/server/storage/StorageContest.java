@@ -26,7 +26,7 @@ public class StorageContest {
 	private static final String CONTEST_XML_NAME = "contest.xml";
 
 	private File root = null;
-	private Long id;
+	private final Long id;
 	private Map<Locale, String> names;
 	private List<StorageProblem> problems;
 
@@ -79,6 +79,18 @@ public class StorageContest {
 		}
 	}
 
+	private String getContestXmlPath() {
+		return this.root + File.separator + CONTEST_XML_NAME;
+	}
+
+	public File getRoot() {
+		return root;
+	}
+
+	public void setRoot(File root) {
+		this.root = root;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -87,7 +99,15 @@ public class StorageContest {
 		return names;
 	}
 
-	private String getContestXmlPath() {
-		return this.root + File.separator + CONTEST_XML_NAME;
+	public void setNames(Map<Locale, String> names) {
+		this.names = names;
+	}
+
+	public List<StorageProblem> getProblems() {
+		return problems;
+	}
+
+	public void setProblems(List<StorageProblem> problems) {
+		this.problems = problems;
 	}
 }

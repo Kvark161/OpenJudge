@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <contest>
-    <names>
-        <name language="en" value="English contest name"/>
-    </names>
-    <statements>
-        <statement language="en" path="statements/english/statement.pdf"/>
-    </statements>
-    <problems>
-        <problem id="1"/>
-        <problem id="2"/>
-    </problems>
+	<names>
+		<name language="en" value="English contest name"/>
+	</names>
+	<statements>
+		<statement language="en" path="statements/english/statement.pdf"/>
+	</statements>
+	<problems>
+		<problem id="1"/>
+		<problem id="2"/>
+	</problems>
 </contest>

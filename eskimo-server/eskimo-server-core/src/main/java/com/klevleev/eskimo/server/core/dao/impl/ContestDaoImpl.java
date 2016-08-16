@@ -2,10 +2,8 @@ package com.klevleev.eskimo.server.core.dao.impl;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
-import com.klevleev.eskimo.server.storage.Storage;
-import com.klevleev.eskimo.server.storage.StorageContest;
-import com.klevleev.eskimo.server.storage.StorageException;
-import com.klevleev.eskimo.server.storage.StorageValidationException;
+import com.klevleev.eskimo.server.core.domain.Problem;
+import com.klevleev.eskimo.server.storage.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -51,6 +49,28 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
+	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
+		try {
+			return storage.getTestInput(contestId, problemId, testId);
+		} catch (StorageException e) {
+			logger.error("can not get test input: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId);
+		}
+		return null;
+	}
+
+	@Override
+	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
+		try {
+			return storage.getTestAnswer(contestId, problemId, testId);
+		} catch (StorageException e) {
+			logger.error("can not get test answer: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId);
+		}
+		return null;
+	}
+
+	@Override
 	public void insertContest(File contestDirectory) throws StorageValidationException {
 		storage.createContest(contestDirectory);
 	}
@@ -64,6 +84,17 @@ public class ContestDaoImpl implements ContestDao {
 		Contest contest = new Contest();
 		contest.setId(storageContest.getId());
 		contest.setNames(storageContest.getNames());
+		contest.setProblems(storageContest.getProblems().stream()
+				.map(this::problemFromStorageProblem)
+				.collect(Collectors.toList()));
 		return contest;
+	}
+
+	private Problem problemFromStorageProblem(StorageProblem storageProblem) {
+		Problem problem = new Problem();
+		problem.setId(storageProblem.getId());
+		problem.setIndex(storageProblem.getIndex());
+		problem.setNames(storageProblem.getNames());
+		return problem;
 	}
 }
