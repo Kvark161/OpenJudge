@@ -13,11 +13,19 @@
 
 <c:url value="/contests/new/zip" var="postUrl"/>
 
+<div class="container">
+
 <form method="POST" action="${postUrl}?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data">
+	<div class="form-group">
 	File to upload: <input type="file" name="file"/>
+	</div>
+	<div class="form-group">
 	Name: <input type="text" name="name"/>
+	</div>
 	<input type="submit" value="Upload"/> Press here to upload the file!
 </form>
+
+</div>
 
 <eskimo:footer/>
 </body>

@@ -78,12 +78,12 @@ public class ContestController {
 		return "contest/standings";
 	}
 
-	@RequestMapping(path = "/contests/new", method = RequestMethod.GET)
+	@RequestMapping(value = "/contests/new", method = RequestMethod.GET)
 	public String newContest() {
 		return "contest/new";
 	}
 
-	@RequestMapping(path = "/contests/new/zip", method = RequestMethod.POST)
+	@RequestMapping(value = "/contests/new/zip", method = RequestMethod.POST)
 	public @ResponseBody
 	String uploadFileHandler(@RequestParam("file") MultipartFile multipartFile) {
 		try {
