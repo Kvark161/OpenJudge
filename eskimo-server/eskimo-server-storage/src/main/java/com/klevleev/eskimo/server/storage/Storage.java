@@ -1,13 +1,16 @@
 package com.klevleev.eskimo.server.storage;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,4 +110,29 @@ public class Storage implements InitializingBean {
 				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
 	}
 
+	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
+		try {
+			File file = new File(pathToContest(contestId) + File.separator + StorageProblem.FOLDER_NAME
+			+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
+			try (InputStream in = new FileInputStream(file)) {
+				return IOUtils.toByteArray(in);
+			}
+		} catch (Throwable e) {
+			throw new StorageException("can not get test input: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId, e);
+		}
+	}
+
+	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
+		try {
+			File file = new File(pathToContest(contestId) + File.separator + StorageProblem.FOLDER_NAME
+					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".ans");
+			try (InputStream in = new FileInputStream(file)) {
+				return IOUtils.toByteArray(in);
+			}
+		} catch (Throwable e) {
+			throw new StorageException("can not get test: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId, e);
+		}
+	}
 }

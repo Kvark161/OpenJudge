@@ -49,6 +49,28 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
+	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
+		try {
+			return storage.getTestInput(contestId, problemId, testId);
+		} catch (StorageException e) {
+			logger.error("can not get test input: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId);
+		}
+		return null;
+	}
+
+	@Override
+	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
+		try {
+			return storage.getTestAnswer(contestId, problemId, testId);
+		} catch (StorageException e) {
+			logger.error("can not get test answer: contestId=" + contestId +
+					" problemId=" + problemId + " testId=" + testId);
+		}
+		return null;
+	}
+
+	@Override
 	public void insertContest(File contestDirectory) throws StorageValidationException {
 		storage.createContest(contestDirectory);
 	}

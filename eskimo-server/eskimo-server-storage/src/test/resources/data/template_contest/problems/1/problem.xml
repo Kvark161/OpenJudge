@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <problem index="A">
-    <names>
-        <name language="english" value="A plus B"/>
-    </names>
-    <testset name="testset">
-            <time-limit>1000</time-limit>
-            <memory-limit>268435456</memory-limit>
-            <test-count>5</test-count>
-    </testset>
+	<names>
+		<name language="english" value="A plus B"/>
+	</names>
+	<testset name="testset">
+		<time-limit>1000</time-limit>
+		<memory-limit>268435456</memory-limit>
+		<test-count>5</test-count>
+	</testset>
 
 	<solutions>
-        <solution type="main">
-            <source path="solutions/main.cpp" type="g++"/>
-        </solution>
-    </solutions>
-    <checker>
-        <source path="files/check.cpp" type="g++"/>
-    </checker>
-    
-    <validators>
-        <validator testset="testset">
-            <source path="files/validator.cpp" type="g++"/>
-        </validator>
-    </validators>
+		<solution type="main">
+			<source path="solutions/main.cpp" type="g++"/>
+		</solution>
+	</solutions>
+	<checker>
+		<source path="files/check.cpp" type="g++"/>
+	</checker>
+
+	<validators>
+		<validator testset="testset">
+			<source path="files/validator.cpp" type="g++"/>
+		</validator>
+	</validators>
 
 </problem>
 
