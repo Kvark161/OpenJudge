@@ -37,4 +37,12 @@ public class Problem implements Serializable {
 	public void setNames(Map<Locale, String> names) {
 		this.names = names;
 	}
+
+	public String getName(Locale locale) {
+		String name = names.get(new Locale(locale.getLanguage()));
+		if (name != null) {
+			return name;
+		}
+		return names.get(new Locale("english"));
+	}
 }
