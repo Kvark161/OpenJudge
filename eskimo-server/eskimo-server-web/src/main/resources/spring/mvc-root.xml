@@ -9,17 +9,21 @@
    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 
-    <context:component-scan base-package="com.klevleev.eskimo.server.web"/>
+	<context:component-scan base-package="com.klevleev.eskimo.server.web"/>
 
-    <mvc:resources mapping="/resources/**" location="/resources/"/>
-    <mvc:resources mapping="/bootstrap/**" location="/resources/"/>
-    <mvc:annotation-driven/>
+	<mvc:resources mapping="/resources/**" location="/resources/"/>
+	<mvc:resources mapping="/bootstrap/**" location="/resources/"/>
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean class="org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver"/>
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
 
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/"/>
-        <property name="suffix" value=".jsp"/>
-    </bean>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"/>
+		<property name="suffix" value=".jsp"/>
+	</bean>
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
 
 </beans>

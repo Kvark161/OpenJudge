@@ -2,49 +2,30 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
 	<eskimo:globalHead/>
-	<c:url value="/resources/css/submit-style.css" var="customSubmitStyle" />
-	<link href="${customSubmitStyle}" rel="stylesheet" />
-
 	<title>Submit</title>
 </head>
 
 <body>
 <eskimo:contestMenu/>
 
+
+<c:url value="/contest/${contest.id}/submit" var="submitUrl"/>
+
 <div class="container">
-	<form method="post" action="/contest/${contest.id}/submit?${_csrf.parameterName}=${_csrf.token}" enctype="multipart/form-data">
-		<table class="submit-form">
-			<tr>
-			<td>
-				<label for="problemId"> Choose problem: </label>
-			</td>
-			<td>
-				<select name="problemId" id="problemId">
-					<option></option>
-					<c:forEach var="problem" items="${contest.problems}">
-						<option value="${problem.id}">${problem.getName(pageContext.response.locale)}</option>
-					</c:forEach>
-				</select>
-			</td>
-			</tr>
-			<tr>
-			<td>
-				<label for="sourceCode">Source code:</label>
-			</td>
-			<td>
-				<textarea name="sourceCode" id="sourceCode" rows="20" style="width: 500px" ></textarea>
-			</td>
-			</tr>
-			<tr>
-			<td colspan="2" style="text-align: center">
-				<button type="submit">Submit</button>
-			</td>
-			</tr>
-		</table>
-	</form>
+	<form:form method="POST" action="${submitUrl}" modelAttribute="submissionForm">
+		<form:select path="problemId">
+			<form:option value=""/>
+			<c:forEach var="problem" items="${contest.problems}">
+				<form:option value="${problem.id}" label="${problem.getName(pageContext.response.locale)}"/>
+			</c:forEach>
+		</form:select>
+		<form:textarea path="sourceCode" cols="30" rows="20"/>
+		<button type="submit">Submit</button>
+	</form:form>
 </div>
 <eskimo:footer/>
 </body>
