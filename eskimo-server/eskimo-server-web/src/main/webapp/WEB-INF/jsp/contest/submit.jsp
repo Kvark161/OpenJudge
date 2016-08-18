@@ -17,14 +17,45 @@
 
 <div class="container">
 	<form:form method="POST" action="${submitUrl}" modelAttribute="submissionForm">
-		<form:select path="problemId">
-			<form:option value=""/>
-			<c:forEach var="problem" items="${contest.problems}">
-				<form:option value="${problem.id}" label="${problem.getName(pageContext.response.locale)}"/>
-			</c:forEach>
-		</form:select>
-		<form:textarea path="sourceCode" cols="30" rows="20"/>
-		<button type="submit">Submit</button>
+		<div class="row">
+			<div class="col-xs-2"><form:label path="problemId">Choose problem:</form:label></div>
+			<div class="col-xs-10">
+				<form:select id="problemId" path="problemId">
+					<form:option value=""/>
+					<c:forEach var="problem" items="${contest.problems}">
+						<form:option value="${problem.id}" label="${problem.getName(pageContext.response.locale)}"/>
+					</c:forEach>
+				</form:select>
+				<div class="has-error">
+					<form:errors path="problemId" class="help-block"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-2"><form:label path="problemId">Source code:</form:label></div>
+			<div class="col-xs-10">
+				<form:textarea path="sourceCode" cols="30" rows="20"/>
+				<div class="has-error">
+					<form:errors path="sourceCode" class="help-block"/>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3"></div>
+			<div class="col-xs-9">
+				<button type="submit">Submit</button>
+			</div>
+		</div>
+		<c:if test="${success}">
+			<div class="row">
+				<div class="col-xs-3"></div>
+				<div class="col-xs-9">
+					<div class="alert alert-success">
+						Submitted successfully
+					</div>
+				</div>
+			</div>
+		</c:if>
 	</form:form>
 </div>
 <eskimo:footer/>
