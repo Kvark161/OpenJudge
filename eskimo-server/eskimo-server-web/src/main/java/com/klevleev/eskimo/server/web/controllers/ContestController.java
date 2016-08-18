@@ -53,7 +53,7 @@ public class ContestController {
 	public String summary(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
-			return "redirect:contests";
+			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
 		return "contest/summary";
@@ -63,7 +63,7 @@ public class ContestController {
 	public String problems(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
-			return "redirect:contests";
+			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
 		return "contest/problems";
@@ -73,7 +73,7 @@ public class ContestController {
 	public String submit(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
-			return "redirect:contests";
+			return "redirect:/contests";
 		}
 		model.addAttribute("submissionForm", new SubmissionForm());
 		model.addAttribute("contest", contest);
@@ -100,7 +100,7 @@ public class ContestController {
 		submission.setSourceCode(submissionForm.getSourceCode());
 		submission.setUserId(user.getId());
 		submissionDao.insertSubmission(submission);
-		return "redirect:/contest/" + contestId + "/submissions";
+		return "redirect:/contest/{contestId}/submit";
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
