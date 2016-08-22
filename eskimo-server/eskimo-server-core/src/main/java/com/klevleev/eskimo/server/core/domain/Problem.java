@@ -43,6 +43,6 @@ public class Problem implements Serializable {
 		if (name != null) {
 			return name;
 		}
-		return names.get(new Locale("english"));
+		return names.get(new Locale("en"));
 	}
 }

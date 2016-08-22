@@ -18,6 +18,9 @@
 			<column name="is_admin" type="boolean">
 				<constraints nullable="false"/>
 			</column>
+			<column name="locale" type="text">
+				<constraints nullable="false" />
+			</column>
 		</createTable>
 		<createTable tableName="submissions">
 			<column name="id" type="bigint" autoIncrement="true">

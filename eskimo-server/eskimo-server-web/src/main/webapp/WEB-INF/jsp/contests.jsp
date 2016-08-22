@@ -32,7 +32,7 @@
 				<tr>
 					<td>${contest.id}</td>
 					<td><a href="<c:url value="/contest/${contest.id}"/>">
-						${contest.getName(pageContext.response.locale)}
+						${contest.getName(currentLocale)}
 					</a></td>
 				</tr>
 			</c:forEach>
