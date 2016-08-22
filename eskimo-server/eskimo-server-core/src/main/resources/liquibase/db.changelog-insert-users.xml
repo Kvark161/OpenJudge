@@ -8,11 +8,13 @@
             <column name="name" value="admin"/>
             <column name="password" value="admin"/>
             <column name="is_admin" value="true"/>
+            <column name="locale" value="en" />
         </insert>
         <insert tableName="users">
             <column name="name" value="user"/>
             <column name="password" value="user"/>
             <column name="is_admin" value="false"/>
+            <column name="locale" value="en" />
         </insert>
     </changeSet>
 

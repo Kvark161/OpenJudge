@@ -15,6 +15,7 @@ import org.springframework.util.Assert;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Stepan Klevleev on 27-Jul-16.
@@ -35,7 +36,7 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	@Transactional
 	public List<User> getAllUsers() {
-		String sql = "SELECT u.id, u.name, u.password, u.is_admin FROM users AS u";
+		String sql = "SELECT u.id, u.name, u.password, u.is_admin, u.locale FROM users AS u";
 		return jdbcTemplate.query(sql, new Object[]{}, new UserRowMapper());
 	}
 
@@ -43,7 +44,7 @@ public class UserDaoImpl implements UserDao {
 	@Transactional
 	public User getUserById(Long id) {
 		try {
-			String sql = "SELECT u.id, u.name, u.password, u.is_admin FROM users AS u WHERE u.id = ?";
+			String sql = "SELECT u.id, u.name, u.password, u.is_admin, u.locale FROM users AS u WHERE u.id = ?";
 			return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("can not get user by id=" + id, e);
@@ -55,7 +56,7 @@ public class UserDaoImpl implements UserDao {
 	@Transactional
 	public User getUserByName(String name) {
 		try {
-			String sql = "SELECT u.id, u.name, u.password, u.is_admin FROM users AS u WHERE u.name = ?";
+			String sql = "SELECT u.id, u.name, u.password, u.is_admin, u.locale FROM users AS u WHERE u.name = ?";
 			return jdbcTemplate.queryForObject(sql, new Object[]{name}, new UserRowMapper());
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("can not get user by name=" + name, e);
@@ -71,6 +72,7 @@ public class UserDaoImpl implements UserDao {
 			user.setUsername(resultSet.getString("name"));
 			user.setPassword(resultSet.getString("password"));
 			user.setAdmin(resultSet.getBoolean("is_admin"));
+			user.setLocale(new Locale(resultSet.getString("locale")));
 			return user;
 		}
 	}
