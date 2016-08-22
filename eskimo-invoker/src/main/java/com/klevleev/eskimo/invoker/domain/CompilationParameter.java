@@ -12,15 +12,15 @@ public class CompilationParameter implements Serializable {
 
 	public static final String OUTPUT_FILE = "{OUTPUT_FILE}";
 
-	private String compilationString;
+	private String compilationCommand;
 	private byte[] sourceCode;
 
-	public String getCompilationString() {
-		return compilationString;
+	public String getCompilationCommand() {
+		return compilationCommand;
 	}
 
-	public void setCompilationString(String compilationString) {
-		this.compilationString = compilationString;
+	public void setCompilationCommand(String compilationCommand) {
+		this.compilationCommand = compilationCommand;
 	}
 
 	public byte[] getSourceCode() {
