@@ -1,26 +1,24 @@
 package com.klevleev.eskimo.server.core.judge;
 
 import com.klevleev.eskimo.invoker.domain.InvokerNodeInfo;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Pool;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Created by Stepan Klevleev on 16-Aug-16.
  */
 @Component("invokerPool")
-class InvokerPool  implements Pool<Invoker> {
+class InvokerPool {
 
 	private final Set<InvokerNodeInfo> invokerNodes = ConcurrentHashMap.newKeySet();
 
-	private final Queue<Invoker> invokerQueue = new ConcurrentLinkedQueue<>();
+	private final BlockingQueue<Invoker> invokerQueue = new LinkedBlockingQueue<>();
 
 	void add(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
 		this.invokerNodes.add(invokerNodeInfo);
@@ -31,21 +29,19 @@ class InvokerPool  implements Pool<Invoker> {
 		}
 	}
 
-	public int getMaxNumberThreads() {
-		int result = 0;
-		for (InvokerNodeInfo invokerNode : invokerNodes) {
-			result += invokerNode.getMaxThreads();
-		}
-		return result;
-	}
-
-	@Override
 	public Invoker take() {
-		return invokerQueue.poll();
+		try {
+			return invokerQueue.take();
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("can't take invoker from the pool", e);
+		}
 	}
 
-	@Override
-	public void recycle(@NotNull Invoker invoker) {
-		invokerQueue.add(invoker);
+	public void release(Invoker invoker) {
+		try {
+			invokerQueue.put(invoker);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException("can't put invoker to the pool", e);
+		}
 	}
 }

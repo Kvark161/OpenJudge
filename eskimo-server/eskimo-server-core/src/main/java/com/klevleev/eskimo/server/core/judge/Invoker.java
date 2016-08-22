@@ -16,4 +16,9 @@ class Invoker {
 	public void setUri(URI uri) {
 		this.uri = uri;
 	}
+
+	public String getCompileUrl() {
+		return uri.toString() + "/invoker/compile";
+	}
+
 }

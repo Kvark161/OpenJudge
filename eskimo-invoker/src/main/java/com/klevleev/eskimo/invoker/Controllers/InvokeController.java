@@ -1,5 +1,8 @@
 package com.klevleev.eskimo.invoker.Controllers;
 
+import com.klevleev.eskimo.invoker.domain.CompilationParameter;
+import com.klevleev.eskimo.invoker.domain.CompilationResult;
+import com.klevleev.eskimo.invoker.services.ExecuteService;
 import com.klevleev.eskimo.invoker.services.ServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,12 +22,15 @@ public class InvokeController {
 
 	private final ServerService serverService;
 
+	private final ExecuteService executeService;
+
 	@Autowired
-	public InvokeController(ServerService serverService) {
+	public InvokeController(ServerService serverService, ExecuteService executeService) {
 		this.serverService = serverService;
+		this.executeService = executeService;
 	}
 
-	@RequestMapping(value = "/invoker/run-test", method = RequestMethod.GET)
+	@RequestMapping(value = "/invoke/run-test", method = RequestMethod.GET)
 	public String runTest(@RequestParam("submission") Long submissionId,
 	                      @RequestParam("contest") Long contestId,
 	                      @RequestParam("problem") Long problemId,
@@ -37,5 +43,10 @@ public class InvokeController {
 			return "error: " + e.getMessage();
 		}
 		return "I got test's input and output!";
+	}
+
+	@RequestMapping(value = "/invoke/compile", method = RequestMethod.POST)
+	public CompilationResult compile(@RequestParam CompilationParameter compilationParameter) {
+		return executeService.compile(compilationParameter);
 	}
 }

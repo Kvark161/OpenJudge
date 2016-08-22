@@ -31,7 +31,7 @@ public class InvokerController {
 		try {
 			judgeService.registerInvoker(invokerNodeInfo);
 		} catch (URISyntaxException e) {
-			logger.error("can not register invoker: " + invokerNodeInfo, e);
+			logger.error("can't register invoker " + invokerNodeInfo, e);
 			return false;
 		}
 		return true;

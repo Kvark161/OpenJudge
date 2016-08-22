@@ -5,10 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
-public class AppLauncher {
-    
-    public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(AppLauncher.class, args);
-    }
+public class Application {
+
+	public static void main(String[] args) {
+		ApplicationContext ctx = SpringApplication.run(Application.class, args);
+	}
 
 }
