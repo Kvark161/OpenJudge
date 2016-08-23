@@ -6,6 +6,7 @@ import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
+import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.storage.StorageValidationException;
 import com.klevleev.eskimo.server.web.viewObjects.UserSubmission;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
@@ -42,15 +43,19 @@ public class ContestController {
 
 	private final UserUtils userUtils;
 
+	private final SubmissionService submissionService;
+
 	@Autowired
 	public ContestController(ContestDao contestDao,
 							 SubmissionDao submissionDao,
 							 FileUtils fileUtils,
-							 UserUtils userUtils) {
+							 UserUtils userUtils,
+							 SubmissionService submissionService) {
 		this.contestDao = contestDao;
 		this.submissionDao = submissionDao;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
+		this.submissionService = submissionService;
 	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
@@ -112,8 +117,8 @@ public class ContestController {
 		submission.setProblemId(submissionForm.getProblemId());
 		submission.setSourceCode(submissionForm.getSourceCode());
 		submission.setUserId(user.getId());
-		submissionDao.insertSubmission(submission);
-		return "redirect:/contest/{contestId}/submit";
+		submissionService.submit(submission);
+		return "redirect:/contest/{contestId}/submissions";
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)

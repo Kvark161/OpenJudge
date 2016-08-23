@@ -24,12 +24,12 @@ class InvokerPool {
 		this.invokerNodes.add(invokerNodeInfo);
 		for (int i = 0; i < invokerNodeInfo.getMaxThreads(); ++i) {
 			Invoker invoker = new Invoker();
-			invoker.setUri(new URI(invokerNodeInfo.getAddress().getHostAddress() + ":" + invokerNodeInfo.getPort()));
+			invoker.setUri(new URI("http://" + invokerNodeInfo.getHost() + ":" + invokerNodeInfo.getPort()));
 			invokerQueue.add(invoker);
 		}
 	}
 
-	public Invoker take() {
+	Invoker take() {
 		try {
 			return invokerQueue.take();
 		} catch (InterruptedException e) {
@@ -37,7 +37,7 @@ class InvokerPool {
 		}
 	}
 
-	public void release(Invoker invoker) {
+	void release(Invoker invoker) {
 		try {
 			invokerQueue.put(invoker);
 		} catch (InterruptedException e) {

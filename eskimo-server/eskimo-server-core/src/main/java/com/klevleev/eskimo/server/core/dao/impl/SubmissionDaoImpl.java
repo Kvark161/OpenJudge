@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,12 +30,14 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public List<Submission> getAllSubmissions() {
 		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper());
 	}
 
 	@Override
+	@Transactional
 	public Submission getSubmissionById(Long id) {
 		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions " +
 				"WHERE id = ?";
@@ -42,6 +45,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public List<Submission> getUserSubmissions(Long userId) {
 		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions " +
 				"WHERE user_id = ?";
@@ -49,6 +53,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public void insertSubmission(Submission submission) {
 		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
 				.withTableName("submissions")
@@ -64,6 +69,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	@Transactional
 	public void updateSubmission(Submission submission) {
 		String sql = "UPDATE submissions " +
 				"SET " +

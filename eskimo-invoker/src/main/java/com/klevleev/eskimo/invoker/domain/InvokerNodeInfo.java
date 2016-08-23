@@ -1,7 +1,6 @@
 package com.klevleev.eskimo.invoker.domain;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 
 /**
  * Created by Stepan Klevleev on 16-Aug-16.
@@ -9,16 +8,16 @@ import java.net.InetAddress;
 public class InvokerNodeInfo implements Serializable {
 	private static final long serialVersionUID = 3039858792073069558L;
 
-	private InetAddress address;
+	private String host;
 	private int port;
 	private int maxThreads;
 
-	public InetAddress getAddress() {
-		return address;
+	public String getHost() {
+		return host;
 	}
 
-	public void setAddress(InetAddress address) {
-		this.address = address;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public int getPort() {

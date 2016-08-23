@@ -17,8 +17,8 @@ class Invoker {
 		this.uri = uri;
 	}
 
-	public String getCompileUrl() {
-		return uri.toString() + "/invoker/compile";
+	String getCompileUrl() {
+		return uri.toString() + "/invoke/compile";
 	}
 
 }

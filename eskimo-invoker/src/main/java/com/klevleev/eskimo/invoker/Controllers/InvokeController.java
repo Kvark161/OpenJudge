@@ -7,10 +7,7 @@ import com.klevleev.eskimo.invoker.services.ServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Stepan Klevleev on 16-Aug-16.
@@ -46,7 +43,7 @@ public class InvokeController {
 	}
 
 	@RequestMapping(value = "/invoke/compile", method = RequestMethod.POST)
-	public CompilationResult compile(@RequestParam CompilationParameter compilationParameter) {
+	public CompilationResult compile(@RequestBody CompilationParameter compilationParameter) {
 		return executeService.compile(compilationParameter);
 	}
 }
