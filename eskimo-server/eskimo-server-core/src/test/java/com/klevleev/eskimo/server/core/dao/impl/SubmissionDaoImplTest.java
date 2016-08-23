@@ -34,6 +34,7 @@ public class SubmissionDaoImplTest {
 		submission.setContestId(1L);
 		submission.setProblemId(1L);
 		submission.setSourceCode("This is a source code");
+		submission.setVerdict(Submission.Verdict.SUBMITTED);
 		submissionDao.insertSubmission(submission);
 		Assert.notNull(submission.getId());
 	}

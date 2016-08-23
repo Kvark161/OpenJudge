@@ -19,7 +19,7 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="locale" type="text">
-				<constraints nullable="false" />
+				<constraints nullable="false"/>
 			</column>
 		</createTable>
 		<createTable tableName="submissions">
@@ -37,6 +37,9 @@
 				<constraints nullable="false"/>
 			</column>
 			<column name="source_code" type="text">
+				<constraints nullable="false"/>
+			</column>
+			<column name="verdict" type="text">
 				<constraints nullable="false"/>
 			</column>
 		</createTable>

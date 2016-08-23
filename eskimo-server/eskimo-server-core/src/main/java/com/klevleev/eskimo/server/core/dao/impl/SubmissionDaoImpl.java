@@ -30,20 +30,20 @@ public class SubmissionDaoImpl implements SubmissionDao {
 
 	@Override
 	public List<Submission> getAllSubmissions() {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code FROM submissions";
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper());
 	}
 
 	@Override
 	public Submission getSubmissionById(Long id) {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code FROM submissions " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions " +
 				"WHERE id = ?";
 		return jdbcTemplate.queryForObject(sql, new SubmissionRowMapper(), id);
 	}
 
 	@Override
 	public List<Submission> getUserSubmissions(Long userId) {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code FROM submissions " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions " +
 				"WHERE user_id = ?";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId);
 	}
@@ -58,8 +58,28 @@ public class SubmissionDaoImpl implements SubmissionDao {
 		params.put("contest_id", submission.getContestId());
 		params.put("problem_id", submission.getProblemId());
 		params.put("source_code", submission.getSourceCode());
+		params.put("verdict", submission.getVerdict());
 		Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
 		submission.setId(key.longValue());
+	}
+
+	@Override
+	public void updateSubmission(Submission submission) {
+		String sql = "UPDATE submissions " +
+				"SET " +
+				"user_id = ?, " +
+				"contest_id = ?, " +
+				"problem_id = ?, " +
+				"source_code = ?, " +
+				"verdict = ? " +
+				"WHERE id = ?";
+		jdbcTemplate.update(sql,
+				submission.getUserId(),
+				submission.getContestId(),
+				submission.getProblemId(),
+				submission.getSourceCode(),
+				submission.getVerdict().name(),
+				submission.getId());
 	}
 
 	private static class SubmissionRowMapper implements RowMapper<Submission> {
@@ -71,6 +91,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 			submission.setContestId(resultSet.getLong("contest_id"));
 			submission.setProblemId(resultSet.getLong("problem_id"));
 			submission.setSourceCode(resultSet.getString("source_code"));
+			submission.setVerdict(Submission.Verdict.valueOf(resultSet.getString("verdict")));
 			return submission;
 		}
 	}

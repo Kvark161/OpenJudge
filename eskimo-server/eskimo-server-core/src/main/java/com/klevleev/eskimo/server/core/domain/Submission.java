@@ -10,6 +10,16 @@ public class Submission {
 	private Long contestId;
 	private Long problemId;
 	private String sourceCode;
+	private Verdict verdict;
+
+	public enum Verdict {
+		SUBMITTED,
+		PENDING,
+		RUNNING,
+		COMPILATION_ERROR,
+		COMPILATION_SUCCESS,
+		INTERNAL_ERROR
+	}
 
 	public Long getId() {
 		return id;
@@ -50,4 +60,13 @@ public class Submission {
 	public void setProblemId(Long problemId) {
 		this.problemId = problemId;
 	}
+
+	public Verdict getVerdict() {
+		return verdict;
+	}
+
+	public void setVerdict(Verdict verdict) {
+		this.verdict = verdict;
+	}
+
 }
