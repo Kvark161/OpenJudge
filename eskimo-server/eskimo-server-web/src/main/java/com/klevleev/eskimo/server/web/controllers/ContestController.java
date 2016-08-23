@@ -1,17 +1,17 @@
 package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
-import com.klevleev.eskimo.server.core.dao.SubmissionDao;
-import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
+import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.storage.StorageValidationException;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,18 +35,17 @@ public class ContestController {
 
 	private final ContestDao contestDao;
 
-	private final SubmissionDao submissionDao;
-
-	private final UserDao userDao;
 
 	private final FileUtils fileUtils;
 
+	private final SubmissionService submissionService;
+
 	@Autowired
-	public ContestController(ContestDao contestDao, SubmissionDao submissionDao, UserDao userDao, FileUtils fileUtils) {
+	public ContestController(ContestDao contestDao, FileUtils fileUtils,
+	                         SubmissionService submissionService) {
 		this.contestDao = contestDao;
-		this.submissionDao = submissionDao;
-		this.userDao = userDao;
 		this.fileUtils = fileUtils;
+		this.submissionService = submissionService;
 	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
@@ -108,8 +107,8 @@ public class ContestController {
 		submission.setProblemId(submissionForm.getProblemId());
 		submission.setSourceCode(submissionForm.getSourceCode());
 		submission.setUserId(user.getId());
-		submissionDao.insertSubmission(submission);
-		return "redirect:/contest/{contestId}/submit";
+		submissionService.submit(submission);
+		return "redirect:/contest/{contestId}/submissions";
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
@@ -145,9 +144,12 @@ public class ContestController {
 		return "redirect:/contests";
 	}
 
-	private Locale getCurrentUserLocale(){
+	private Locale getCurrentUserLocale() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = userDao.getUserByName(authentication.getName());
-		return currentUser == null? new Locale("en") : currentUser.getLocale();
+		if (authentication instanceof AnonymousAuthenticationToken) {
+			return new Locale("en");
+		}
+		User user = (User) authentication.getPrincipal();
+		return user.getLocale();
 	}
 }

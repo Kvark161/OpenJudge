@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <problem index="B">
 	<names>
-		<name language="english" value="A multiply B"/>
+		<name language="en" value="A multiply B"/>
 	</names>
 	<testset name="testset">
 		<time-limit>2000</time-limit>

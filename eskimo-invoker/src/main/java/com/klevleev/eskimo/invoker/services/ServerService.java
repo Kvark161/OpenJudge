@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -27,11 +27,14 @@ public class ServerService {
 	@PostConstruct
 	private void registerMe() throws UnknownHostException {
 		InvokerNodeInfo invokerNodeInfo = new InvokerNodeInfo();
-		invokerNodeInfo.setAddress(InetAddress.getLocalHost());
 		invokerNodeInfo.setPort(port);
 		invokerNodeInfo.setMaxThreads(2);
-		if (!restTemplate.postForObject("http://localhost:8080/eskimo/invoker/register", invokerNodeInfo, Boolean.class)) {
-			logger.error("can not register invoker!");
+		try {
+			if (!restTemplate.postForObject("http://localhost:8080/eskimo/invoker/register", invokerNodeInfo, Boolean.class)) {
+				logger.error("can't register invoker!");
+			}
+		} catch (RestClientException e) {
+			logger.error("can't register invoker!", e);
 		}
 	}
 
