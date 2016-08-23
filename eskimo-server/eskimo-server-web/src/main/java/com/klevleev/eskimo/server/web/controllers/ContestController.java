@@ -2,19 +2,19 @@ package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
-import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.storage.StorageValidationException;
+import com.klevleev.eskimo.server.web.viewObjects.UserSubmission;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
+import com.klevleev.eskimo.server.web.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,22 +38,25 @@ public class ContestController {
 
 	private final SubmissionDao submissionDao;
 
-	private final UserDao userDao;
-
 	private final FileUtils fileUtils;
 
+	private final UserUtils userUtils;
+
 	@Autowired
-	public ContestController(ContestDao contestDao, SubmissionDao submissionDao, UserDao userDao, FileUtils fileUtils) {
+	public ContestController(ContestDao contestDao,
+							 SubmissionDao submissionDao,
+							 FileUtils fileUtils,
+							 UserUtils userUtils) {
 		this.contestDao = contestDao;
 		this.submissionDao = submissionDao;
-		this.userDao = userDao;
 		this.fileUtils = fileUtils;
+		this.userUtils = userUtils;
 	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
 	public String contests(ModelMap model) {
 		List<Contest> contests = contestDao.getAllContests();
-		model.addAttribute("currentLocale", getCurrentUserLocale());
+		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
 		model.addAttribute("contests", contests);
 		return "contests";
 	}
@@ -83,7 +87,7 @@ public class ContestController {
 		if (contest == null) {
 			return "redirect:/contests";
 		}
-		model.addAttribute("currentLocale", getCurrentUserLocale());
+		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
 		model.addAttribute("submissionForm", new SubmissionForm());
 		model.addAttribute("contest", contest);
 		return "contest/submit";
@@ -91,10 +95,10 @@ public class ContestController {
 
 	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.POST)
 	public String submit(@PathVariable Long contestId,
-	                     @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
-	                     BindingResult bindingResult,
-	                     @AuthenticationPrincipal User user,
-	                     Model model) {
+						 @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
+						 BindingResult bindingResult,
+						 @AuthenticationPrincipal User user,
+						 Model model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
@@ -110,6 +114,35 @@ public class ContestController {
 		submission.setUserId(user.getId());
 		submissionDao.insertSubmission(submission);
 		return "redirect:/contest/{contestId}/submit";
+	}
+
+	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)
+	public String submissions(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestDao.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:/contests";
+		}
+		model.addAttribute("contest", contest);
+		List<Submission> submissions = submissionDao.getUserSubmissions(userUtils.getCurrentUser().getId());
+		List<Problem> problems = contestDao.getContestById(contestId).getProblems();
+		Locale currentLocale = userUtils.getCurrentUserLocale();
+		List<UserSubmission> userSubmissions = new ArrayList<>();
+		for (Submission submission : submissions) {
+			UserSubmission userSubmission = new UserSubmission();
+			userSubmission.setSubmissionId(submission.getId());
+			userSubmission.setProblemName("DELETED");
+			for (Problem problem : problems) {
+				if (problem.getId().equals(submission.getProblemId())) {
+					userSubmission.setProblemName(problem.getName(currentLocale));
+					break;
+				}
+			}
+			userSubmission.setVerdict(submission.getVerdict());
+			userSubmissions.add(userSubmission);
+		}
+
+		model.addAttribute("userSubmissions", userSubmissions);
+		return "contest/submissions";
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
@@ -143,11 +176,5 @@ public class ContestController {
 			return "file is invalid";
 		}
 		return "redirect:/contests";
-	}
-
-	private Locale getCurrentUserLocale(){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User currentUser = userDao.getUserByName(authentication.getName());
-		return currentUser == null? new Locale("en") : currentUser.getLocale();
 	}
 }
