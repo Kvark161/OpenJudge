@@ -30,10 +30,14 @@ public class UserUtils {
 
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return (User)authentication.getPrincipal();
+		if (authentication.getName().equals("anonymousUser")) {
+			return (User) authentication.getPrincipal();
+		} else {
+			return null;
+		}
 	}
 
-	public Locale getCurrentUserLocale(){
+	public Locale getCurrentUserLocale() {
 		User currentUser = getCurrentUser();
 		return currentUser == null ? new Locale("en") : currentUser.getLocale();
 	}
