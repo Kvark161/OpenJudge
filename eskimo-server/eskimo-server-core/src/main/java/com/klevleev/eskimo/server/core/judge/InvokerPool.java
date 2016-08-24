@@ -1,6 +1,8 @@
 package com.klevleev.eskimo.server.core.judge;
 
 import com.klevleev.eskimo.invoker.domain.InvokerNodeInfo;
+import com.klevleev.eskimo.server.core.config.ApplicationSettings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -16,17 +18,28 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Component("invokerPool")
 class InvokerPool {
 
+	private final ApplicationSettings settings;
+
 	private final Set<InvokerNodeInfo> invokerNodes = ConcurrentHashMap.newKeySet();
 
 	private final BlockingQueue<Invoker> invokerQueue = new LinkedBlockingQueue<>();
 
-	void add(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
-		this.invokerNodes.add(invokerNodeInfo);
-		for (int i = 0; i < invokerNodeInfo.getMaxThreads(); ++i) {
-			Invoker invoker = new Invoker();
-			invoker.setUri(new URI("http://" + invokerNodeInfo.getHost() + ":" + invokerNodeInfo.getPort()));
-			invokerQueue.add(invoker);
+	@Autowired
+	public InvokerPool(ApplicationSettings applicationSettings) {
+		this.settings = applicationSettings;
+	}
+
+	boolean add(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
+		if (this.invokerNodes.add(invokerNodeInfo)) {
+			for (int i = 0; i < invokerNodeInfo.getMaxThreads(); ++i) {
+				Invoker invoker = new Invoker();
+				invoker.setUri(new URI(settings.getInvokerProtocol() + "://" + invokerNodeInfo.getHost() +
+						":" + invokerNodeInfo.getPort()));
+				invokerQueue.add(invoker);
+			}
+			return true;
 		}
+		return false;
 	}
 
 	Invoker take() {

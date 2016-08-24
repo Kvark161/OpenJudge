@@ -8,10 +8,10 @@ import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.storage.StorageValidationException;
-import com.klevleev.eskimo.server.web.viewObjects.UserSubmission;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
+import com.klevleev.eskimo.server.web.viewObjects.UserSubmission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,13 +122,15 @@ public class ContestController {
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)
-	public String submissions(@PathVariable Long contestId, ModelMap model) {
+	public String submissions(@PathVariable Long contestId,
+	                          ModelMap model,
+	                          @AuthenticationPrincipal User user) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
-		List<Submission> submissions = submissionDao.getUserSubmissions(userUtils.getCurrentUser().getId());
+		List<Submission> submissions = submissionDao.getUserSubmissions(user.getId());
 		List<Problem> problems = contestDao.getContestById(contestId).getProblems();
 		Locale currentLocale = userUtils.getCurrentUserLocale();
 		List<UserSubmission> userSubmissions = new ArrayList<>();

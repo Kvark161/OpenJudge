@@ -1,6 +1,6 @@
 package com.klevleev.eskimo.server.web.utils;
 
-import com.klevleev.eskimo.server.core.ApplicationSettings;
+import com.klevleev.eskimo.server.core.config.ApplicationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +26,7 @@ public class FileUtils {
 
 	public File saveFile(MultipartFile file) throws IOException {
 		byte[] bytes = file.getBytes();
-		File dir = new File(settings.getTempPath() + File.separator + "uploaded");
+		File dir = new File(settings.getTempRoot() + File.separator + "uploaded");
 		if (!dir.exists()) {
 			//noinspection ResultOfMethodCallIgnored
 			dir.mkdirs();
@@ -42,7 +42,7 @@ public class FileUtils {
 
 	public File unzip(File zipFile) throws IOException {
 		byte[] buffer = new byte[1024];
-		Path outputFolder = Files.createTempDirectory(new File(settings.getTempPath()).toPath(), "contest-");
+		Path outputFolder = Files.createTempDirectory(settings.getTempRoot().toPath(), "contest-");
 		try (FileInputStream fis = new FileInputStream(zipFile);
 		     ZipInputStream zis = new ZipInputStream(fis)) {
 			ZipEntry ze = zis.getNextEntry();

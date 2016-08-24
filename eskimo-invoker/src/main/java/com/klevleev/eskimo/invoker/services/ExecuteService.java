@@ -1,5 +1,6 @@
 package com.klevleev.eskimo.invoker.services;
 
+import com.klevleev.eskimo.invoker.config.InvokerSettings;
 import com.klevleev.eskimo.invoker.domain.CompilationParameter;
 import com.klevleev.eskimo.invoker.domain.CompilationResult;
 import com.klevleev.eskimo.invoker.enums.CompilationVerdict;
@@ -7,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
@@ -20,9 +22,17 @@ public class ExecuteService {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecuteService.class);
 
+	private final InvokerSettings invokerConfig;
+
+	@Autowired
+	public ExecuteService(InvokerSettings invokerConfig) {
+		this.invokerConfig = invokerConfig;
+	}
+
 	public CompilationResult compile(CompilationParameter compilationParameter) {
-		File folder = createTempFolder();
+		File folder = null;
 		try {
+			folder = createTempFolder();
 			prepareCompilationFolder(compilationParameter, folder);
 			String command = getCompilationCommand(compilationParameter, folder);
 			ExecutionResult executionResult = executeCommand(command);
@@ -32,7 +42,9 @@ public class ExecuteService {
 			compilationResult.setVerdict(CompilationVerdict.INTERNAL_INVOKER_ERROR);
 			return compilationResult;
 		} finally {
-			cleanFolder(folder);
+			if (folder != null) {
+				cleanFolder(folder);
+			}
 		}
 	}
 
@@ -59,7 +71,7 @@ public class ExecuteService {
 	private void cleanFolder(File folder) {
 		try {
 			FileUtils.deleteDirectory(folder);
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			logger.error("can't delete folder " + folder);
 		}
 	}
@@ -92,13 +104,8 @@ public class ExecuteService {
 		}
 	}
 
-	private File createTempFolder() {
-		try {
-			return Files.createTempDirectory("invoker-").toFile();
-		} catch (IOException e) {
-			logger.error("can't create temp directory");
-			return null;
-		}
+	private File createTempFolder() throws IOException {
+		return Files.createTempDirectory(invokerConfig.getInvokerTempPath().toPath(), "invoker-").toFile();
 	}
 
 	private class ExecutionResult {

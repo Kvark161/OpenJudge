@@ -57,8 +57,8 @@ public class JudgeService {
 		}
 	}
 
-	public void registerInvoker(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
-		invokerPool.add(invokerNodeInfo);
+	public boolean registerInvoker(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
+		return invokerPool.add(invokerNodeInfo);
 	}
 
 	private CompilationResult compile(Submission submission, Invoker invoker) {
@@ -87,6 +87,10 @@ public class JudgeService {
 							} else {
 								submission.setVerdict(Submission.Verdict.COMPILATION_ERROR);
 							}
+							submissionDao.updateSubmission(submission);
+						} catch (Throwable e) {
+							logger.error("", e);
+							submission.setVerdict(Submission.Verdict.INTERNAL_ERROR);
 							submissionDao.updateSubmission(submission);
 						} finally {
 							invokerPool.release(invoker);

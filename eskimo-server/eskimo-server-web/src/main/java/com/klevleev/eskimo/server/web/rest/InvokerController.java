@@ -32,11 +32,10 @@ public class InvokerController {
 	public Boolean register(@RequestBody InvokerNodeInfo invokerNodeInfo, HttpServletRequest request) {
 		invokerNodeInfo.setHost(request.getRemoteHost());
 		try {
-			judgeService.registerInvoker(invokerNodeInfo);
+			return judgeService.registerInvoker(invokerNodeInfo);
 		} catch (URISyntaxException e) {
 			logger.error("can't register invoker " + invokerNodeInfo, e);
 			return false;
 		}
-		return true;
 	}
 }

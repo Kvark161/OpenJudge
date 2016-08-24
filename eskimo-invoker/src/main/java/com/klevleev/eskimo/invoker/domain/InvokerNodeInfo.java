@@ -35,4 +35,22 @@ public class InvokerNodeInfo implements Serializable {
 	public void setMaxThreads(int maxThreads) {
 		this.maxThreads = maxThreads;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		InvokerNodeInfo that = (InvokerNodeInfo) o;
+
+		return port == that.port && (host != null ? host.equals(that.host) : that.host == null);
+
+	}
+
+	@Override
+	public int hashCode() {
+		int result = host != null ? host.hashCode() : 0;
+		result = 31 * result + port;
+		return result;
+	}
 }
