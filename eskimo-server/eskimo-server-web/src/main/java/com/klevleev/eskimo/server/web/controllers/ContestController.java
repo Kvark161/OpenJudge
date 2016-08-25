@@ -1,14 +1,12 @@
 package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
-import com.klevleev.eskimo.server.core.dao.SubmissionDao;
+import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
-import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.storage.StorageValidationException;
-import com.klevleev.eskimo.server.web.viewObjects.UserSubmission;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
@@ -26,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +34,7 @@ public class ContestController {
 
 	private final ContestDao contestDao;
 
-	private final SubmissionDao submissionDao;
+	private final UserDao userDao;
 
 	private final FileUtils fileUtils;
 
@@ -47,12 +44,12 @@ public class ContestController {
 
 	@Autowired
 	public ContestController(ContestDao contestDao,
-							 SubmissionDao submissionDao,
+							 UserDao userDao,
 							 FileUtils fileUtils,
 							 UserUtils userUtils,
 							 SubmissionService submissionService) {
 		this.contestDao = contestDao;
-		this.submissionDao = submissionDao;
+		this.userDao = userDao;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
 		this.submissionService = submissionService;
@@ -113,40 +110,25 @@ public class ContestController {
 			return "contest/submit";
 		}
 		Submission submission = new Submission();
-		submission.setContestId(contestId);
-		submission.setProblemId(submissionForm.getProblemId());
+		submission.setContest(contestDao.getContestById(contestId));
+		submission.setProblem(contestDao.getProblemByContestAndProblemId(contestId, submissionForm.getProblemId()));
 		submission.setSourceCode(submissionForm.getSourceCode());
-		submission.setUserId(user.getId());
+		submission.setUser(userDao.getUserById(user.getId()));
 		submissionService.submit(submission);
 		return "redirect:/contest/{contestId}/submissions";
 	}
 
 	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)
-	public String submissions(@PathVariable Long contestId, ModelMap model) {
+	public String submissions(@PathVariable Long contestId, @AuthenticationPrincipal User user, ModelMap model) {
 		Contest contest = contestDao.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
-		List<Submission> submissions = submissionDao.getUserSubmissions(userUtils.getCurrentUser().getId());
-		List<Problem> problems = contestDao.getContestById(contestId).getProblems();
-		Locale currentLocale = userUtils.getCurrentUserLocale();
-		List<UserSubmission> userSubmissions = new ArrayList<>();
-		for (Submission submission : submissions) {
-			UserSubmission userSubmission = new UserSubmission();
-			userSubmission.setSubmissionId(submission.getId());
-			userSubmission.setProblemName("DELETED");
-			for (Problem problem : problems) {
-				if (problem.getId().equals(submission.getProblemId())) {
-					userSubmission.setProblemName(problem.getName(currentLocale));
-					break;
-				}
-			}
-			userSubmission.setVerdict(submission.getVerdict());
-			userSubmissions.add(userSubmission);
-		}
-
-		model.addAttribute("userSubmissions", userSubmissions);
+		List<Submission> submissions = submissionService.getUserInContestSubmissions(user.getId(), contestId);
+		Locale currentLocale = user.getLocale();
+		model.addAttribute("submissions", submissions);
+		model.addAttribute("locale", currentLocale);
 		return "contest/submissions";
 	}
 

@@ -3,32 +3,30 @@
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <html>
 <head>
-    <eskimo:globalHead/>
-    <title>Submissions</title>
+	<eskimo:globalHead/>
+	<title>Submissions</title>
 </head>
 <body>
 <eskimo:contestMenu/>
 <div class="container">
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Problem</th>
-            <th>Verdict</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach var="submission" items="${userSubmissions}">
-            <tr>
-                <td>${submission.submissionId}</td>
-                <td>
-                    ${submission.problemName}
-                </td>
-                <td>${submission.verdict}</td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+	<table class="table table-striped table-bordered">
+		<thead>
+		<tr>
+			<th>ID</th>
+			<th>Problem</th>
+			<th>Verdict</th>
+		</tr>
+		</thead>
+		<tbody>
+		<c:forEach var="submission" items="${submissions}">
+			<tr>
+				<td>${submission.id}</td>
+				<td>${submission.problem.getName(locale)}</td>
+				<td>${submission.verdict}</td>
+			</tr>
+		</c:forEach>
+		</tbody>
+	</table>
 </div>
 <eskimo:footer/>
 </body>

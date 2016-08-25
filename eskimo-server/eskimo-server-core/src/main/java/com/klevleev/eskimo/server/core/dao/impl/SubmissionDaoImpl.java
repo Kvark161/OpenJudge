@@ -1,7 +1,10 @@
 package com.klevleev.eskimo.server.core.dao.impl;
 
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
+import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
+import com.klevleev.eskimo.server.core.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,15 +56,22 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
+	public List<Submission> getUserInContestSubmissions(Long userId, Long contestId) {
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict FROM submissions " +
+				"WHERE user_id = ? AND contest_id = ?";
+		return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId, contestId);
+	}
+
+	@Override
 	@Transactional
 	public void insertSubmission(Submission submission) {
 		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
 				.withTableName("submissions")
 				.usingGeneratedKeyColumns("id");
 		Map<String, Object> params = new HashMap<>();
-		params.put("user_id", submission.getUserId());
-		params.put("contest_id", submission.getContestId());
-		params.put("problem_id", submission.getProblemId());
+		params.put("user_id", submission.getUser().getId());
+		params.put("contest_id", submission.getContest().getId());
+		params.put("problem_id", submission.getProblem().getId());
 		params.put("source_code", submission.getSourceCode());
 		params.put("verdict", submission.getVerdict());
 		Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
@@ -80,9 +90,9 @@ public class SubmissionDaoImpl implements SubmissionDao {
 				"verdict = ? " +
 				"WHERE id = ?";
 		jdbcTemplate.update(sql,
-				submission.getUserId(),
-				submission.getContestId(),
-				submission.getProblemId(),
+				submission.getUser().getId(),
+				submission.getContest().getId(),
+				submission.getProblem().getId(),
 				submission.getSourceCode(),
 				submission.getVerdict().name(),
 				submission.getId());
@@ -93,9 +103,15 @@ public class SubmissionDaoImpl implements SubmissionDao {
 		public Submission mapRow(ResultSet resultSet, int i) throws SQLException {
 			Submission submission = new Submission();
 			submission.setId(resultSet.getLong("id"));
-			submission.setUserId(resultSet.getLong("user_id"));
-			submission.setContestId(resultSet.getLong("contest_id"));
-			submission.setProblemId(resultSet.getLong("problem_id"));
+			User user = new User();
+			user.setId(resultSet.getLong("user_id"));
+			submission.setUser(user);
+			Contest contest = new Contest();
+			contest.setId(resultSet.getLong("contest_id"));
+			submission.setContest(contest);
+			Problem problem = new Problem();
+			problem.setId(resultSet.getLong("problem_id"));
+			submission.setProblem(problem);
 			submission.setSourceCode(resultSet.getString("source_code"));
 			submission.setVerdict(Submission.Verdict.valueOf(resultSet.getString("verdict")));
 			return submission;

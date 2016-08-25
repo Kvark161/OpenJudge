@@ -1,7 +1,10 @@
 package com.klevleev.eskimo.server.core.dao.impl;
 
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
+import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
+import com.klevleev.eskimo.server.core.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +33,15 @@ public class SubmissionDaoImplTest {
 	@Test
 	public void insertSubmission() throws Exception {
 		Submission submission = new Submission();
-		submission.setUserId(1L);
-		submission.setContestId(1L);
-		submission.setProblemId(1L);
+		User user = new User();
+		user.setId(1L);
+		submission.setUser(user);
+		Contest contest = new Contest();
+		contest.setId(1L);
+		submission.setContest(contest);
+		Problem problem = new Problem();
+		problem.setId(1L);
+		submission.setProblem(problem);
 		submission.setSourceCode("This is a source code");
 		submission.setVerdict(Submission.Verdict.SUBMITTED);
 		submissionDao.insertSubmission(submission);

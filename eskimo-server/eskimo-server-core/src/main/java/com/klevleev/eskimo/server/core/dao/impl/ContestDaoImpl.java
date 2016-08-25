@@ -49,6 +49,16 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
+	public Problem getProblemByContestAndProblemId(Long contestId, Long problemId) {
+		Contest contest = getContestById(contestId);
+		for (Problem problem : contest.getProblems()) {
+			if (problem.getId().equals(problemId))
+				return problem;
+		}
+		return null;
+	}
+
+	@Override
 	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
 			return storage.getTestInput(contestId, problemId, testId);

@@ -6,9 +6,9 @@ package com.klevleev.eskimo.server.core.domain;
 public class Submission {
 
 	private Long id;
-	private Long userId;
-	private Long contestId;
-	private Long problemId;
+	private User user;
+	private Contest contest;
+	private Problem problem;
 	private String sourceCode;
 	private Verdict verdict;
 
@@ -29,12 +29,12 @@ public class Submission {
 		this.id = id;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getSourceCode() {
@@ -45,20 +45,20 @@ public class Submission {
 		this.sourceCode = sourceCode;
 	}
 
-	public Long getContestId() {
-		return contestId;
+	public Contest getContest() {
+		return contest;
 	}
 
-	public void setContestId(Long contestId) {
-		this.contestId = contestId;
+	public void setContest(Contest contest) {
+		this.contest = contest;
 	}
 
-	public Long getProblemId() {
-		return problemId;
+	public Problem getProblem() {
+		return problem;
 	}
 
-	public void setProblemId(Long problemId) {
-		this.problemId = problemId;
+	public void setProblem(Problem problem) {
+		this.problem = problem;
 	}
 
 	public Verdict getVerdict() {

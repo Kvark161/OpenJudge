@@ -15,6 +15,8 @@ public interface SubmissionDao {
 
 	List<Submission> getUserSubmissions(Long userId);
 
+	List<Submission> getUserInContestSubmissions(Long userId, Long contestId);
+
 	void insertSubmission(Submission submission);
 
 	void updateSubmission(Submission submission);
