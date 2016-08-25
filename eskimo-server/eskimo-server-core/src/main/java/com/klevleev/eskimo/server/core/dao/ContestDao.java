@@ -2,7 +2,6 @@ package com.klevleev.eskimo.server.core.dao;
 
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Problem;
-import com.klevleev.eskimo.server.storage.StorageValidationException;
 
 import java.io.File;
 import java.util.List;

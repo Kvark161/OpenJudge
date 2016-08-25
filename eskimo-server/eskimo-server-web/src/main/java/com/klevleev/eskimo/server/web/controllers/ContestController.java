@@ -1,13 +1,12 @@
 package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
+import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
-import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
-import com.klevleev.eskimo.server.storage.StorageValidationException;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;

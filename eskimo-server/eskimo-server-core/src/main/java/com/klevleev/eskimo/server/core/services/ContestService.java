@@ -1,6 +1,7 @@
 package com.klevleev.eskimo.server.core.services;
 
 import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Problem;
 
 import java.io.File;
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ContestService {
 	Contest getContestById(Long contestId);
 
 	List<Contest> getAllContests();
+
+	Problem getProblemByContestAndProblemId(Long contestId, Long problemId);
 }
