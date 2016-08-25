@@ -36,11 +36,7 @@
 			<li class="${currentUrl == problemsUrl ? "active" : ""}"><a href="${problemsUrl}">Problems</a></li>
 			<li class="${currentUrl == submitUrl ? "active" : ""}"><a href="${submitUrl}">Submit</a></li>
 			<li class="${currentUrl == standingsUrl ? "active" : ""}"><a href="${standingsUrl}">Standings</a></li>
-			<sec:authorize access="isAuthenticated()">
-				<li class="${currentUrl == submissionsUrl ? "active" : ""}">
-					<a href="${submissionsUrl}">Submissions</a>
-				</li>
-			</sec:authorize>
+            <li class="${currentUrl == submissionsUrl ? "active" : ""}"><a href="${submissionsUrl}">Submissions</a></li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">
 			<sec:authorize access="!isAuthenticated()">
