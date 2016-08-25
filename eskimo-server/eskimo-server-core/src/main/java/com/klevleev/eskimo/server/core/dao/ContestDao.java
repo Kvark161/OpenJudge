@@ -11,7 +11,7 @@ public interface ContestDao {
 
 	List<Contest> getAllContests();
 
-	void insertContest(File contestDirectory) throws StorageValidationException;
+	Contest insertContest(File contestDirectory);
 
 	void updateContest(Long contestId, File contestDirectory);
 

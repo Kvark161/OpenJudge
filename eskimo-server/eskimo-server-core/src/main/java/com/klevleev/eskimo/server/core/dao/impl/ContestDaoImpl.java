@@ -3,7 +3,10 @@ package com.klevleev.eskimo.server.core.dao.impl;
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Problem;
-import com.klevleev.eskimo.server.storage.*;
+import com.klevleev.eskimo.server.storage.Storage;
+import com.klevleev.eskimo.server.storage.StorageContest;
+import com.klevleev.eskimo.server.storage.StorageException;
+import com.klevleev.eskimo.server.storage.StorageProblem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -81,8 +84,8 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
-	public void insertContest(File contestDirectory) throws StorageValidationException {
-		storage.createContest(contestDirectory);
+	public Contest insertContest(File contestDirectory) {
+		return contestFromStorageContest(storage.createContest(contestDirectory));
 	}
 
 	@Override

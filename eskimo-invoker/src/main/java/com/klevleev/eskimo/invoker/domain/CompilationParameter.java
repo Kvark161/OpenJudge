@@ -13,6 +13,7 @@ public class CompilationParameter implements Serializable {
 	public static final String OUTPUT_FILE = "{OUTPUT_FILE}";
 
 	private String compilationCommand;
+
 	private byte[] sourceCode;
 
 	public String getCompilationCommand() {

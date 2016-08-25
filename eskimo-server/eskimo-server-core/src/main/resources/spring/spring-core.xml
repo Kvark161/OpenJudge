@@ -13,10 +13,10 @@
 	<context:component-scan base-package="com.klevleev.eskimo.server.core"/>
 
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="location" value="classpath:eskimo/eskimo.properties"/>
+		<property name="location" value="classpath:eskimo/server.properties"/>
 	</bean>
 
-	<util:properties id="eskimoProperties" location="classpath:eskimo/eskimo.properties"/>
+	<util:properties id="eskimoProperties" location="classpath:eskimo/server.properties"/>
 
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driver}"/>
@@ -36,10 +36,7 @@
 	</bean>
 
 	<bean id="storage" class="com.klevleev.eskimo.server.storage.Storage">
-		<property name="root" value="${eskimo.storage.root}"/>
+		<property name="root" value="${server.storage.path}"/>
 	</bean>
 
-	<bean id="applicationSettings" class="com.klevleev.eskimo.server.core.ApplicationSettings" init-method="init">
-		<property name="properties" ref="eskimoProperties"/>
-	</bean>
 </beans>
