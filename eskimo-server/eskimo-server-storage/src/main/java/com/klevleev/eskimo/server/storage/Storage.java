@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +26,24 @@ public class Storage implements InitializingBean {
 	private static final Logger logger = LoggerFactory.getLogger(Storage.class);
 
 	private static final String CONTEST_ID_FORMAT = "000000";
+	private static final String TEMP_FOLDER_NAME = "temp";
 
 	private String root;
+	private File rootFolder;
+	private File tempFolder;
 	private AtomicLong contestIdGenerator = new AtomicLong(1L);
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		File file = new File(root);
-		root = file.getAbsolutePath();
-		logger.debug("initialize Storage with root=" + root);
+		logger.info("initialize Storage with root=" + root);
+		rootFolder = new File(root).getAbsoluteFile();
+		tempFolder = new File(root + File.separator + TEMP_FOLDER_NAME).getAbsoluteFile();
+		root = rootFolder.getAbsolutePath();
 		//noinspection ResultOfMethodCallIgnored
-		file.mkdirs();
+		rootFolder.mkdirs();
+		//noinspection ResultOfMethodCallIgnored
+		tempFolder.mkdirs();
 		File dir = new File(root + File.separator + StorageContest.FOLDER_NAME);
-		List<StorageContest> result = new ArrayList<>();
 		File[] directoryListing = dir.listFiles();
 		if (directoryListing != null) {
 			for (File child : directoryListing) {
@@ -64,28 +71,52 @@ public class Storage implements InitializingBean {
 	}
 
 	public boolean contestExists(long contestId) {
-		return new File(pathToContest(contestId)).exists();
+		return getContestFolder(contestId).exists();
 	}
 
 	@SuppressWarnings("WeakerAccess")
 	public StorageContest getContest(long contestId) {
-		return new StorageContest(new File(pathToContest(contestId)));
+		return new StorageContest(getContestFolder(contestId));
 	}
 
-	public StorageContest createContest(File contestRoot) throws StorageValidationException {
-		long contestId = contestIdGenerator.getAndIncrement();
-		String contestDirectoryPath = this.root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
-		File contestDir = new File(contestDirectoryPath);
-		//noinspection ResultOfMethodCallIgnored
-		contestDir.mkdirs();
+	public StorageContest createContest(File contestRoot) throws StorageException {
+		File folder = null;
 		try {
-			FileUtils.copyDirectory(contestRoot, contestDir);
+			folder = createTempContestFolder();
+			FileUtils.copyDirectory(contestRoot, folder);
+			StorageContest contest = new StorageContest(folder);
+			contest.validate();
+			return insertContest(contest);
 		} catch (IOException e) {
-			logger.error("con not copy new contest", e);
-			throw new StorageException("can not copy new contest", e);
+			logger.warn("can't create new contest", e);
+			throw new StorageException("Internal error: " + e.getMessage(), e);
+		} finally {
+			if (folder != null) {
+				clearTempContestFolder(folder);
+			}
 		}
-		return getContest(contestId);
+	}
+
+	private void clearTempContestFolder(File folder) {
+		try {
+			FileUtils.deleteDirectory(folder.getParentFile());
+		} catch (Throwable e) {
+			logger.error("can't delete temp directory", e);
+		}
+	}
+
+	private StorageContest insertContest(StorageContest contest) throws IOException {
+		long newContestId = contestIdGenerator.getAndIncrement();
+		FileUtils.copyDirectory(contest.getRoot(), getContestFolder(newContestId));
+		return getContest(newContestId);
+	}
+
+	private File createTempContestFolder() throws IOException {
+		Path temp = Files.createTempDirectory(tempFolder.toPath(), "contest-");
+		File result = new File(temp.toFile().getAbsolutePath() + File.separator + CONTEST_ID_FORMAT);
+		//noinspection ResultOfMethodCallIgnored
+		result.mkdirs();
+		return result;
 	}
 
 	public void updateContest(Long contestId, File contestRoot) {
@@ -105,14 +136,14 @@ public class Storage implements InitializingBean {
 		this.root = root;
 	}
 
-	private String pathToContest(long contestId) {
-		return root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
+	private File getContestFolder(long contestId) {
+		return new File(root + File.separator + StorageContest.FOLDER_NAME + File.separator +
+				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
 	}
 
 	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
-			File file = new File(pathToContest(contestId) + File.separator + StorageProblem.FOLDER_NAME
+			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 			+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
 			try (InputStream in = new FileInputStream(file)) {
 				return IOUtils.toByteArray(in);
@@ -125,7 +156,7 @@ public class Storage implements InitializingBean {
 
 	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
 		try {
-			File file = new File(pathToContest(contestId) + File.separator + StorageProblem.FOLDER_NAME
+			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".ans");
 			try (InputStream in = new FileInputStream(file)) {
 				return IOUtils.toByteArray(in);

@@ -1,13 +1,12 @@
 package com.klevleev.eskimo.server.web.controllers;
 
-import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
+import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
-import com.klevleev.eskimo.server.storage.StorageValidationException;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
@@ -35,8 +34,6 @@ public class ContestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
 
-	private final ContestDao contestDao;
-
 	private final SubmissionDao submissionDao;
 
 	private final FileUtils fileUtils;
@@ -45,22 +42,24 @@ public class ContestController {
 
 	private final SubmissionService submissionService;
 
+	private final ContestService contestService;
+
 	@Autowired
-	public ContestController(ContestDao contestDao,
-							 SubmissionDao submissionDao,
-							 FileUtils fileUtils,
-							 UserUtils userUtils,
-							 SubmissionService submissionService) {
-		this.contestDao = contestDao;
+	public ContestController(SubmissionDao submissionDao,
+	                         FileUtils fileUtils,
+	                         UserUtils userUtils,
+	                         SubmissionService submissionService,
+	                         ContestService contestService) {
 		this.submissionDao = submissionDao;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
 		this.submissionService = submissionService;
+		this.contestService = contestService;
 	}
 
 	@RequestMapping(value = "/contests", method = RequestMethod.GET)
 	public String contests(ModelMap model) {
-		List<Contest> contests = contestDao.getAllContests();
+		List<Contest> contests = contestService.getAllContests();
 		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
 		model.addAttribute("contests", contests);
 		return "contests";
@@ -68,7 +67,7 @@ public class ContestController {
 
 	@RequestMapping(value = "/contest/{contestId}", method = RequestMethod.GET)
 	public String summary(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
@@ -78,7 +77,7 @@ public class ContestController {
 
 	@RequestMapping(value = "/contest/{contestId}/problems", method = RequestMethod.GET)
 	public String problems(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
@@ -88,7 +87,7 @@ public class ContestController {
 
 	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.GET)
 	public String submit(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
@@ -104,7 +103,7 @@ public class ContestController {
 						 BindingResult bindingResult,
 						 @AuthenticationPrincipal User user,
 						 Model model) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
@@ -125,13 +124,13 @@ public class ContestController {
 	public String submissions(@PathVariable Long contestId,
 	                          ModelMap model,
 	                          @AuthenticationPrincipal User user) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
 		List<Submission> submissions = submissionDao.getUserSubmissions(user.getId());
-		List<Problem> problems = contestDao.getContestById(contestId).getProblems();
+		List<Problem> problems = contestService.getContestById(contestId).getProblems();
 		Locale currentLocale = userUtils.getCurrentUserLocale();
 		List<UserSubmission> userSubmissions = new ArrayList<>();
 		for (Submission submission : submissions) {
@@ -154,7 +153,7 @@ public class ContestController {
 
 	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
 	public String standings(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestDao.getContestById(contestId);
+		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
 		}
@@ -168,19 +167,29 @@ public class ContestController {
 	}
 
 	@RequestMapping(value = "/contests/new/zip", method = RequestMethod.POST)
-	public
-	@ResponseBody
-	String uploadFileHandler(@RequestParam("file") MultipartFile multipartFile) {
+	public String newContestFromZip(@RequestParam("file") MultipartFile multipartFile,
+	                         Model model) {
+		File contestZipFile = null;
+		File contestFolder = null;
 		try {
-			File contestZipFile = fileUtils.saveFile(multipartFile);
-			File contestFolder = fileUtils.unzip(contestZipFile);
-			contestDao.insertContest(contestFolder);
+			contestZipFile = fileUtils.saveFile(multipartFile, "contest-", "zip");
+			contestFolder = fileUtils.unzip(contestZipFile);
+			contestService.createContest(contestFolder);
 		} catch (IOException e) {
 			logger.error("can not upload file " + multipartFile.getName(), e);
-			return "can not upload file";
-		} catch (StorageValidationException e) {
-			logger.info("can not parse contest " + multipartFile.getName(), e);
-			return "file is invalid";
+			model.addAttribute("error", "can't upload a file: " + e.getMessage());
+			return "/contest/new";
+		} catch (Throwable e) {
+			logger.debug("incorrect contest's format", e);
+			model.addAttribute("error", "incorrect contest's format: " + e.getMessage());
+			return "/contest/new";
+		} finally {
+			if (contestFolder != null) {
+				fileUtils.deleteFolder(contestFolder);
+			}
+			if (contestZipFile != null) {
+				fileUtils.deleteFile(contestZipFile);
+			}
 		}
 		return "redirect:/contests";
 	}

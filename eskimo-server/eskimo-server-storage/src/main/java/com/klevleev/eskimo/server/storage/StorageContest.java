@@ -79,6 +79,9 @@ public class StorageContest {
 		}
 	}
 
+	void validate() {
+	}
+
 	private String getContestXmlPath() {
 		return this.root + File.separator + CONTEST_XML_NAME;
 	}
@@ -110,4 +113,5 @@ public class StorageContest {
 	public void setProblems(List<StorageProblem> problems) {
 		this.problems = problems;
 	}
+
 }
