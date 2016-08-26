@@ -16,7 +16,7 @@ public interface ContestDao {
 
 	Contest getContestById(long id);
 
-	Problem getProblemByContestAndProblemId(Long contestId, Long problemId);
+	Problem getContestProblem(Long contestId, Long problemId);
 
 	byte[] getTestInput(Long contestId, Long problemId, Long testId);
 

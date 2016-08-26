@@ -52,7 +52,7 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
-	public Problem getProblemByContestAndProblemId(Long contestId, Long problemId) {
+	public Problem getContestProblem(Long contestId, Long problemId) {
 		Contest contest = getContestById(contestId);
 		for (Problem problem : contest.getProblems()) {
 			if (problem.getId().equals(problemId))

@@ -62,7 +62,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 	@Override
 	public List<Submission> getUserInContestSubmissions(Long userId, Long contestId) {
-		List<Submission> submissions = submissionDao.getUserInContestSubmissions(userId, contestId);
+		List<Submission> submissions = submissionDao.getUserSubmissions(userId, contestId);
 		fillSubmissions(submissions);
 		return submissions;
 	}
@@ -71,7 +71,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 		submission.setUser(userDao.getUserById(submission.getUser().getId()));
 		Contest contest = contestDao.getContestById(submission.getContest().getId());
 		submission.setContest(contest);
-		submission.setProblem(contestDao.getProblemByContestAndProblemId(contest.getId(),
+		submission.setProblem(contestDao.getContestProblem(contest.getId(),
 				submission.getProblem().getId()));
 	}
 

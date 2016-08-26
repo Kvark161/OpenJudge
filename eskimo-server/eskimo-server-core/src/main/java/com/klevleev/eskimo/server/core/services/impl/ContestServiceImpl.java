@@ -40,6 +40,6 @@ public class ContestServiceImpl implements ContestService {
 
 	@Override
 	public Problem getProblemByContestAndProblemId(Long contestId, Long problemId) {
-		return contestDao.getProblemByContestAndProblemId(contestId, problemId);
+		return contestDao.getContestProblem(contestId, problemId);
 	}
 }
