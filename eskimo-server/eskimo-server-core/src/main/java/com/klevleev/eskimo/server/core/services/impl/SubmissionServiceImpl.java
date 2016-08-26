@@ -1,12 +1,12 @@
 package com.klevleev.eskimo.server.core.services.impl;
 
-import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
-import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.judge.JudgeService;
+import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
+import com.klevleev.eskimo.server.core.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +19,18 @@ import java.util.List;
 public class SubmissionServiceImpl implements SubmissionService {
 
 	private final SubmissionDao submissionDao;
-	private final ContestDao contestDao;
-	private final UserDao userDao;
+	private final ContestService contestService;
+	private final UserService userService;
 	private final JudgeService judgeService;
+
+	@Autowired
+	public SubmissionServiceImpl(JudgeService judgeService, SubmissionDao submissionDao, ContestService contestService,
+	                             UserService userService) {
+		this.judgeService = judgeService;
+		this.submissionDao = submissionDao;
+		this.contestService = contestService;
+		this.userService = userService;
+	}
 
 	@Override
 	public List<Submission> getAllSubmissions() {
@@ -44,15 +53,6 @@ public class SubmissionServiceImpl implements SubmissionService {
 		return submissions;
 	}
 
-	@Autowired
-	public SubmissionServiceImpl(JudgeService judgeService, SubmissionDao submissionDao, ContestDao contestDao,
-	                             UserDao userDao) {
-		this.judgeService = judgeService;
-		this.submissionDao = submissionDao;
-		this.contestDao = contestDao;
-		this.userDao = userDao;
-	}
-
 	@Override
 	public void submit(Submission submission) {
 		submission.setVerdict(Submission.Verdict.SUBMITTED);
@@ -68,10 +68,10 @@ public class SubmissionServiceImpl implements SubmissionService {
 	}
 
 	private void fillSubmission(Submission submission) {
-		submission.setUser(userDao.getUserById(submission.getUser().getId()));
-		Contest contest = contestDao.getContestById(submission.getContest().getId());
+		submission.setUser(userService.getUserById(submission.getUser().getId()));
+		Contest contest = contestService.getContestById(submission.getContest().getId());
 		submission.setContest(contest);
-		submission.setProblem(contestDao.getContestProblem(contest.getId(),
+		submission.setProblem(contestService.getContestProblem(contest.getId(),
 				submission.getProblem().getId()));
 	}
 

@@ -1,12 +1,11 @@
 package com.klevleev.eskimo.server.web.controllers;
 
-import com.klevleev.eskimo.server.core.dao.SubmissionDao;
-import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
+import com.klevleev.eskimo.server.core.services.UserService;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
@@ -32,7 +31,7 @@ public class ContestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
 
-	private final UserDao userDao;
+	private final UserService userService;
 
 	private final FileUtils fileUtils;
 
@@ -43,13 +42,12 @@ public class ContestController {
 	private final ContestService contestService;
 
 	@Autowired
-	public ContestController(UserDao userDao,
-							 SubmissionDao submissionDao,
+	public ContestController(UserService userService,
 							 FileUtils fileUtils,
 							 UserUtils userUtils,
 							 SubmissionService submissionService,
 							 ContestService contestService) {
-		this.userDao = userDao;
+		this.userService = userService;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
 		this.submissionService = submissionService;
@@ -112,9 +110,9 @@ public class ContestController {
 		}
 		Submission submission = new Submission();
 		submission.setContest(contestService.getContestById(contestId));
-		submission.setProblem(contestService.getProblemByContestAndProblemId(contestId, submissionForm.getProblemId()));
+		submission.setProblem(contestService.getContestProblem(contestId, submissionForm.getProblemId()));
 		submission.setSourceCode(submissionForm.getSourceCode());
-		submission.setUser(userDao.getUserById(user.getId()));
+		submission.setUser(userService.getUserById(user.getId()));
 		submissionService.submit(submission);
 		return "redirect:/contest/{contestId}/submissions";
 	}
