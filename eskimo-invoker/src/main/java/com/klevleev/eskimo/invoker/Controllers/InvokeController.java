@@ -27,7 +27,7 @@ public class InvokeController {
 		this.executeService = executeService;
 	}
 
-	@RequestMapping(value = "/invoke/run-test", method = RequestMethod.GET)
+	@GetMapping(value = "/invoke/run-test")
 	public String runTest(@RequestParam("submission") Long submissionId,
 	                      @RequestParam("contest") Long contestId,
 	                      @RequestParam("problem") Long problemId,
@@ -42,7 +42,7 @@ public class InvokeController {
 		return "I got test's input and output!";
 	}
 
-	@RequestMapping(value = "/invoke/compile", method = RequestMethod.POST)
+	@PostMapping(value = "/invoke/compile")
 	public CompilationResult compile(@RequestBody CompilationParameter compilationParameter) {
 		return executeService.compile(compilationParameter);
 	}
