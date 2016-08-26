@@ -34,8 +34,6 @@ public class ContestController {
 
 	private final UserDao userDao;
 
-	private final SubmissionDao submissionDao;
-
 	private final FileUtils fileUtils;
 
 	private final UserUtils userUtils;
@@ -52,14 +50,13 @@ public class ContestController {
 							 SubmissionService submissionService,
 							 ContestService contestService) {
 		this.userDao = userDao;
-		this.submissionDao = submissionDao;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
 		this.submissionService = submissionService;
 		this.contestService = contestService;
 	}
 
-	@RequestMapping(value = "/contests", method = RequestMethod.GET)
+	@GetMapping(value = "/contests")
 	public String contests(ModelMap model) {
 		List<Contest> contests = contestService.getAllContests();
 		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
@@ -67,7 +64,7 @@ public class ContestController {
 		return "contests";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}")
 	public String summary(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -77,7 +74,7 @@ public class ContestController {
 		return "contest/summary";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/problems", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/problems")
 	public String problems(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -87,7 +84,7 @@ public class ContestController {
 		return "contest/problems";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -99,7 +96,7 @@ public class ContestController {
 		return "contest/submit";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.POST)
+	@PostMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId,
 						 @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
 						 BindingResult bindingResult,
@@ -122,7 +119,7 @@ public class ContestController {
 		return "redirect:/contest/{contestId}/submissions";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/submissions")
 	public String submissions(@PathVariable Long contestId,
 	                          ModelMap model,
 	                          @AuthenticationPrincipal User user) {
@@ -138,7 +135,7 @@ public class ContestController {
 		return "contest/submissions";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/standings")
 	public String standings(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -148,12 +145,12 @@ public class ContestController {
 		return "contest/standings";
 	}
 
-	@RequestMapping(value = "/contests/new", method = RequestMethod.GET)
+	@GetMapping(value = "/contests/new")
 	public String newContest() {
 		return "contest/new";
 	}
 
-	@RequestMapping(value = "/contests/new/zip", method = RequestMethod.POST)
+	@PostMapping(value = "/contests/new/zip")
 	public String newContestFromZip(@RequestParam("file") MultipartFile multipartFile,
 	                         Model model) {
 		File contestZipFile = null;

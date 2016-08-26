@@ -5,8 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Locale;
@@ -16,13 +15,13 @@ public class HomeController {
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@GetMapping(value = "/")
 	public String welcome(ModelMap model, Locale locale) {
 		String lan = locale.getLanguage();
 		return "home";
 	}
 
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	@GetMapping(value = "/login")
 	public String login(@RequestParam(value = "error", required = false) String error,
 	                    @RequestParam(value = "logout", required = false) String logout,
 	                    ModelMap model,
@@ -39,7 +38,7 @@ public class HomeController {
 		return "login";
 	}
 
-	@RequestMapping(value = "/signup", method = RequestMethod.GET)
+	@GetMapping(value = "/signup")
 	public String login(ModelMap model,
 	                    Authentication authentication) {
 		if (authentication != null) {
