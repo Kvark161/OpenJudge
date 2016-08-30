@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="/WEB-INF/tld/functions" prefix="func" %>
 <html>
 <head>
 	<eskimo:globalHead/>
@@ -23,7 +24,7 @@
 				<form:select id="problemId" path="problemId">
 					<form:option value=""/>
 					<c:forEach var="problem" items="${contest.problems}">
-						<form:option value="${problem.id}" label="${problem.getName(currentLocale)}"/>
+						<form:option value="${problem.id}" label="${func:getName(problem.names, currentLocale)}"/>
 					</c:forEach>
 				</form:select>
 				<div class="has-error">

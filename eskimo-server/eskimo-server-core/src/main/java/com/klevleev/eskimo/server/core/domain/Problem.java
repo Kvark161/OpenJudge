@@ -38,11 +38,4 @@ public class Problem implements Serializable {
 		this.names = names;
 	}
 
-	public String getName(Locale locale) {
-		String name = names.get(new Locale(locale.getLanguage()));
-		if (name != null) {
-			return name;
-		}
-		return names.get(new Locale("en"));
-	}
 }
