@@ -38,4 +38,8 @@ public class Problem implements Serializable {
 		this.names = names;
 	}
 
+	public String getName(Locale locale){
+		return DomainUtils.getName(names, locale);
+	}
+
 }

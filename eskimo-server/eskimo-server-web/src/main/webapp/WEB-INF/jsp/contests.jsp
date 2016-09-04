@@ -3,7 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib uri="/WEB-INF/tld/functions" prefix="func" %>
 <html>
 <head>
 	<eskimo:globalHead/>
@@ -33,7 +32,7 @@
 				<tr>
 					<td>${contest.id}</td>
 					<td><a href="<c:url value="/contest/${contest.id}"/>">
-						${func:getName(contest.names, currentLocale)}
+						${contest.getName(currentLocale)}
 					</a></td>
 				</tr>
 			</c:forEach>

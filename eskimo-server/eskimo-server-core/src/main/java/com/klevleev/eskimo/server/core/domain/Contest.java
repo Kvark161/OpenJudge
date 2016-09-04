@@ -35,4 +35,8 @@ public class Contest implements Serializable {
 	public void setProblems(List<Problem> problems) {
 		this.problems = problems;
 	}
+
+	public String getName(Locale locale){
+		return DomainUtils.getName(names, locale);
+	}
 }

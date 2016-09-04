@@ -61,7 +61,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 	}
 
 	@Override
-	public List<Submission> getUserInContestSubmissions(Long userId, Long contestId) {
+	public List<Submission> getUserSubmissions(Long userId, Long contestId) {
 		List<Submission> submissions = submissionDao.getUserSubmissions(userId, contestId);
 		fillSubmissions(submissions);
 		return submissions;

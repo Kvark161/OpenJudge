@@ -126,7 +126,7 @@ public class ContestController {
 			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
-		List<Submission> submissions = submissionService.getUserInContestSubmissions(user.getId(), contestId);
+		List<Submission> submissions = submissionService.getUserSubmissions(user.getId(), contestId);
 		Locale currentLocale = user.getLocale();
 		model.addAttribute("submissions", submissions);
 		model.addAttribute("locale", currentLocale);

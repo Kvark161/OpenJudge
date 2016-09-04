@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="eskimo" tagdir="/WEB-INF/tags/eskimo" %>
-<%@ taglib uri="/WEB-INF/tld/functions" prefix="func" %>
 <html>
 <head>
 	<eskimo:globalHead/>
@@ -22,7 +21,7 @@
 		<c:forEach var="submission" items="${submissions}">
 			<tr>
 				<td>${submission.id}</td>
-				<td>${func:getName(submission.problem.names, locale)}</td>
+				<td>${submission.problem.getName(locale)}</td>
 				<td>${submission.verdict}</td>
 			</tr>
 		</c:forEach>

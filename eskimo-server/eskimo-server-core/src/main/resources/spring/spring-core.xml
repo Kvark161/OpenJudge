@@ -39,7 +39,4 @@
 		<property name="root" value="${server.storage.path}"/>
 	</bean>
 
-	<bean id="applicationContextProvder"
-	      class="com.klevleev.eskimo.server.core.utils.ApplicationContextProvider"/>
-
 </beans>
