@@ -17,6 +17,6 @@ public interface SubmissionService {
 
 	List<Submission> getUserSubmissions(Long userId);
 
-	List<Submission> getUserInContestSubmissions(Long userId, Long contestId);
+	List<Submission> getUserSubmissions(Long userId, Long contestId);
 
 }

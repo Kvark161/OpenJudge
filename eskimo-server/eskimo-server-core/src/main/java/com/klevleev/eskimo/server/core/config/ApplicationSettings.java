@@ -19,6 +19,7 @@ public class ApplicationSettings {
 
 	private static final String SERVER_STORAGE_PATH = "server.storage.path";
 	private static final String SERVER_TEMP_PATH = "server.temp.path";
+	private static final String SERVER_DEFAULT_LANGUAGE = "server.default.language";
 	private static final String INVOKER_PROTOCOL = "invoker.protocol";
 
 	private final Properties properties = new Properties();
@@ -44,6 +45,10 @@ public class ApplicationSettings {
 
 	public File getTempRoot() {
 		return new File(getPropery(SERVER_TEMP_PATH));
+	}
+
+	public String getDefaultLanguage() {
+		return getPropery(SERVER_DEFAULT_LANGUAGE);
 	}
 
 	public String getInvokerProtocol() {

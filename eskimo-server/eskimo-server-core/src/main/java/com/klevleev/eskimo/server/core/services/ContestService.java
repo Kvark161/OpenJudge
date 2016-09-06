@@ -17,5 +17,5 @@ public interface ContestService {
 
 	List<Contest> getAllContests();
 
-	Problem getProblemByContestAndProblemId(Long contestId, Long problemId);
+	Problem getContestProblem(Long contestId, Long problemId);
 }

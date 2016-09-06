@@ -5,9 +5,8 @@ import com.klevleev.eskimo.server.core.judge.JudgeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +27,7 @@ public class InvokerController {
 		this.judgeService = judgeService;
 	}
 
-	@RequestMapping(value = "/invoker/register", method = RequestMethod.POST)
+	@PostMapping(value = "/invoker/register")
 	public Boolean register(@RequestBody InvokerNodeInfo invokerNodeInfo, HttpServletRequest request) {
 		invokerNodeInfo.setHost(request.getRemoteHost());
 		try {

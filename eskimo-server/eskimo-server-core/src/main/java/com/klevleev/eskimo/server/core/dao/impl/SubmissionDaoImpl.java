@@ -60,7 +60,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	}
 
 	@Override
-	public List<Submission> getUserInContestSubmissions(Long userId, Long contestId) {
+	public List<Submission> getUserSubmissions(Long userId, Long contestId) {
 		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time " +
 				"FROM submissions " +
 				"WHERE user_id = ? AND contest_id = ?";

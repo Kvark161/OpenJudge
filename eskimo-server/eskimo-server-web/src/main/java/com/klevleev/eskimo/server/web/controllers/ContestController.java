@@ -1,12 +1,11 @@
 package com.klevleev.eskimo.server.web.controllers;
 
-import com.klevleev.eskimo.server.core.dao.SubmissionDao;
-import com.klevleev.eskimo.server.core.dao.UserDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
+import com.klevleev.eskimo.server.core.services.UserService;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
@@ -33,9 +32,7 @@ public class ContestController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
 
-	private final UserDao userDao;
-
-	private final SubmissionDao submissionDao;
+	private final UserService userService;
 
 	private final FileUtils fileUtils;
 
@@ -46,21 +43,19 @@ public class ContestController {
 	private final ContestService contestService;
 
 	@Autowired
-	public ContestController(UserDao userDao,
-							 SubmissionDao submissionDao,
+	public ContestController(UserService userService,
 							 FileUtils fileUtils,
 							 UserUtils userUtils,
 							 SubmissionService submissionService,
 							 ContestService contestService) {
-		this.userDao = userDao;
-		this.submissionDao = submissionDao;
+		this.userService = userService;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
 		this.submissionService = submissionService;
 		this.contestService = contestService;
 	}
 
-	@RequestMapping(value = "/contests", method = RequestMethod.GET)
+	@GetMapping(value = "/contests")
 	public String contests(ModelMap model) {
 		List<Contest> contests = contestService.getAllContests();
 		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
@@ -68,7 +63,7 @@ public class ContestController {
 		return "contests";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}")
 	public String summary(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -78,7 +73,7 @@ public class ContestController {
 		return "contest/summary";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/problems", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/problems")
 	public String problems(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -88,7 +83,7 @@ public class ContestController {
 		return "contest/problems";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -100,7 +95,7 @@ public class ContestController {
 		return "contest/submit";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submit", method = RequestMethod.POST)
+	@PostMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId,
 						 @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
 						 BindingResult bindingResult,
@@ -117,14 +112,14 @@ public class ContestController {
 		Submission submission = new Submission();
 		submission.setSendingDateTime(LocalDateTime.now());
 		submission.setContest(contestService.getContestById(contestId));
-		submission.setProblem(contestService.getProblemByContestAndProblemId(contestId, submissionForm.getProblemId()));
+		submission.setProblem(contestService.getContestProblem(contestId, submissionForm.getProblemId()));
 		submission.setSourceCode(submissionForm.getSourceCode());
-		submission.setUser(userDao.getUserById(user.getId()));
+		submission.setUser(userService.getUserById(user.getId()));
 		submissionService.submit(submission);
 		return "redirect:/contest/{contestId}/submissions";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/submissions", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/submissions")
 	public String submissions(@PathVariable Long contestId,
 	                          ModelMap model,
 	                          @AuthenticationPrincipal User user) {
@@ -133,14 +128,14 @@ public class ContestController {
 			return "redirect:/contests";
 		}
 		model.addAttribute("contest", contest);
-		List<Submission> submissions = submissionService.getUserInContestSubmissions(user.getId(), contestId);
+		List<Submission> submissions = submissionService.getUserSubmissions(user.getId(), contestId);
 		Locale currentLocale = user.getLocale();
 		model.addAttribute("submissions", submissions);
 		model.addAttribute("locale", currentLocale);
 		return "contest/submissions";
 	}
 
-	@RequestMapping(value = "/contest/{contestId}/standings", method = RequestMethod.GET)
+	@GetMapping(value = "/contest/{contestId}/standings")
 	public String standings(@PathVariable Long contestId, ModelMap model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
@@ -150,12 +145,12 @@ public class ContestController {
 		return "contest/standings";
 	}
 
-	@RequestMapping(value = "/contests/new", method = RequestMethod.GET)
+	@GetMapping(value = "/contests/new")
 	public String newContest() {
 		return "contest/new";
 	}
 
-	@RequestMapping(value = "/contests/new/zip", method = RequestMethod.POST)
+	@PostMapping(value = "/contests/new/zip")
 	public String newContestFromZip(@RequestParam("file") MultipartFile multipartFile,
 	                         Model model) {
 		File contestZipFile = null;

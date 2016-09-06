@@ -4,8 +4,7 @@ import com.klevleev.eskimo.server.core.dao.ContestDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,7 +24,7 @@ public class StorageController {
 		this.contestDao = contestDao;
 	}
 
-	@RequestMapping(value = "/storage/get-test-input", method = RequestMethod.GET)
+	@GetMapping(value = "/storage/get-test-input")
 	public void getTestInput(@RequestParam("contest") Long contestId,
 	                         @RequestParam("problem") Long problemId,
 	                         @RequestParam("test") Long testId,
@@ -40,7 +39,7 @@ public class StorageController {
 		response.getOutputStream().write(test);
 	}
 
-	@RequestMapping(value = "/storage/get-test-answer", method = RequestMethod.GET)
+	@GetMapping(value = "/storage/get-test-answer")
 	public void getTestOutput(@RequestParam("contest") Long contestId,
 	                          @RequestParam("problem") Long problemId,
 	                          @RequestParam("test") Long testId,
