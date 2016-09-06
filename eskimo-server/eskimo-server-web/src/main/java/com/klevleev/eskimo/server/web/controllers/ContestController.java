@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -114,6 +115,7 @@ public class ContestController {
 			return "contest/submit";
 		}
 		Submission submission = new Submission();
+		submission.setSendingDateTime(LocalDateTime.now());
 		submission.setContest(contestService.getContestById(contestId));
 		submission.setProblem(contestService.getProblemByContestAndProblemId(contestId, submissionForm.getProblemId()));
 		submission.setSourceCode(submissionForm.getSourceCode());

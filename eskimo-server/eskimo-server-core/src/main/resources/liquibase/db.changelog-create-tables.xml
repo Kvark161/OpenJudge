@@ -42,6 +42,9 @@
 			<column name="verdict" type="text">
 				<constraints nullable="false"/>
 			</column>
+			<column name="sending_date_time" type="datetime">
+				<constraints nullable="false"/>
+			</column>
 		</createTable>
 	</changeSet>
 

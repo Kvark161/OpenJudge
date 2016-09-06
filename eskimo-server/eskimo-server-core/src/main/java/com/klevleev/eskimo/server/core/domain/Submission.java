@@ -1,5 +1,7 @@
 package com.klevleev.eskimo.server.core.domain;
 
+import java.time.LocalDateTime;
+
 /**
  * Created by Stepan Klevleev on 15-Aug-16.
  */
@@ -11,6 +13,7 @@ public class Submission {
 	private Problem problem;
 	private String sourceCode;
 	private Verdict verdict;
+	private LocalDateTime sendingDateTime;
 
 	public enum Verdict {
 		SUBMITTED,
@@ -69,4 +72,11 @@ public class Submission {
 		this.verdict = verdict;
 	}
 
+	public LocalDateTime getSendingDateTime() {
+		return sendingDateTime;
+	}
+
+	public void setSendingDateTime(LocalDateTime sendingDateTime) {
+		this.sendingDateTime = sendingDateTime;
+	}
 }

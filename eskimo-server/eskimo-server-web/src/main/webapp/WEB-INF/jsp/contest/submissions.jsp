@@ -15,6 +15,7 @@
 			<th>ID</th>
 			<th>Problem</th>
 			<th>Verdict</th>
+			<th>Sending time</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -23,6 +24,7 @@
 				<td>${submission.id}</td>
 				<td>${submission.problem.getName(locale)}</td>
 				<td>${submission.verdict}</td>
+				<td>${submission.sendingDateTime}</td>
 			</tr>
 		</c:forEach>
 		</tbody>
