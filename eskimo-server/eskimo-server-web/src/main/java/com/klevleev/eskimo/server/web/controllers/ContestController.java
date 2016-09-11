@@ -6,6 +6,7 @@ import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.ContestService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.core.services.UserService;
+import com.klevleev.eskimo.server.web.forms.EditContestForm;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
 import com.klevleev.eskimo.server.web.utils.UserUtils;
@@ -44,10 +45,10 @@ public class ContestController {
 
 	@Autowired
 	public ContestController(UserService userService,
-							 FileUtils fileUtils,
-							 UserUtils userUtils,
-							 SubmissionService submissionService,
-							 ContestService contestService) {
+	                         FileUtils fileUtils,
+	                         UserUtils userUtils,
+	                         SubmissionService submissionService,
+	                         ContestService contestService) {
 		this.userService = userService;
 		this.fileUtils = fileUtils;
 		this.userUtils = userUtils;
@@ -97,10 +98,10 @@ public class ContestController {
 
 	@PostMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId,
-						 @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
-						 BindingResult bindingResult,
-						 @AuthenticationPrincipal User user,
-						 Model model) {
+	                     @Valid @ModelAttribute("submissionForm") SubmissionForm submissionForm,
+	                     BindingResult bindingResult,
+	                     @AuthenticationPrincipal User user,
+	                     Model model) {
 		Contest contest = contestService.getContestById(contestId);
 		if (contest == null) {
 			return "redirect:/contests";
@@ -152,7 +153,7 @@ public class ContestController {
 
 	@PostMapping(value = "/contests/new/zip")
 	public String newContestFromZip(@RequestParam("file") MultipartFile multipartFile,
-	                         Model model) {
+	                                Model model) {
 		File contestZipFile = null;
 		File contestFolder = null;
 		try {
@@ -177,4 +178,33 @@ public class ContestController {
 		}
 		return "redirect:/contests";
 	}
+
+	@GetMapping(value = "/contest/{contestId}/edit")
+	public String editContest(@PathVariable Long contestId, ModelMap model) {
+		Contest contest = contestService.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:/contests";
+		}
+		model.addAttribute("contest", contest);
+		EditContestForm editContestForm = new EditContestForm(contest);
+		model.addAttribute("editContestForm", editContestForm);
+		return "contest/edit";
+	}
+
+	@PostMapping(value = "/contest/{contestId}/edit")
+	public String editContest(@PathVariable Long contestId,
+	                          @Valid @ModelAttribute("editContestForm") EditContestForm editContestForm,
+	                          BindingResult bindingResult,
+	                          ModelMap model) {
+		Contest contest = contestService.getContestById(contestId);
+		if (contest == null) {
+			return "redirect:/contests";
+		}
+		model.addAttribute("contest", contest);
+		if (bindingResult.hasErrors()) {
+			return "contest/edit";
+		}
+		return "redirect:/contest/{contestId}";
+	}
+
 }

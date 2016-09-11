@@ -1,6 +1,7 @@
 package com.klevleev.eskimo.server.core.domain;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -11,6 +12,24 @@ public class Contest implements Serializable {
 	private long id;
 	private Map<Locale, String> names;
 	private List<Problem> problems;
+	private LocalDateTime startTime;
+	private Integer durationInMinutes;
+
+	public LocalDateTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalDateTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public Integer getDurationInMinutes() {
+		return durationInMinutes;
+	}
+
+	public void setDurationInMinutes(Integer durationInMinutes) {
+		this.durationInMinutes = durationInMinutes;
+	}
 
 	public long getId() {
 		return id;

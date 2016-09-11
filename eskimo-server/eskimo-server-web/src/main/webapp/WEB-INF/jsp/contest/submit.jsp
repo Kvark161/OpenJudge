@@ -46,16 +46,6 @@
 				<button type="submit">Submit</button>
 			</div>
 		</div>
-		<c:if test="${success}">
-			<div class="row">
-				<div class="col-xs-3"></div>
-				<div class="col-xs-9">
-					<div class="alert alert-success">
-						Submitted successfully
-					</div>
-				</div>
-			</div>
-		</c:if>
 	</form:form>
 </div>
 <eskimo:footer/>
