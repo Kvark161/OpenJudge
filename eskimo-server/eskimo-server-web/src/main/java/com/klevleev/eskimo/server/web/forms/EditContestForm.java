@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -25,7 +26,7 @@ public class EditContestForm implements Serializable {
 
 	@NotNull
 	@Min(value = 1)
-	private Integer durationInMinutes;
+	private Long durationInMinutes;
 
 	public EditContestForm() {
 	}
@@ -36,7 +37,10 @@ public class EditContestForm implements Serializable {
 		if (startTime != null) {
 			setStartTime(contest.getStartTime());
 		}
-		setDurationInMinutes(contest.getDurationInMinutes());
+		Duration duration = contest.getDuration();
+		if (duration != null){
+			setDurationInMinutes(duration.getSeconds()/60);
+		}
 	}
 
 	public String getName() {
@@ -55,11 +59,11 @@ public class EditContestForm implements Serializable {
 		this.startTime = startTime;
 	}
 
-	public Integer getDurationInMinutes() {
+	public Long getDurationInMinutes() {
 		return durationInMinutes;
 	}
 
-	public void setDurationInMinutes(Integer durationInMinutes) {
+	public void setDurationInMinutes(Long durationInMinutes) {
 		this.durationInMinutes = durationInMinutes;
 	}
 }
