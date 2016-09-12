@@ -34,6 +34,11 @@ public class ContestServiceImpl implements ContestService {
 	}
 
 	@Override
+	public Boolean contestExists(Long id) {
+		return contestDao.contestExists(id);
+	}
+
+	@Override
 	public List<Contest> getAllContests() {
 		return contestDao.getAllContests();
 	}

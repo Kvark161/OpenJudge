@@ -52,6 +52,16 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
+	public boolean contestExists(long id) {
+		try{
+			return storage.contestExists(id);
+		} catch (StorageException e){
+			logger.error("failed to find out if contest exist");
+		}
+		return false;
+	}
+
+	@Override
 	public Problem getContestProblem(Long contestId, Long problemId) {
 		Contest contest = getContestById(contestId);
 		for (Problem problem : contest.getProblems()) {

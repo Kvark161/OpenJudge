@@ -15,6 +15,8 @@ public interface ContestService {
 
 	Contest getContestById(Long contestId);
 
+	Boolean contestExists(Long id);
+
 	List<Contest> getAllContests();
 
 	Problem getContestProblem(Long contestId, Long problemId);

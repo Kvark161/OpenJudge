@@ -66,30 +66,30 @@ public class ContestController {
 
 	@GetMapping(value = "/contest/{contestId}")
 	public String summary(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		return "contest/summary";
 	}
 
 	@GetMapping(value = "/contest/{contestId}/problems")
 	public String problems(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		return "contest/problems";
 	}
 
 	@GetMapping(value = "/contest/{contestId}/submit")
 	public String submit(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
 		model.addAttribute("submissionForm", new SubmissionForm());
 		model.addAttribute("contest", contest);
@@ -102,10 +102,10 @@ public class ContestController {
 	                     BindingResult bindingResult,
 	                     @AuthenticationPrincipal User user,
 	                     Model model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		if (bindingResult.hasErrors()) {
 			return "contest/submit";
@@ -124,10 +124,10 @@ public class ContestController {
 	public String submissions(@PathVariable Long contestId,
 	                          ModelMap model,
 	                          @AuthenticationPrincipal User user) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		List<Submission> submissions = submissionService.getUserSubmissions(user.getId(), contestId);
 		Locale currentLocale = user.getLocale();
@@ -138,10 +138,10 @@ public class ContestController {
 
 	@GetMapping(value = "/contest/{contestId}/standings")
 	public String standings(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		return "contest/standings";
 	}
@@ -181,10 +181,10 @@ public class ContestController {
 
 	@GetMapping(value = "/contest/{contestId}/edit")
 	public String editContest(@PathVariable Long contestId, ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		EditContestForm editContestForm = new EditContestForm(contest);
 		model.addAttribute("editContestForm", editContestForm);
@@ -196,10 +196,10 @@ public class ContestController {
 	                          @Valid @ModelAttribute("editContestForm") EditContestForm editContestForm,
 	                          BindingResult bindingResult,
 	                          ModelMap model) {
-		Contest contest = contestService.getContestById(contestId);
-		if (contest == null) {
+		if (!contestService.contestExists(contestId)){
 			return "redirect:/contests";
 		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		if (bindingResult.hasErrors()) {
 			return "contest/edit";
