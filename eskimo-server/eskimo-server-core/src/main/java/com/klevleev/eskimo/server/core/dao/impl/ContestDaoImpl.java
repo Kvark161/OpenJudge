@@ -53,9 +53,9 @@ public class ContestDaoImpl implements ContestDao {
 
 	@Override
 	public boolean contestExists(long id) {
-		try{
+		try {
 			return storage.contestExists(id);
-		} catch (StorageException e){
+		} catch (StorageException e) {
 			logger.error("failed to find out if contest exist");
 		}
 		return false;
@@ -63,10 +63,13 @@ public class ContestDaoImpl implements ContestDao {
 
 	@Override
 	public Problem getContestProblem(Long contestId, Long problemId) {
-		Contest contest = getContestById(contestId);
-		for (Problem problem : contest.getProblems()) {
-			if (problem.getId().equals(problemId))
-				return problem;
+		try {
+			if (storage.contestProblemExists(contestId, problemId)) {
+				return problemFromStorageProblem(storage.getContestProblem(contestId, problemId));
+			}
+		} catch (StorageException e) {
+			logger.error("can not get problem from contest by (contestId, problemId) = ("
+					+ contestId + ", " + problemId + ")", e);
 		}
 		return null;
 	}

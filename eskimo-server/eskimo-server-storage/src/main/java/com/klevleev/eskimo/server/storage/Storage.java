@@ -74,9 +74,17 @@ public class Storage implements InitializingBean {
 		return getContestFolder(contestId).exists();
 	}
 
+	public boolean contestProblemExists(long contestId, long problemId) {
+		return getContestProblemFolder(contestId, problemId).exists();
+	}
+
 	@SuppressWarnings("WeakerAccess")
 	public StorageContest getContest(long contestId) {
 		return new StorageContest(getContestFolder(contestId));
+	}
+
+	public StorageProblem getContestProblem(long contestId, long problemId) {
+		return new StorageProblem(getContestProblemFolder(contestId, problemId));
 	}
 
 	public StorageContest createContest(File contestRoot) throws StorageException {
@@ -141,10 +149,16 @@ public class Storage implements InitializingBean {
 				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
 	}
 
+	private File getContestProblemFolder(long contestId, long problemId) {
+		return new File(root + File.separator + StorageContest.FOLDER_NAME + File.separator +
+				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId) + File.separator + StorageProblem.FOLDER_NAME
+				+ File.separator + problemId);
+	}
+
 	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
 			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
-			+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
+					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
 			try (InputStream in = new FileInputStream(file)) {
 				return IOUtils.toByteArray(in);
 			}
