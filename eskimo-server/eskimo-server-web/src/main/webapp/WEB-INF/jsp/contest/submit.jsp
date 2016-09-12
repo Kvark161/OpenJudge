@@ -23,7 +23,7 @@
 				<form:select id="problemId" path="problemId">
 					<form:option value=""/>
 					<c:forEach var="problem" items="${contest.problems}">
-						<form:option value="${problem.id}" label="${problem.getName(currentLocale)}"/>
+						<form:option value="${problem.id}" label="${problem.name}"/>
 					</c:forEach>
 				</form:select>
 				<div class="has-error">

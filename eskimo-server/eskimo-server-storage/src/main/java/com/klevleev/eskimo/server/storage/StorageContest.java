@@ -13,7 +13,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
@@ -27,7 +28,7 @@ public class StorageContest {
 
 	private File root = null;
 	private final Long id;
-	private Map<Locale, String> names;
+	private String name;
 	private List<StorageProblem> problems;
 
 	StorageContest(File contestRootFolder) {
@@ -43,7 +44,7 @@ public class StorageContest {
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document xml = dBuilder.parse(fXmlFile);
 			Element contest = xml.getDocumentElement();
-			parseContestNames(contest);
+			parseContestName(contest);
 			parseProblems(contest);
 		} catch (IOException e) {
 			throw new StorageException("file contest.xml does not exists", e);
@@ -66,17 +67,9 @@ public class StorageContest {
 		}
 	}
 
-	private void parseContestNames(Element contest) {
-		this.names = new HashMap<>();
-		Element elementNames = (Element) contest.getElementsByTagName("names").item(0);
-		NodeList nodeNames = elementNames.getElementsByTagName("name");
-		for (int i = 0; i < nodeNames.getLength(); ++i) {
-			Node nodeName = nodeNames.item(i);
-			Element elementName = (Element) nodeName;
-			String language = elementName.getAttribute("language");
-			String value = elementName.getAttribute("value");
-			this.names.put(new Locale(language), value);
-		}
+	private void parseContestName(Element contest) {
+		Element elementName = (Element) contest.getElementsByTagName("name").item(0);
+		this.name = elementName.getAttribute("value");
 	}
 
 	void validate() {
@@ -98,12 +91,12 @@ public class StorageContest {
 		return id;
 	}
 
-	public Map<Locale, String> getNames() {
-		return names;
+	public String getName() {
+		return name;
 	}
 
-	public void setNames(Map<Locale, String> names) {
-		this.names = names;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<StorageProblem> getProblems() {

@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -13,9 +11,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
@@ -30,7 +25,7 @@ public class StorageProblem {
 	private final File root;
 	private final Long id;
 	private String index;
-	private Map<Locale, String> names;
+	private String name;
 
 	StorageProblem(File problemRootFolder) {
 		this.root = problemRootFolder;
@@ -56,16 +51,8 @@ public class StorageProblem {
 
 	@SuppressWarnings("Duplicates")
 	private void parseProblemNames(Element problem) {
-		this.names = new HashMap<>();
-		Element elementNames = (Element) problem.getElementsByTagName("names").item(0);
-		NodeList nodeNames = elementNames.getElementsByTagName("name");
-		for (int i = 0; i < nodeNames.getLength(); ++i) {
-			Node nodeName = nodeNames.item(i);
-			Element elementName = (Element) nodeName;
-			String language = elementName.getAttribute("language");
-			String value = elementName.getAttribute("value");
-			this.names.put(new Locale(language), value);
-		}
+		Element elementName = (Element) problem.getElementsByTagName("name").item(0);
+		this.name = elementName.getAttribute("value");
 	}
 
 	private String getProblemXmlPath() {
@@ -88,11 +75,12 @@ public class StorageProblem {
 		this.index = index;
 	}
 
-	public Map<Locale, String> getNames() {
-		return names;
+	public String getName() {
+		return name;
 	}
 
-	public void setNames(Map<Locale, String> names) {
-		this.names = names;
+	public void setName(String name) {
+		this.name = name;
 	}
+
 }

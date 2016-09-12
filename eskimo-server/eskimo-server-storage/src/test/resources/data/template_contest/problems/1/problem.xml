@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <problem index="A">
-	<names>
-		<name language="en" value="A plus B"/>
-	</names>
+	<name value="A plus B"/>
 	<testset name="testset">
 		<time-limit>1000</time-limit>
 		<memory-limit>268435456</memory-limit>

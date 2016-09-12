@@ -8,7 +8,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 /**
  * Created by Ekaterina Sokirkina on 06-Sep-2016.
@@ -32,7 +31,7 @@ public class EditContestForm implements Serializable {
 	}
 
 	public EditContestForm(Contest contest) {
-		setName(contest.getName(new Locale("en")));
+		setName(contest.getName());
 		LocalDateTime startTime = contest.getStartTime();
 		if (startTime != null) {
 			setStartTime(contest.getStartTime());

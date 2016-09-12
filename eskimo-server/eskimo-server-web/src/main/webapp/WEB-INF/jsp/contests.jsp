@@ -34,7 +34,7 @@
 			<tr>
 				<td>${contest.id}</td>
 				<td><a href="<c:url value="/contest/${contest.id}"/>">
-						${contest.getName(currentLocale)}
+						${contest.name}
 				</a></td>
 				<sec:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
 					<td>

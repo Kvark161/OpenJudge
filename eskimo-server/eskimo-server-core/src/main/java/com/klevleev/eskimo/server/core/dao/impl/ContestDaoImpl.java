@@ -96,7 +96,7 @@ public class ContestDaoImpl implements ContestDao {
 	private Contest contestFromStorageContest(StorageContest storageContest) {
 		Contest contest = new Contest();
 		contest.setId(storageContest.getId());
-		contest.setNames(storageContest.getNames());
+		contest.setName(storageContest.getName());
 		contest.setProblems(storageContest.getProblems().stream()
 				.map(this::problemFromStorageProblem)
 				.collect(Collectors.toList()));
@@ -107,7 +107,7 @@ public class ContestDaoImpl implements ContestDao {
 		Problem problem = new Problem();
 		problem.setId(storageProblem.getId());
 		problem.setIndex(storageProblem.getIndex());
-		problem.setNames(storageProblem.getNames());
+		problem.setName(storageProblem.getName());
 		return problem;
 	}
 }

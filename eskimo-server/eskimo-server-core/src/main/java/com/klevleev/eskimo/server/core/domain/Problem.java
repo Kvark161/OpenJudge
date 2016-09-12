@@ -1,8 +1,6 @@
 package com.klevleev.eskimo.server.core.domain;
 
 import java.io.Serializable;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by Stepan Klevleev on 15-Aug-16.
@@ -12,7 +10,7 @@ public class Problem implements Serializable {
 
 	private Long id;
 	private String index;
-	private Map<Locale, String> names;
+	private String name;
 
 	public Long getId() {
 		return id;
@@ -30,16 +28,11 @@ public class Problem implements Serializable {
 		this.index = index;
 	}
 
-	public Map<Locale, String> getNames() {
-		return names;
+	public String getName() {
+		return name;
 	}
 
-	public void setNames(Map<Locale, String> names) {
-		this.names = names;
+	public void setName(String name) {
+		this.name = name;
 	}
-
-	public String getName(Locale locale){
-		return DomainUtils.getName(names, locale);
-	}
-
 }
