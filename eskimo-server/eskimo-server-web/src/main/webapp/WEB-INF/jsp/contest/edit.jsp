@@ -20,7 +20,6 @@
 			<div class="col-xs-2 control-label">Name:</div>
 			<form:label path="name"/>
 			<div class="col-xs-4">
-
 				<form:input path="name" id="name" class="form-control"/>
 			</div>
 			<div class="has-error">
