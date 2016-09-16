@@ -20,6 +20,8 @@ public interface ContestDao {
 
 	Problem getContestProblem(Long contestId, Long problemId);
 
+	byte[] getStatements(Long contestId);
+
 	byte[] getTestInput(Long contestId, Long problemId, Long testId);
 
 	byte[] getTestAnswer(Long contestId, Long problemId, Long testId);

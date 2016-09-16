@@ -20,4 +20,6 @@ public interface ContestService {
 	List<Contest> getAllContests();
 
 	Problem getContestProblem(Long contestId, Long problemId);
+
+	byte[] getStatements(Long contestId);
 }

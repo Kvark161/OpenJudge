@@ -17,16 +17,16 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Controller
 public class ContestController {
@@ -59,14 +59,13 @@ public class ContestController {
 	@GetMapping(value = "/contests")
 	public String contests(ModelMap model) {
 		List<Contest> contests = contestService.getAllContests();
-		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
 		model.addAttribute("contests", contests);
 		return "contests";
 	}
 
 	@GetMapping(value = "/contest/{contestId}")
 	public String summary(@PathVariable Long contestId, ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
@@ -76,7 +75,7 @@ public class ContestController {
 
 	@GetMapping(value = "/contest/{contestId}/problems")
 	public String problems(@PathVariable Long contestId, ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
@@ -84,13 +83,29 @@ public class ContestController {
 		return "contest/problems";
 	}
 
-	@GetMapping(value = "/contest/{contestId}/submit")
-	public String submit(@PathVariable Long contestId, ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+	@GetMapping(value = "/contest/{contestId}/statements")
+	public String statements(@PathVariable Long contestId, HttpServletResponse response, ModelMap model) throws IOException {
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
-		model.addAttribute("currentLocale", userUtils.getCurrentUserLocale());
+		model.addAttribute("contest", contest);
+		byte[] statements = contestService.getStatements(contestId);
+		response.setContentType("application/pdf");
+		response.setContentLength(statements.length);
+		response.setHeader("Content-Disposition", "inline; filename=\"statements\"");
+		try (InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(statements))) {
+			FileCopyUtils.copy(inputStream, response.getOutputStream());
+		}
+		return "redirect:contest/problems";
+	}
+
+	@GetMapping(value = "/contest/{contestId}/submit")
+	public String submit(@PathVariable Long contestId, ModelMap model) {
+		if (!contestService.contestExists(contestId)) {
+			return "redirect:/contests";
+		}
+		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("submissionForm", new SubmissionForm());
 		model.addAttribute("contest", contest);
 		return "contest/submit";
@@ -102,7 +117,7 @@ public class ContestController {
 	                     BindingResult bindingResult,
 	                     @AuthenticationPrincipal User user,
 	                     Model model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
@@ -124,21 +139,19 @@ public class ContestController {
 	public String submissions(@PathVariable Long contestId,
 	                          ModelMap model,
 	                          @AuthenticationPrincipal User user) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		List<Submission> submissions = submissionService.getUserSubmissions(user.getId(), contestId);
-		Locale currentLocale = user.getLocale();
 		model.addAttribute("submissions", submissions);
-		model.addAttribute("locale", currentLocale);
 		return "contest/submissions";
 	}
 
 	@GetMapping(value = "/contest/{contestId}/standings")
 	public String standings(@PathVariable Long contestId, ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
@@ -181,7 +194,7 @@ public class ContestController {
 
 	@GetMapping(value = "/contest/{contestId}/edit")
 	public String editContest(@PathVariable Long contestId, ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
@@ -196,7 +209,7 @@ public class ContestController {
 	                          @Valid @ModelAttribute("editContestForm") EditContestForm editContestForm,
 	                          BindingResult bindingResult,
 	                          ModelMap model) {
-		if (!contestService.contestExists(contestId)){
+		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);

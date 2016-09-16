@@ -75,6 +75,16 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
+	public byte[] getStatements(Long contestId) {
+		try {
+			return storage.getStatements(contestId);
+		} catch (StorageException e){
+			logger.error("cannot get statements; contestId = " + contestId);
+		}
+		return new byte[0];
+	}
+
+	@Override
 	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
 			return storage.getTestInput(contestId, problemId, testId);

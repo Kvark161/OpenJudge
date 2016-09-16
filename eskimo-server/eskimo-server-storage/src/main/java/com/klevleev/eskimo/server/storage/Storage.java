@@ -83,6 +83,19 @@ public class Storage implements InitializingBean {
 		return new StorageContest(getContestFolder(contestId));
 	}
 
+	public byte[] getStatements(long contestId) {
+		try {
+			File statements = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + "statements"
+					+ File.separator + "english" + File.separator + "statement.pdf");
+			logger.info(statements.getAbsolutePath());
+			try (InputStream in = new FileInputStream(statements)) {
+				return IOUtils.toByteArray(in);
+			}
+		} catch (Throwable e) {
+			throw new StorageException("cannot get statements; contestId = " + contestId, e);
+		}
+	}
+
 	public StorageProblem getContestProblem(long contestId, long problemId) {
 		return new StorageProblem(getContestProblemFolder(contestId, problemId));
 	}

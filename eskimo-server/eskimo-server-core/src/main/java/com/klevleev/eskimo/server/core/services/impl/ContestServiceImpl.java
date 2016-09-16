@@ -47,4 +47,9 @@ public class ContestServiceImpl implements ContestService {
 	public Problem getContestProblem(Long contestId, Long problemId) {
 		return contestDao.getContestProblem(contestId, problemId);
 	}
+
+	@Override
+	public byte[] getStatements(Long contestId) {
+		return contestDao.getStatements(contestId);
+	}
 }
