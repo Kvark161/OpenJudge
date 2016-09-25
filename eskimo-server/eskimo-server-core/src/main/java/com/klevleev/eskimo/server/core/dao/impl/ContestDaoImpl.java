@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,9 +43,7 @@ public class ContestDaoImpl implements ContestDao {
 	@Override
 	public Contest getContestById(long id) {
 		try {
-			if (storage.contestExists(id)) {
-				return contestFromStorageContest(storage.getContest(id));
-			}
+			return contestFromStorageContest(storage.getContest(id));
 		} catch (StorageException e) {
 			logger.error("can not get contest by id=" + id, e);
 		}
@@ -64,9 +63,7 @@ public class ContestDaoImpl implements ContestDao {
 	@Override
 	public Problem getContestProblem(Long contestId, Long problemId) {
 		try {
-			if (storage.contestProblemExists(contestId, problemId)) {
-				return problemFromStorageProblem(storage.getContestProblem(contestId, problemId));
-			}
+			return problemFromStorageProblem(storage.getContestProblem(contestId, problemId));
 		} catch (StorageException e) {
 			logger.error("can not get problem from contest by (contestId, problemId) = ("
 					+ contestId + ", " + problemId + ")", e);
@@ -75,17 +72,17 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
-	public byte[] getStatements(Long contestId) {
+	public InputStream getStatements(Long contestId) {
 		try {
 			return storage.getStatements(contestId);
 		} catch (StorageException e){
 			logger.error("cannot get statements; contestId = " + contestId);
 		}
-		return new byte[0];
+		return null;
 	}
 
 	@Override
-	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
+	public InputStream getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
 			return storage.getTestInput(contestId, problemId, testId);
 		} catch (StorageException e) {
@@ -96,7 +93,7 @@ public class ContestDaoImpl implements ContestDao {
 	}
 
 	@Override
-	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
+	public InputStream getTestAnswer(Long contestId, Long problemId, Long testId) {
 		try {
 			return storage.getTestAnswer(contestId, problemId, testId);
 		} catch (StorageException e) {

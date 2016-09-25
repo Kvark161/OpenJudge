@@ -13,18 +13,20 @@ import com.klevleev.eskimo.server.web.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -84,18 +86,19 @@ public class ContestController {
 	}
 
 	@GetMapping(value = "/contest/{contestId}/statements")
-	public String statements(@PathVariable Long contestId, HttpServletResponse response, ModelMap model) throws IOException {
+	public String statements(@PathVariable Long contestId,
+	                         HttpServletResponse response,
+	                         ModelMap model) throws IOException {
 		if (!contestService.contestExists(contestId)) {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
-		byte[] statements = contestService.getStatements(contestId);
-		response.setContentType("application/pdf");
-		response.setContentLength(statements.length);
-		response.setHeader("Content-Disposition", "inline; filename=\"statements\"");
-		try (InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(statements))) {
-			FileCopyUtils.copy(inputStream, response.getOutputStream());
+		try (InputStream statements = contestService.getStatements(contestId)) {
+			response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+			response.setHeader("Content-Disposition", "inline; filename=\"statements\"");
+			org.apache.commons.io.IOUtils.copy(statements, response.getOutputStream());
+			response.flushBuffer();
 		}
 		return "redirect:contest/problems";
 	}

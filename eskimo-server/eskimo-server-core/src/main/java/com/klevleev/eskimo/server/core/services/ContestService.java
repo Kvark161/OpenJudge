@@ -4,6 +4,7 @@ import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Problem;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -21,5 +22,5 @@ public interface ContestService {
 
 	Problem getContestProblem(Long contestId, Long problemId);
 
-	byte[] getStatements(Long contestId);
+	InputStream getStatements(Long contestId);
 }

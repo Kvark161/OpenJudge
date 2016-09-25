@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Stepan Klevleev on 15-Aug-16.
@@ -29,14 +30,15 @@ public class StorageController {
 	                         @RequestParam("problem") Long problemId,
 	                         @RequestParam("test") Long testId,
 	                         HttpServletResponse response) throws IOException {
-		byte[] test = contestDao.getTestInput(contestId, problemId, testId);
+		InputStream test = contestDao.getTestInput(contestId, problemId, testId);
 		if (test == null) {
 			response.sendError(HttpStatus.NOT_FOUND.value());
 			return;
 		}
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.MULTIPART_FORM_DATA_VALUE);
-		response.getOutputStream().write(test);
+		org.apache.commons.io.IOUtils.copy(test, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 	@GetMapping(value = "/storage/get-test-answer")
@@ -44,14 +46,15 @@ public class StorageController {
 	                          @RequestParam("problem") Long problemId,
 	                          @RequestParam("test") Long testId,
 	                          HttpServletResponse response) throws IOException {
-		byte[] test = contestDao.getTestAnswer(contestId, problemId, testId);
+		InputStream test = contestDao.getTestAnswer(contestId, problemId, testId);
 		if (test == null) {
 			response.sendError(HttpStatus.NOT_FOUND.value());
 			return;
 		}
 		response.setStatus(HttpStatus.OK.value());
 		response.setContentType(MediaType.MULTIPART_FORM_DATA_VALUE);
-		response.getOutputStream().write(test);
+		org.apache.commons.io.IOUtils.copy(test, response.getOutputStream());
+		response.flushBuffer();
 	}
 
 }

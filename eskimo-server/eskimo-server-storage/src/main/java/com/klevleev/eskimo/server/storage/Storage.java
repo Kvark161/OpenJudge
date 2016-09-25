@@ -1,14 +1,12 @@
 package com.klevleev.eskimo.server.storage;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -83,14 +81,11 @@ public class Storage implements InitializingBean {
 		return new StorageContest(getContestFolder(contestId));
 	}
 
-	public byte[] getStatements(long contestId) {
+	public InputStream getStatements(long contestId) {
 		try {
 			File statements = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + "statements"
 					+ File.separator + "english" + File.separator + "statement.pdf");
-			logger.info(statements.getAbsolutePath());
-			try (InputStream in = new FileInputStream(statements)) {
-				return IOUtils.toByteArray(in);
-			}
+			return new StorageFileInputStream(statements);
 		} catch (Throwable e) {
 			throw new StorageException("cannot get statements; contestId = " + contestId, e);
 		}
@@ -168,26 +163,22 @@ public class Storage implements InitializingBean {
 				+ File.separator + problemId);
 	}
 
-	public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
+	public InputStream getTestInput(Long contestId, Long problemId, Long testId) {
 		try {
 			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
-			try (InputStream in = new FileInputStream(file)) {
-				return IOUtils.toByteArray(in);
-			}
+			return new StorageFileInputStream(file);
 		} catch (Throwable e) {
 			throw new StorageException("can not get test input: contestId=" + contestId +
 					" problemId=" + problemId + " testId=" + testId, e);
 		}
 	}
 
-	public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
+	public InputStream getTestAnswer(Long contestId, Long problemId, Long testId) {
 		try {
 			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".ans");
-			try (InputStream in = new FileInputStream(file)) {
-				return IOUtils.toByteArray(in);
-			}
+			return new StorageFileInputStream(file);
 		} catch (Throwable e) {
 			throw new StorageException("can not get test: contestId=" + contestId +
 					" problemId=" + problemId + " testId=" + testId, e);

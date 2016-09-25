@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -49,7 +50,7 @@ public class ContestServiceImpl implements ContestService {
 	}
 
 	@Override
-	public byte[] getStatements(Long contestId) {
+	public InputStream getStatements(Long contestId) {
 		return contestDao.getStatements(contestId);
 	}
 }
