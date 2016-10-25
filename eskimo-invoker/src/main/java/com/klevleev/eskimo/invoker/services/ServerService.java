@@ -47,4 +47,9 @@ public class ServerService {
 				"contest=" + contestId + "&problem=" + problemId + "&test=" + testId, byte[].class);
 	}
 
+	public byte[] getChecker(Long contestId, Long problemId) {
+		return restTemplate.getForObject(invokerConfig.getServerUrlGetChecker() + "?" +
+				"contest=" + contestId + "&problem=" + problemId, byte[].class);
+	}
+
 }

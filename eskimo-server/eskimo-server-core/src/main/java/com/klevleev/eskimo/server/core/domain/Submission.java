@@ -13,6 +13,7 @@ public class Submission {
 	private Problem problem;
 	private String sourceCode;
 	private Verdict verdict;
+	private Long testNumber;
 	private LocalDateTime sendingDateTime;
 
 	public enum Verdict {
@@ -21,6 +22,11 @@ public class Submission {
 		RUNNING,
 		COMPILATION_ERROR,
 		COMPILATION_SUCCESS,
+		OK,
+		WRONG_ANSWER,
+		PRESENTATION_ERROR,
+		FAIL,
+		TIME_LIMIT_EXCEED,
 		INTERNAL_ERROR
 	}
 
@@ -78,5 +84,13 @@ public class Submission {
 
 	public void setSendingDateTime(LocalDateTime sendingDateTime) {
 		this.sendingDateTime = sendingDateTime;
+	}
+
+	public Long getTestNumber() {
+		return testNumber;
+	}
+
+	public void setTestNumber(Long testNumber) {
+		this.testNumber = testNumber;
 	}
 }

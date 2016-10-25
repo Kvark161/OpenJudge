@@ -184,4 +184,15 @@ public class Storage implements InitializingBean {
 					" problemId=" + problemId + " testId=" + testId, e);
 		}
 	}
+
+	public InputStream getChecker(Long contestId, Long problemId) {
+		try {
+			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
+					+ File.separator + problemId + File.separator + "files" + File.separator + "checker.exe");
+			return new StorageFileInputStream(file);
+		} catch (Throwable e) {
+			throw new StorageException("can not get checker: contestId=" + contestId +
+					" problemId=" + problemId, e);
+		}
+	}
 }

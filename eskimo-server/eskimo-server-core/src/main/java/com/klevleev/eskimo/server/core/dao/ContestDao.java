@@ -26,4 +26,7 @@ public interface ContestDao {
 	InputStream getTestInput(Long contestId, Long problemId, Long testId);
 
 	InputStream getTestAnswer(Long contestId, Long problemId, Long testId);
+
+	InputStream getChecker(Long contestId, Long problemId);
+
 }

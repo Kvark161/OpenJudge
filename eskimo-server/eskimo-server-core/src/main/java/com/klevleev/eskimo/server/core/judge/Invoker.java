@@ -21,4 +21,8 @@ class Invoker {
 		return uri.toString() + "/invoke/compile";
 	}
 
+	String getTestUrl() {
+		return uri.toString() + "/invoke/run-test";
+	}
+
 }

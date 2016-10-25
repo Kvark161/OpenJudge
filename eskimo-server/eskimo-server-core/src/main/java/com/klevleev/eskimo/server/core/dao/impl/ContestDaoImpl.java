@@ -75,7 +75,7 @@ public class ContestDaoImpl implements ContestDao {
 	public InputStream getStatements(Long contestId) {
 		try {
 			return storage.getStatements(contestId);
-		} catch (StorageException e){
+		} catch (StorageException e) {
 			logger.error("cannot get statements; contestId = " + contestId);
 		}
 		return null;
@@ -99,6 +99,17 @@ public class ContestDaoImpl implements ContestDao {
 		} catch (StorageException e) {
 			logger.error("can not get test answer: contestId=" + contestId +
 					" problemId=" + problemId + " testId=" + testId);
+		}
+		return null;
+	}
+
+	@Override
+	public InputStream getChecker(Long contestId, Long problemId) {
+		try {
+			return storage.getChecker(contestId, problemId);
+		} catch (StorageException e) {
+			logger.error("can not get checker: contestId=" + contestId +
+					" problemId=" + problemId);
 		}
 		return null;
 	}

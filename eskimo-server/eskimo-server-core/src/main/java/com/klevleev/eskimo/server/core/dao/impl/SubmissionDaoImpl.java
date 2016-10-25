@@ -36,7 +36,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public List<Submission> getAllSubmissions() {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
 				"FROM submissions";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper());
 	}
@@ -44,7 +44,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public Submission getSubmissionById(Long id) {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
 				"FROM submissions " +
 				"WHERE id = ?";
 		return jdbcTemplate.queryForObject(sql, new SubmissionRowMapper(), id);
@@ -53,7 +53,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 	@Override
 	@Transactional
 	public List<Submission> getUserSubmissions(Long userId) {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
 				"FROM submissions " +
 				"WHERE user_id = ?";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId);
@@ -61,7 +61,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 
 	@Override
 	public List<Submission> getUserSubmissions(Long userId, Long contestId) {
-		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time " +
+		String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
 				"FROM submissions " +
 				"WHERE user_id = ? AND contest_id = ?";
 		return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId, contestId);
@@ -80,6 +80,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 		params.put("source_code", submission.getSourceCode());
 		params.put("verdict", submission.getVerdict());
 		params.put("sending_date_time", Timestamp.valueOf(submission.getSendingDateTime()));
+		params.put("test_number", submission.getTestNumber());
 		Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
 		submission.setId(key.longValue());
 	}
@@ -94,7 +95,8 @@ public class SubmissionDaoImpl implements SubmissionDao {
 				"problem_id = ?, " +
 				"source_code = ?, " +
 				"verdict = ? ," +
-				"sending_date_time = ? " +
+				"sending_date_time = ? ," +
+				"test_number = ? " +
 				"WHERE id = ?";
 		jdbcTemplate.update(sql,
 				submission.getUser().getId(),
@@ -103,6 +105,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 				submission.getSourceCode(),
 				submission.getVerdict().name(),
 				Timestamp.valueOf(submission.getSendingDateTime()),
+				submission.getTestNumber(),
 				submission.getId());
 	}
 
@@ -123,6 +126,7 @@ public class SubmissionDaoImpl implements SubmissionDao {
 			submission.setSourceCode(resultSet.getString("source_code"));
 			submission.setVerdict(Submission.Verdict.valueOf(resultSet.getString("verdict")));
 			submission.setSendingDateTime(resultSet.getTimestamp("sending_date_time").toLocalDateTime());
+			submission.setTestNumber(resultSet.getLong("test_number"));
 			return submission;
 		}
 	}

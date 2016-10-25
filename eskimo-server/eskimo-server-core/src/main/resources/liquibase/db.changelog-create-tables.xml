@@ -45,6 +45,9 @@
 			<column name="sending_date_time" type="datetime">
 				<constraints nullable="false"/>
 			</column>
+			<column name="test_number" type="bigint">
+
+			</column>
 		</createTable>
 	</changeSet>
 

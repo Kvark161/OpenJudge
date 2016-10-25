@@ -32,6 +32,12 @@
 			</div>
 		</div>
 		<div class="row">
+			<div class="col-xs-2"></div>
+			<div class="col-xs-10">
+				Please, use files for input and output: "input.txt", "output.txt"
+			</div>
+		</div>
+		<div class="row">
 			<div class="col-xs-2"><form:label path="problemId">Source code:</form:label></div>
 			<div class="col-xs-10">
 				<form:textarea path="sourceCode" cols="30" rows="20"/>

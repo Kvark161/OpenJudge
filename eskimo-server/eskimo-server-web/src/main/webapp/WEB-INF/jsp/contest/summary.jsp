@@ -9,7 +9,22 @@
 
 <body>
 <eskimo:contestMenu/>
-
+<div class="container">
+	<table class="table">
+		<tr>
+			<td>Name:</td>
+			<td>${contest.name}</td>
+		</tr>
+		<tr>
+			<td>Start time:</td>
+			<td>${contest.startTime}</td>
+		</tr>
+		<tr>
+			<td>Duration:</td>
+			<td>${contest.duration}</td>
+		</tr>
+	</table>
+</div>
 <eskimo:footer/>
 </body>
 </html>

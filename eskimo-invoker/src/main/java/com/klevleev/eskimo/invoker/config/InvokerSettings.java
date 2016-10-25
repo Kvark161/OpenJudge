@@ -22,6 +22,7 @@ public class InvokerSettings {
 	private static final String SERVER_PATH_REGISTER = "server.path.register";
 	private static final String SERVER_PATH_GET_TEST_INPUT = "server.path.get.test.input";
 	private static final String SERVER_PATH_GET_TEST_ANSWER = "server.path.get.test.answer";
+	private static final String SERVER_PATH_GET_CHECKER = "server.path.get.checker";
 
 	private static final String INVOKER_MAX_THREADS = "invoker.max.threads";
 	private static final String INVOKER_TEMP_PATH = "invoker.temp.path";
@@ -66,6 +67,10 @@ public class InvokerSettings {
 
 	public String getServerUrlGetTestAnswer() {
 		return getServerRootUrl() + getPropery(SERVER_PATH_GET_TEST_ANSWER);
+	}
+
+	public String getServerUrlGetChecker() {
+		return getServerRootUrl() + getPropery(SERVER_PATH_GET_CHECKER);
 	}
 
 	public String getServerPathGetTestAnswer() {

@@ -23,7 +23,12 @@
 			<tr>
 				<td>${submission.id}</td>
 				<td>${submission.problem.name}</td>
-				<td>${submission.verdict}</td>
+				<td>
+						${submission.verdict}
+					<c:if test="${submission.testNumber != null && submission.testNumber != 0}">
+						${submission.testNumber}
+					</c:if>
+				</td>
 				<td>${submission.sendingDateTime}</td>
 			</tr>
 		</c:forEach>
