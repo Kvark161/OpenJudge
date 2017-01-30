@@ -1,15 +1,16 @@
 package com.klevleev.eskimo.server.web.controllers;
 
 import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.domain.User;
 import com.klevleev.eskimo.server.core.services.ContestService;
+import com.klevleev.eskimo.server.core.services.ProblemService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.core.services.UserService;
 import com.klevleev.eskimo.server.web.forms.EditContestForm;
 import com.klevleev.eskimo.server.web.forms.SubmissionForm;
 import com.klevleev.eskimo.server.web.utils.FileUtils;
-import com.klevleev.eskimo.server.web.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,23 +40,24 @@ public class ContestController {
 
 	private final FileUtils fileUtils;
 
-	private final UserUtils userUtils;
 
 	private final SubmissionService submissionService;
 
 	private final ContestService contestService;
 
+	private final ProblemService problemService;
+
 	@Autowired
 	public ContestController(UserService userService,
 	                         FileUtils fileUtils,
-	                         UserUtils userUtils,
 	                         SubmissionService submissionService,
-	                         ContestService contestService) {
+	                         ContestService contestService,
+	                         ProblemService problemService) {
 		this.userService = userService;
 		this.fileUtils = fileUtils;
-		this.userUtils = userUtils;
 		this.submissionService = submissionService;
 		this.contestService = contestService;
+		this.problemService = problemService;
 	}
 
 	@GetMapping(value = "/contests")
@@ -81,7 +83,9 @@ public class ContestController {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
+		List<Problem> problems = problemService.getContestProblems(contestId);
 		model.addAttribute("contest", contest);
+		model.addAttribute("problems", problems);
 		return "contest/problems";
 	}
 
@@ -109,8 +113,10 @@ public class ContestController {
 			return "redirect:/contests";
 		}
 		Contest contest = contestService.getContestById(contestId);
+		List<Problem> problems = problemService.getContestProblems(contestId);
 		model.addAttribute("submissionForm", new SubmissionForm());
 		model.addAttribute("contest", contest);
+		model.addAttribute("problems", problems);
 		return "contest/submit";
 	}
 
@@ -131,7 +137,7 @@ public class ContestController {
 		Submission submission = new Submission();
 		submission.setSendingDateTime(LocalDateTime.now());
 		submission.setContest(contestService.getContestById(contestId));
-		submission.setProblem(contestService.getContestProblem(contestId, submissionForm.getProblemId()));
+		submission.setProblem(problemService.getProblemById(submissionForm.getProblemId()));
 		submission.setSourceCode(submissionForm.getSourceCode());
 		submission.setUser(userService.getUserById(user.getId()));
 		submissionService.submit(submission);
@@ -175,7 +181,7 @@ public class ContestController {
 		try {
 			contestZipFile = fileUtils.saveFile(multipartFile, "contest-", "zip");
 			contestFolder = fileUtils.unzip(contestZipFile);
-			contestService.createContest(contestFolder);
+			contestService.insertContest(fileUtils.getUnzippedContestFolder(contestFolder));
 		} catch (IOException e) {
 			logger.error("can not upload file " + multipartFile.getName(), e);
 			model.addAttribute("error", "can't upload a file: " + e.getMessage());

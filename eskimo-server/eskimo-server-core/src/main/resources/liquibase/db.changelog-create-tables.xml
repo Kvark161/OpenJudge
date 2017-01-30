@@ -51,4 +51,46 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="create_contests" author="lunawyll">
+		<createTable tableName="contests">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="text">
+				<constraints nullable="false"/>
+			</column>
+			<column name="start_time" type="timestamptz">
+				<constraints nullable="true"/>
+			</column>
+			<column name="duration_in_minutes" type="int">
+				<constraints nullable="true"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="problems">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="contest_id" type="bigint">
+				<constraints nullable="false" referencedTableName="contests"
+				             referencedColumnNames="id" foreignKeyName="fk_statements_contests"/>
+			</column>
+			<column name="number_in_contest" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="name" type="text">
+				<constraints nullable="false"/>
+			</column>
+			<column name="time_limit" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="memory_limit" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="tests_count" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>

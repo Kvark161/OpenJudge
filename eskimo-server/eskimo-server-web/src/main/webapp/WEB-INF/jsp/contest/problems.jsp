@@ -20,7 +20,7 @@
 	</tr>
 	</thead>
 	<tbody>
-	<c:forEach items="${contest.problems}" var="problem">
+	<c:forEach items="${problems}" var="problem">
 		<tr>
 			<td>${problem.index}</td>
 			<td>${problem.name}</td>

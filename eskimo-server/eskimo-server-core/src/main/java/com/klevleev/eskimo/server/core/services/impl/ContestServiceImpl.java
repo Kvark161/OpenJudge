@@ -2,8 +2,9 @@ package com.klevleev.eskimo.server.core.services.impl;
 
 import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.domain.Contest;
-import com.klevleev.eskimo.server.core.domain.Problem;
 import com.klevleev.eskimo.server.core.services.ContestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ import java.util.List;
 @Service("contestService")
 public class ContestServiceImpl implements ContestService {
 
+	private static final Logger logger = LoggerFactory.getLogger(ContestServiceImpl.class);
+
 	private final ContestDao contestDao;
 
 	@Autowired
@@ -25,8 +28,13 @@ public class ContestServiceImpl implements ContestService {
 	}
 
 	@Override
-	public Contest createContest(File contestRoot) {
-		return contestDao.insertContest(contestRoot);
+	public Contest insertContest(File contestRoot) {
+		try {
+			return contestDao.insertContest(contestRoot);
+		} catch (RuntimeException e){
+			logger.error("failed to create new contest ", e);
+			return null;
+		}
 	}
 
 	@Override
@@ -42,11 +50,6 @@ public class ContestServiceImpl implements ContestService {
 	@Override
 	public List<Contest> getAllContests() {
 		return contestDao.getAllContests();
-	}
-
-	@Override
-	public Problem getContestProblem(Long contestId, Long problemId) {
-		return contestDao.getContestProblem(contestId, problemId);
 	}
 
 	@Override

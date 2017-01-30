@@ -11,6 +11,9 @@ public class Problem implements Serializable {
 	private Long id;
 	private String index;
 	private String name;
+	private Long timeLimit;
+	private Long memoryLimit;
+	private Long testsCount;
 
 	public Long getId() {
 		return id;
@@ -34,5 +37,29 @@ public class Problem implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getTimeLimit() {
+		return timeLimit;
+	}
+
+	public void setTimeLimit(Long timeLimit) {
+		this.timeLimit = timeLimit;
+	}
+
+	public Long getMemoryLimit() {
+		return memoryLimit;
+	}
+
+	public void setMemoryLimit(Long memoryLimit) {
+		this.memoryLimit = memoryLimit;
+	}
+
+	public Long getTestsCount() {
+		return testsCount;
+	}
+
+	public void setTestsCount(Long testsCount) {
+		this.testsCount = testsCount;
 	}
 }

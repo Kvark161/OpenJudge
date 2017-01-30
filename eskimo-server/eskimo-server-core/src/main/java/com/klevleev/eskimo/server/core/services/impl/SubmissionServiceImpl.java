@@ -5,6 +5,7 @@ import com.klevleev.eskimo.server.core.domain.Contest;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import com.klevleev.eskimo.server.core.judge.JudgeService;
 import com.klevleev.eskimo.server.core.services.ContestService;
+import com.klevleev.eskimo.server.core.services.ProblemService;
 import com.klevleev.eskimo.server.core.services.SubmissionService;
 import com.klevleev.eskimo.server.core.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +21,21 @@ public class SubmissionServiceImpl implements SubmissionService {
 
 	private final SubmissionDao submissionDao;
 	private final ContestService contestService;
+	private final ProblemService problemService;
 	private final UserService userService;
 	private final JudgeService judgeService;
 
 	@Autowired
-	public SubmissionServiceImpl(JudgeService judgeService, SubmissionDao submissionDao, ContestService contestService,
+	public SubmissionServiceImpl(JudgeService judgeService,
+	                             SubmissionDao submissionDao,
+	                             ContestService contestService,
+	                             ProblemService problemService,
 	                             UserService userService) {
 		this.judgeService = judgeService;
 		this.submissionDao = submissionDao;
 		this.contestService = contestService;
 		this.userService = userService;
+		this.problemService = problemService;
 	}
 
 	@Override
@@ -71,8 +77,7 @@ public class SubmissionServiceImpl implements SubmissionService {
 		submission.setUser(userService.getUserById(submission.getUser().getId()));
 		Contest contest = contestService.getContestById(submission.getContest().getId());
 		submission.setContest(contest);
-		submission.setProblem(contestService.getContestProblem(contest.getId(),
-				submission.getProblem().getId()));
+		submission.setProblem(problemService.getProblemById(submission.getProblem().getId()));
 	}
 
 	private void fillSubmissions(List<Submission> submissions){

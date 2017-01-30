@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.Assert;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -44,6 +45,7 @@ public class SubmissionDaoImplTest {
 		submission.setProblem(problem);
 		submission.setSourceCode("This is a source code");
 		submission.setVerdict(Submission.Verdict.SUBMITTED);
+		submission.setSendingDateTime(LocalDateTime.now());
 		submissionDao.insertSubmission(submission);
 		Assert.notNull(submission.getId());
 	}

@@ -1,16 +1,16 @@
 package com.klevleev.eskimo.server.storage;
 
+import com.klevleev.eskimo.server.storage.domain.Test;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
@@ -19,60 +19,61 @@ public class StorageProblem {
 
 	private static final Logger logger = LoggerFactory.getLogger(StorageProblem.class);
 
-	static final String FOLDER_NAME = "problems";
-	private static final String PROBLEM_XML_NAME = "problem.xml";
+	public static final String FOLDER_NAME = "problems";
+	public static final String JSON_NAME = "problem.json";
 
 	private final File root;
-	private final Long id;
-	private String index;
 	private String name;
+	private Long timeLimit;
+	private Long memoryLimit;
+	private int testCount;
+
 
 	StorageProblem(File problemRootFolder) {
 		this.root = problemRootFolder;
-		id = Long.valueOf(problemRootFolder.getName());
-		parseContestXml();
+		parseProblem();
 	}
 
-	private void parseContestXml() {
+	private void parseProblem(){
+		testCount = getTestsCount();
+		parseProblemJSON();
+	}
+
+	private int getTestsCount(){
 		try {
-			File fXmlFile = new File(getProblemXmlPath());
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document xml = dBuilder.parse(fXmlFile);
-			Element problem = xml.getDocumentElement();
-			this.index = problem.getAttribute("index");
-			parseProblemNames(problem);
-		} catch (IOException e) {
-			throw new StorageException("file problem.xml does not exists", e);
-		} catch (SAXException | ParserConfigurationException e) {
-			throw new StorageException("error in parsing problem.xml: " + e.getMessage(), e);
+			File sourceDir = new File(root + File.separator + Test.FOLDER_NAME);
+			File testsConfig = new File(sourceDir + File.separator + Test.JSON_NAME);
+			JSONParser parser = new JSONParser();
+			try(Reader jsonReader = new FileReader(testsConfig)) {
+				JSONObject problemsInfo = (JSONObject) parser.parse(jsonReader);
+				return Integer.parseInt(problemsInfo.get("count").toString());
+			}
+		}catch (IOException e) {
+			throw new StorageException("file "+ Test.JSON_NAME +" does not exists", e);
+		} catch (ParseException e){
+			throw new StorageException("error in parsing "+ Test.JSON_NAME, e);
 		}
 	}
 
-	@SuppressWarnings("Duplicates")
-	private void parseProblemNames(Element problem) {
-		Element elementName = (Element) problem.getElementsByTagName("name").item(0);
-		this.name = elementName.getAttribute("value");
-	}
-
-	private String getProblemXmlPath() {
-		return this.root + File.separator + PROBLEM_XML_NAME;
+	private void parseProblemJSON(){
+		try {
+			File json = new File(root + File.separator + JSON_NAME);
+			JSONParser parser = new JSONParser();
+			try(Reader jsonReader = new FileReader(json)) {
+				JSONObject problem = (JSONObject) parser.parse(jsonReader);
+				name = problem.get("name").toString();
+				timeLimit = (Long) problem.get("time-limit");
+				memoryLimit = (Long) problem.get("memory-limit");
+			}
+		} catch (IOException e){
+			throw new StorageException("cannot read " + JSON_NAME, e);
+		} catch (ParseException e){
+			throw new StorageException("cannot parse " + JSON_NAME, e);
+		}
 	}
 
 	File getRoot() {
 		return root;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public String getIndex() {
-		return index;
-	}
-
-	public void setIndex(String index) {
-		this.index = index;
 	}
 
 	public String getName() {
@@ -83,4 +84,15 @@ public class StorageProblem {
 		this.name = name;
 	}
 
+	public int getTestCount() {
+		return testCount;
+	}
+
+	public Long getTimeLimit() {
+		return timeLimit;
+	}
+
+	public Long getMemoryLimit() {
+		return memoryLimit;
+	}
 }

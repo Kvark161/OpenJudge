@@ -6,7 +6,6 @@ import com.klevleev.eskimo.invoker.domain.InvokerNodeInfo;
 import com.klevleev.eskimo.invoker.domain.RunTestParameter;
 import com.klevleev.eskimo.invoker.enums.CompilationVerdict;
 import com.klevleev.eskimo.invoker.enums.RunTestVerdict;
-import com.klevleev.eskimo.server.core.dao.ContestDao;
 import com.klevleev.eskimo.server.core.dao.SubmissionDao;
 import com.klevleev.eskimo.server.core.domain.Submission;
 import org.slf4j.Logger;
@@ -39,7 +38,6 @@ public class JudgeService {
 	private final JudgeThread judgeThread = new JudgeThread();
 	private final ExecutorService executorService = Executors.newCachedThreadPool();
 	private final SubmissionDao submissionDao;
-	private final ContestDao contestDao;
 
 	@PostConstruct
 	private void init() {
@@ -47,10 +45,9 @@ public class JudgeService {
 	}
 
 	@Autowired
-	public JudgeService(InvokerPool invokerPool, SubmissionDao submissionDao, ContestDao contestDao) {
+	public JudgeService(InvokerPool invokerPool, SubmissionDao submissionDao) {
 		this.invokerPool = invokerPool;
 		this.submissionDao = submissionDao;
-		this.contestDao = contestDao;
 	}
 
 	public void judge(Submission submission) {
@@ -134,6 +131,8 @@ public class JudgeService {
 								submission.setVerdict(Submission.Verdict.COMPILATION_SUCCESS);
 							} else {
 								submission.setVerdict(Submission.Verdict.COMPILATION_ERROR);
+								submissionDao.updateSubmission(submission);
+								return;
 							}
 							submissionDao.updateSubmission(submission);
 							runOnTests(submission, invoker, compilationResult);

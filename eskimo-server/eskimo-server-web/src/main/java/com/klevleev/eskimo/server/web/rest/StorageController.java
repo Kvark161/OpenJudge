@@ -1,6 +1,6 @@
 package com.klevleev.eskimo.server.web.rest;
 
-import com.klevleev.eskimo.server.core.dao.ContestDao;
+import com.klevleev.eskimo.server.core.dao.ProblemDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,19 +20,18 @@ import java.io.InputStream;
 @RequestMapping("/storage")
 public class StorageController {
 
-	private final ContestDao contestDao;
+	private final ProblemDao problemDao;
 
 	@Autowired
-	public StorageController(ContestDao contestDao) {
-		this.contestDao = contestDao;
+	public StorageController(ProblemDao problemDao) {
+		this.problemDao = problemDao;
 	}
-
+	//TODO do smt with repeating code
 	@GetMapping(value = "/get-test-input")
-	public void getTestInput(@RequestParam("contest") Long contestId,
-	                         @RequestParam("problem") Long problemId,
+	public void getTestInput(@RequestParam("problem") Long problemId,
 	                         @RequestParam("test") Long testId,
 	                         HttpServletResponse response) throws IOException {
-		try (InputStream test = contestDao.getTestInput(contestId, problemId, testId)) {
+		try (InputStream test = problemDao.getTestInput(problemId, testId)) {
 			if (test == null) {
 				response.sendError(HttpStatus.NOT_FOUND.value());
 				return;
@@ -45,11 +44,10 @@ public class StorageController {
 	}
 
 	@GetMapping(value = "/get-test-answer")
-	public void getTestOutput(@RequestParam("contest") Long contestId,
-	                          @RequestParam("problem") Long problemId,
+	public void getTestOutput(@RequestParam("problem") Long problemId,
 	                          @RequestParam("test") Long testId,
 	                          HttpServletResponse response) throws IOException {
-		try (InputStream test = contestDao.getTestAnswer(contestId, problemId, testId)) {
+		try (InputStream test = problemDao.getTestAnswer(problemId, testId)) {
 			if (test == null) {
 				response.sendError(HttpStatus.NOT_FOUND.value());
 				return;
@@ -62,10 +60,9 @@ public class StorageController {
 	}
 
 	@GetMapping(value = "/get-checker")
-	public void getChecker(@RequestParam("contest") Long contestId,
-	                       @RequestParam("problem") Long problemId,
+	public void getChecker(@RequestParam("problem") Long problemId,
 	                       HttpServletResponse response) throws IOException {
-		try (InputStream checker = contestDao.getChecker(contestId, problemId)) {
+		try (InputStream checker = problemDao.getChecker(problemId)) {
 			if (checker == null) {
 				response.sendError(HttpStatus.NOT_FOUND.value());
 				return;

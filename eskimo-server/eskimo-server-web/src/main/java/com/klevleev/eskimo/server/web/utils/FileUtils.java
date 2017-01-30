@@ -49,6 +49,14 @@ public class FileUtils {
 		return filePath;
 	}
 
+	public File getUnzippedContestFolder(File unzipedFile) throws IOException{
+		File[] files = unzipedFile.listFiles();
+		if (files == null || files.length != 1 || !files[0].isDirectory()) {
+			throw new RuntimeException("files in zip have bad format");
+		}
+		return files[0];
+	}
+
 	public File unzip(File zipFile) throws IOException {
 		byte[] buffer = new byte[1024];
 		Path outputFolder = Files.createTempDirectory(settings.getTempRoot().toPath(), "contest-");

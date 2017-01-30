@@ -38,13 +38,13 @@
 		</div>
 		<div class="row form-group">
 			<div class="col-xs-2 control-label">Duration:</div>
-			<form:label path="durationInMinutes"/>
+			<form:label path="duration"/>
 			<div class="col-xs-4">
-				<form:input type="number" path="durationInMinutes" id="durationInMinutes" class="form-control"
+				<form:input type="number" path="duration" id="duration" class="form-control"
 				            step="1" min="1"/>
 			</div>
 			<div class="col-xs-4 has-error">
-				<form:errors path="durationInMinutes" class="help-block"/>
+				<form:errors path="duration" class="help-block"/>
 			</div>
 		</div>
 

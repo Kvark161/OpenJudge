@@ -22,7 +22,7 @@
 			<div class="col-xs-10">
 				<form:select id="problemId" path="problemId">
 					<form:option value=""/>
-					<c:forEach var="problem" items="${contest.problems}">
+					<c:forEach var="problem" items="${problems}">
 						<form:option value="${problem.id}" label="${problem.name}"/>
 					</c:forEach>
 				</form:select>

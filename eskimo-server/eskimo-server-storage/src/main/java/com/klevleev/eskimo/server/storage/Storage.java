@@ -1,10 +1,12 @@
 package com.klevleev.eskimo.server.storage;
 
+import com.klevleev.eskimo.server.storage.domain.*;
+import com.klevleev.eskimo.server.storage.utils.ParseUtils;
 import org.apache.commons.io.FileUtils;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +14,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiFunction;
 
 /**
  * Created by Stepan Klevleev on 22-Jul-16.
@@ -53,99 +55,67 @@ public class Storage implements InitializingBean {
 		}
 	}
 
-	public List<StorageContest> getAllContests() {
-		File dir = new File(root + File.separator + StorageContest.FOLDER_NAME);
-		List<StorageContest> result = new ArrayList<>();
-		File[] directoryListing = dir.listFiles();
-		if (directoryListing != null) {
-			for (File child : directoryListing) {
-				StorageContest storageContest = new StorageContest(child);
-				Assert.isTrue(new DecimalFormat(CONTEST_ID_FORMAT).format(storageContest.getId())
-						.equals(child.getName()));
-				result.add(new StorageContest(child));
-			}
-		}
-		return result;
-	}
-
-	public boolean contestExists(long contestId) {
-		return getContestFolder(contestId).exists();
-	}
-
-	public boolean contestProblemExists(long contestId, long problemId) {
-		return getContestProblemFolder(contestId, problemId).exists();
-	}
-
-	@SuppressWarnings("WeakerAccess")
-	public StorageContest getContest(long contestId) {
-		return new StorageContest(getContestFolder(contestId));
-	}
-
-	public InputStream getStatements(long contestId) {
-		try {
-			File statements = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + "statements"
-					+ File.separator + "english" + File.separator + "statement.pdf");
-			return new StorageFileInputStream(statements);
-		} catch (Throwable e) {
-			throw new StorageException("cannot get statements; contestId = " + contestId, e);
-		}
-	}
-
-	public StorageProblem getContestProblem(long contestId, long problemId) {
-		return new StorageProblem(getContestProblemFolder(contestId, problemId));
-	}
-
-	public StorageContest createContest(File contestRoot) throws StorageException {
+	public ParseInfo parseContest(File contestRoot){
 		File folder = null;
 		try {
 			folder = createTempContestFolder();
-			FileUtils.copyDirectory(contestRoot, folder);
-			StorageContest contest = new StorageContest(folder);
-			contest.validate();
-			return insertContest(contest);
+			return new ContestParser(contestRoot, folder).parse();
 		} catch (IOException e) {
-			logger.warn("can't create new contest", e);
-			throw new StorageException("Internal error: " + e.getMessage(), e);
-		} finally {
 			if (folder != null) {
 				clearTempContestFolder(folder);
 			}
+			logger.warn("can't parse contest", e);
+			throw new StorageException("Internal error: " + e.getMessage(), e);
+		}
+	}
+
+	public void insertContest(ParseInfo parseInfo, Long id) {
+		try {
+			FileUtils.copyDirectory(parseInfo.getTmpContestPath(), getContestFolder(id));
+		} catch (IOException e){
+			throw new StorageException("cannot insert contest with id " + id, e);
+		}
+	}
+
+	public void removeFailParsedContest(ParseInfo parseInfo){
+		clearTempContestFolder(parseInfo.getTmpContestPath());
+	}
+
+	public InputStream getStatements(long contestId) {
+		return getStatements(contestId, "en");
+	}
+
+	public InputStream getStatements(long contestId, String language) {
+		try {
+			File statementsJson = new File(getStatementsFolder(contestId) + File.separator + Statements.JSON_NAME);
+			BiFunction<JSONObject, File, Statements> f = Statements::parseFormJson;
+			List<Statements> statements = ParseUtils.parseArray(getStatementsFolder(contestId),
+					statementsJson, f);
+			File result = statements.stream()
+					.filter(s -> s.getLanguage().equals(language))
+					.findAny()
+					.get().getFilePath();
+			return new StorageFileInputStream(result);
+		} catch (Throwable e) {
+			throw new StorageException("cannot get statements on language " + language + " in contest " +
+					contestId, e);
 		}
 	}
 
 	private void clearTempContestFolder(File folder) {
 		try {
-			FileUtils.deleteDirectory(folder.getParentFile());
+			FileUtils.deleteDirectory(folder);
 		} catch (Throwable e) {
 			logger.error("can't delete temp directory", e);
 		}
 	}
 
-	private StorageContest insertContest(StorageContest contest) throws IOException {
-		long newContestId = contestIdGenerator.getAndIncrement();
-		FileUtils.copyDirectory(contest.getRoot(), getContestFolder(newContestId));
-		return getContest(newContestId);
-	}
-
 	private File createTempContestFolder() throws IOException {
 		Path temp = Files.createTempDirectory(tempFolder.toPath(), "contest-");
-		File result = new File(temp.toFile().getAbsolutePath() + File.separator + CONTEST_ID_FORMAT);
+		File result = temp.toFile();
 		//noinspection ResultOfMethodCallIgnored
 		result.mkdirs();
 		return result;
-	}
-
-	public void updateContest(Long contestId, File contestRoot) {
-		String contestDirectoryPath = this.root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId);
-		File contestDir = new File(contestDirectoryPath);
-		try {
-			FileUtils.deleteDirectory(contestDir);
-			FileUtils.copyDirectory(contestRoot, contestDir);
-		} catch (IOException e) {
-			logger.error("can not update contest", e);
-			throw new StorageException("can not update contest", e);
-		}
 	}
 
 	public void setRoot(String root) {
@@ -157,13 +127,32 @@ public class Storage implements InitializingBean {
 				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
 	}
 
-	private File getContestProblemFolder(long contestId, long problemId) {
-		return new File(root + File.separator + StorageContest.FOLDER_NAME + File.separator +
-				new DecimalFormat(CONTEST_ID_FORMAT).format(contestId) + File.separator + StorageProblem.FOLDER_NAME
+	private File getStatementsFolder(long contestId){
+		return new File(getContestFolder(contestId) + File.separator + Statements.FOLDER_NAME);
+	}
+
+	private File getProblemFolder(long contestId, long problemId) {
+		return new File(getContestFolder(contestId) + File.separator + StorageProblem.FOLDER_NAME
 				+ File.separator + problemId);
 	}
 
-	public InputStream getTestInput(Long contestId, Long problemId, Long testId) {
+	private File getCheckerFolder(long contestId, long problemId){
+		return new File(getProblemFolder(contestId, problemId) + File.separator + Checker.FOLDER_NAME);
+	}
+
+	private File getTestsFolder(long contestId, long problemId){
+		return new File(getProblemFolder(contestId, problemId) + File.separator + Test.FOLDER_NAME);
+	}
+
+	private File getValidatorFolder(long contestId, long problemId){
+		return new File(getProblemFolder(contestId, problemId) + File.separator + Validator.FOLDER_NAME);
+	}
+
+	private File getSolutionFolder(long contestId, long problemId){
+		return new File(getProblemFolder(contestId, problemId) + File.separator + Solution.FOLDER_NAME);
+	}
+
+	public InputStream getTestInput(Long contestId, Long problemId, Long testId) {//TODO fix (parse json)
 		try {
 			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".in");
@@ -174,7 +163,7 @@ public class Storage implements InitializingBean {
 		}
 	}
 
-	public InputStream getTestAnswer(Long contestId, Long problemId, Long testId) {
+	public InputStream getTestAnswer(Long contestId, Long problemId, Long testId) {//TODO fix (parse json)
 		try {
 			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
 					+ File.separator + problemId + File.separator + "tests" + File.separator + new DecimalFormat("000").format(testId) + ".ans");
@@ -185,14 +174,19 @@ public class Storage implements InitializingBean {
 		}
 	}
 
-	public InputStream getChecker(Long contestId, Long problemId) {
+	public InputStream getChecker(Long contestId, Long problemId) {//TODO fix (parse json)
 		try {
-			File file = new File(getContestFolder(contestId).getAbsolutePath() + File.separator + StorageProblem.FOLDER_NAME
-					+ File.separator + problemId + File.separator + "files" + File.separator + "checker.exe");
-			return new StorageFileInputStream(file);
+			File checkerJson = new File(getCheckerFolder(contestId, problemId)
+					+ File.separator + Checker.JSON_NAME);
+			BiFunction<JSONObject, File, Checker> f = Checker::parseFormJson;
+			Checker checker = ParseUtils.parseObject(getCheckerFolder(contestId, problemId),
+					checkerJson, f);
+			return new StorageFileInputStream(checker.getFilePath());
 		} catch (Throwable e) {
 			throw new StorageException("can not get checker: contestId=" + contestId +
 					" problemId=" + problemId, e);
 		}
 	}
+
+
 }
