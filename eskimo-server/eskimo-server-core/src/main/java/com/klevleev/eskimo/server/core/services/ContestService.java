@@ -1,9 +1,10 @@
 package com.klevleev.eskimo.server.core.services;
 
 import com.klevleev.eskimo.server.core.domain.Contest;
+import com.klevleev.eskimo.server.core.domain.Statements;
 
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public interface ContestService {
 
-	Contest insertContest(File contestRoot);
+	Contest saveContestZip(File contestRoot) throws IOException;
 
 	Contest getContestById(Long contestId);
 
@@ -19,5 +20,7 @@ public interface ContestService {
 
 	List<Contest> getAllContests();
 
-	InputStream getStatements(Long contestId);
+	Statements getStatements(Long contestId, String language);
+
+	Statements getStatements(Long contestId);
 }

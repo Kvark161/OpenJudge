@@ -1,45 +1,33 @@
 package com.klevleev.eskimo.server.core.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
+/**
+ * Created by Sokirkina Ekaterina on 06-Feb-2017.
+ */
 public class Contest implements Serializable {
 	private static final long serialVersionUID = -7614541625538455702L;
 
-	private long id;
+	@Getter	@Setter
+	private Long id;
+
+	@Getter @Setter
 	private String name;
+
+	@Getter @Setter
 	private LocalDateTime startTime;
+
+	@Getter @Setter
 	private Integer duration;
 
-	public LocalDateTime getStartTime() {
-		return startTime;
-	}
+	@Getter @Setter
+	private List<Statements> statements;
 
-	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
-	}
-
-	public Integer getDuration() {
-		return duration;
-	}
-
-	public void setDuration(Integer duration) {
-		this.duration = duration;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+	@Getter @Setter
+	private List<Problem> problems;
 }

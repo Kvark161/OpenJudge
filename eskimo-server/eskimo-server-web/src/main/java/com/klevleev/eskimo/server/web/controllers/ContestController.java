@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -39,7 +40,6 @@ public class ContestController {
 	private final UserService userService;
 
 	private final FileUtils fileUtils;
-
 
 	private final SubmissionService submissionService;
 
@@ -98,7 +98,7 @@ public class ContestController {
 		}
 		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
-		try (InputStream statements = contestService.getStatements(contestId)) {
+		try (InputStream statements = new FileInputStream(contestService.getStatements(contestId).getFilePath())) {
 			response.setContentType(MediaType.APPLICATION_PDF_VALUE);
 			response.setHeader("Content-Disposition", "inline; filename=\"statements\"");
 			org.apache.commons.io.IOUtils.copy(statements, response.getOutputStream());
@@ -132,6 +132,8 @@ public class ContestController {
 		Contest contest = contestService.getContestById(contestId);
 		model.addAttribute("contest", contest);
 		if (bindingResult.hasErrors()) {
+			List<Problem> problems = problemService.getContestProblems(contestId);
+			model.addAttribute("problems", problems);
 			return "contest/submit";
 		}
 		Submission submission = new Submission();
@@ -176,29 +178,19 @@ public class ContestController {
 	@PostMapping(value = "/contests/new/zip")
 	public String newContestFromZip(@RequestParam("file") MultipartFile multipartFile,
 	                                Model model) {
-		File contestZipFile = null;
-		File contestFolder = null;
 		try {
-			contestZipFile = fileUtils.saveFile(multipartFile, "contest-", "zip");
-			contestFolder = fileUtils.unzip(contestZipFile);
-			contestService.insertContest(fileUtils.getUnzippedContestFolder(contestFolder));
+			File contestZipFile = fileUtils.saveFile(multipartFile, "contest-", "zip");
+			contestService.saveContestZip(contestZipFile);
+			return "redirect:/contests";
 		} catch (IOException e) {
 			logger.error("can not upload file " + multipartFile.getName(), e);
-			model.addAttribute("error", "can't upload a file: " + e.getMessage());
+			model.addAttribute("error", "Can't upload file: " + e.getMessage());
 			return "/contest/new";
-		} catch (Throwable e) {
-			logger.debug("incorrect contest's format", e);
-			model.addAttribute("error", "incorrect contest's format: " + e.getMessage());
+		} catch (RuntimeException e) {
+			logger.debug("Contest failed to insert", e);
+			model.addAttribute("error", "Contest don't added: " + e.getMessage());
 			return "/contest/new";
-		} finally {
-			if (contestFolder != null) {
-				fileUtils.deleteFolder(contestFolder);
-			}
-			if (contestZipFile != null) {
-				fileUtils.deleteFile(contestZipFile);
-			}
 		}
-		return "redirect:/contests";
 	}
 
 	@GetMapping(value = "/contest/{contestId}/edit")

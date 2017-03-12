@@ -13,9 +13,11 @@
 <body>
 <eskimo:contestMenu/>
 
+<c:url value="/contest/${contest.id}/edit" var="editUrl"/>
+
 <div class="container">
 
-	<form:form method="POST" action="${editUrl}" modelAttribute="editContestForm">
+	<form:form method="POST" action="${editUrl}"  modelAttribute="editContestForm">
 		<div class="row form-group">
 			<div class="col-xs-2 control-label">Name:</div>
 			<form:label path="name"/>
@@ -50,6 +52,7 @@
 
 		<div class="form-group">
 			<div class="col-xs-3"></div>
+			<button type="reset">Cancel</button>
 			<button type="submit">Submit</button>
 		</div>
 	</form:form>

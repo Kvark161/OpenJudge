@@ -9,9 +9,12 @@ import java.util.List;
  * Created by Sokirkina Ekaterina on 27-Dec-2016.
  */
 public interface ProblemDao {
+
+	Problem insertProblem(Problem problem, Long contestId, Long numberInContest);
+
 	List<Problem> getContestProblems(Long contestId);
 
-	Problem getProblemById(Long problemId);
+	Problem getProblemInfo(Long problemId);
 
 	InputStream getTestInput(Long problemId, Long testId);
 

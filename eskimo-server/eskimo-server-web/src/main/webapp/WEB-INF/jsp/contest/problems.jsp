@@ -22,7 +22,7 @@
 	<tbody>
 	<c:forEach items="${problems}" var="problem">
 		<tr>
-			<td>${problem.index}</td>
+			<td>${problem.numberInContest}</td>
 			<td>${problem.name}</td>
 		</tr>
 	</c:forEach>

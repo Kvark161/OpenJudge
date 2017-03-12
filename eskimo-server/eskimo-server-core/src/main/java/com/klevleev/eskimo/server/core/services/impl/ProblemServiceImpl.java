@@ -28,6 +28,6 @@ public class ProblemServiceImpl implements ProblemService {
 
 	@Override
 	public Problem getProblemById(Long problemId) {
-		return problemDao.getProblemById(problemId);
+		return problemDao.getProblemInfo(problemId);
 	}
 }

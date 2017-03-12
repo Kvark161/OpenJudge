@@ -67,13 +67,29 @@
 			</column>
 		</createTable>
 
-		<createTable tableName="problems">
+		<createTable tableName="statements">
 			<column name="id" type="bigint" autoIncrement="true">
 				<constraints primaryKey="true" nullable="false"/>
 			</column>
 			<column name="contest_id" type="bigint">
 				<constraints nullable="false" referencedTableName="contests"
 				             referencedColumnNames="id" foreignKeyName="fk_statements_contests"/>
+			</column>
+			<column name="language" type="text">
+				<constraints nullable="false"/>
+			</column>
+			<column name="file_path" type="text">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<createTable tableName="problems">
+			<column name="id" type="bigint" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="contest_id" type="bigint">
+				<constraints nullable="false" referencedTableName="contests"
+				             referencedColumnNames="id" foreignKeyName="fk_problems_contests"/>
 			</column>
 			<column name="number_in_contest" type="int">
 				<constraints nullable="false"/>

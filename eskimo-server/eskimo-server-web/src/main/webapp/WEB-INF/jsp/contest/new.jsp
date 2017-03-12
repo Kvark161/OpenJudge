@@ -22,6 +22,12 @@
 		<input type="submit" value="Create"/>
 	</form>
 
+	<c:if test="${!empty error}">
+		<div class="alert alert-danger">
+			<strong>Fail! </strong>${error}
+		</div>
+	</c:if>
+
 </div>
 
 <eskimo:footer/>

@@ -1,65 +1,58 @@
 package com.klevleev.eskimo.server.core.domain;
 
+import com.klevleev.eskimo.server.core.exceptions.ContestParseException;
+import lombok.Getter;
+import lombok.Setter;
+import org.json.simple.JSONObject;
+
+import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * Created by Stepan Klevleev on 15-Aug-16.
+ * Created by Sokirkina Ekaterina on 06-Feb-2017.
  */
 public class Problem implements Serializable {
 	private static final long serialVersionUID = 4102520856376069141L;
 
+	@Getter	@Setter
 	private Long id;
-	private String index;
+
+	@Getter	@Setter
+	private Long numberInContest;
+
+	@Getter @Setter
 	private String name;
+
+	@Getter @Setter
 	private Long timeLimit;
+
+	@Getter @Setter
 	private Long memoryLimit;
-	private Long testsCount;
 
-	public Long getId() {
-		return id;
+	@Getter @Setter
+	private Checker checker;
+
+	@Getter @Setter
+	private Validator validator;
+
+	@Getter @Setter
+	private List<Test> tests;
+
+	@Getter @Setter
+	private List<Solution> solutions;
+
+
+	public static Problem parseFromJSON(JSONObject problem, File folder){
+		try {
+			Problem result = new Problem();
+			result.name = problem.get("name").toString();
+			result.timeLimit = (long)problem.get("time-limit");
+			result.memoryLimit = (long)problem.get("memory-limit");
+			return result;
+		} catch (NullPointerException e){
+			throw new ContestParseException("wrong json object format", e);
+		}
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getIndex() {
-		return index;
-	}
-
-	public void setIndex(String index) {
-		this.index = index;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Long getTimeLimit() {
-		return timeLimit;
-	}
-
-	public void setTimeLimit(Long timeLimit) {
-		this.timeLimit = timeLimit;
-	}
-
-	public Long getMemoryLimit() {
-		return memoryLimit;
-	}
-
-	public void setMemoryLimit(Long memoryLimit) {
-		this.memoryLimit = memoryLimit;
-	}
-
-	public Long getTestsCount() {
-		return testsCount;
-	}
-
-	public void setTestsCount(Long testsCount) {
-		this.testsCount = testsCount;
-	}
 }
