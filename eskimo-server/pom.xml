@@ -16,8 +16,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>eskimo-server-core</module>
-		<module>eskimo-server-web</module>
+		<module>eskimo-backend</module>
 	</modules>
 
 	<dependencies>
