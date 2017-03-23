@@ -17,6 +17,7 @@
 
 	<modules>
 		<module>eskimo-backend</module>
+		<module>eskimo-frontend</module>
 	</modules>
 
 	<dependencies>
