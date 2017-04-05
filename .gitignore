@@ -6,3 +6,4 @@ eskimo-server/eskimo-backend/target
 eskimo-server/eskimo-frontend/target
 eskimo-server/eskimo-frontend/src/main/eskimo-frontend/node
 eskimo-server/eskimo-frontend/src/main/eskimo-frontend/node_modules
+eskimo-server/eskimo-frontend/src/main/eskimo-frontend/dist/
