@@ -1,7 +1,27 @@
-<md-toolbar>
-    Eskimo
-    <a md-button routerLink="home">Home</a>
-    <a md-button routerLink="about">About</a>
-</md-toolbar>
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="home">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="about">About</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" routerLink="signup">Sign up</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{{ numberContests }}
 
 <router-outlet></router-outlet>

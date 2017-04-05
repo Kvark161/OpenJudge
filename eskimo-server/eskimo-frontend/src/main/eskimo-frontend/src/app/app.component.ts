@@ -1,4 +1,5 @@
 import {Component} from "@angular/core";
+import {EskimoService} from "./services/eskimo.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,14 @@ import {Component} from "@angular/core";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  numberContests: number = -1;
+
+  constructor(private eskimoService: EskimoService) {
+    eskimoService.getContests().subscribe(contests => {
+      console.log(contests);
+      this.numberContests = contests.length;
+    });
+  }
 
 }
