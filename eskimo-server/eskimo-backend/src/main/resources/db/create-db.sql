@@ -12,34 +12,6 @@ create sequence statements_id_seq;
 
 create sequence problems_id_seq;
 
-create table databasechangeloglock
-(
-	id integer not null
-		constraint pk_databasechangeloglock
-			primary key,
-	locked boolean not null,
-	lockgranted timestamp,
-	lockedby varchar(255)
-);
-
-create table databasechangelog
-(
-	id varchar(255) not null,
-	author varchar(255) not null,
-	filename varchar(255) not null,
-	dateexecuted timestamp not null,
-	orderexecuted integer not null,
-	exectype varchar(10) not null,
-	md5sum varchar(35),
-	description varchar(255),
-	comments varchar(255),
-	tag varchar(255),
-	liquibase varchar(20),
-	contexts varchar(255),
-	labels varchar(255),
-	deployment_id varchar(10)
-);
-
 create table users
 (
 	id bigint default nextval('users_id_seq'::regclass) not null
