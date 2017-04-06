@@ -14,14 +14,6 @@
 	<artifactId>eskimo-backend</artifactId>
 	<packaging>jar</packaging>
 
-	<properties>
-		<liquibase.version>3.5.1</liquibase.version>
-		<postgresql.db.url>jdbc:postgresql://localhost:5432/postgres</postgresql.db.url>
-		<postgresql.db.driver>org.postgresql.Driver</postgresql.db.driver>
-		<postgresql.db.name>postgres</postgresql.db.name>
-		<postgresql.db.password>postgres</postgresql.db.password>
-	</properties>
-
 	<dependencies>
 
 		<dependency>
