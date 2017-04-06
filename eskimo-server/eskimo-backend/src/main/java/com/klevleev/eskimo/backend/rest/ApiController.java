@@ -35,7 +35,7 @@ public class ApiController {
                 jsonWriter.beginObject();
                 jsonWriter.name("id").value(contest.getId());
                 jsonWriter.name("name").value(contest.getName());
-                jsonWriter.name("startTime").value(contest.getStartTime().toString());
+                jsonWriter.name("startTime").value(contest.getStartTime() != null ? contest.getStartTime().toString() : null);
                 jsonWriter.name("duration").value(contest.getDuration());
                 jsonWriter.endObject();
             }

@@ -10,6 +10,7 @@ import {router} from "./app.router";
 import {RouterModule} from "@angular/router";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {EskimoService} from "./services/eskimo.service";
+import {ContestsComponent} from "./pages/contests/contests.component";
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {EskimoService} from "./services/eskimo.service";
     declarations: [
         AppComponent,
         AboutComponent,
-        HomeComponent
+        HomeComponent,
+        ContestsComponent
     ],
     providers: [EskimoService],
     bootstrap: [AppComponent]

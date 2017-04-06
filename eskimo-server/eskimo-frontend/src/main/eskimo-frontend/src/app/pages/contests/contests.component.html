@@ -1,0 +1,18 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Start</th>
+            <th>Duration</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let contest of contests">
+            <th scope="row">{{contest.id}}</th>
+            <td>{{contest.name}}</td>
+            <td>{{contest.startTime}}</td>
+            <td>{{contest.duration}}</td>
+        </tr>
+    </tbody>
+</table>
