@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.annotation.PostConstruct;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +24,13 @@ public class FileUtils {
 
 	@Value("${eskimo.temp.path}")
 	private String tempRoot;
+
+	private File tempRootFile;
+
+	@PostConstruct
+	public void init() {
+		tempRootFile = new File(tempRoot);
+	}
 
 	public File unzip(File zipFile) throws IOException {
 		byte[] buffer = new byte[1024];
@@ -51,6 +57,27 @@ public class FileUtils {
 		return outputFolder.toFile();
 	}
 
+	public File saveFile(MultipartFile file, String prefix, String suffix) throws IOException {
+		File filePath = File.createTempFile(prefix, suffix, tempRootFile);
+		byte[] bytes = file.getBytes();
+		try (FileOutputStream fos = new FileOutputStream(filePath);
+			 BufferedOutputStream stream = new BufferedOutputStream(fos)) {
+			stream.write(bytes);
+		} catch (Throwable e) {
+			logger.error("can't save file=" + file.getName(), e);
+			deleteFile(filePath);
+		}
+		return filePath;
+	}
+
+	private void deleteFile(File file){
+		try {
+			org.apache.commons.io.FileUtils.forceDelete(file);
+		} catch (Throwable e) {
+			logger.error("can't delete temp file=" + file, e);
+		}
+	}
+
 	public File copyFileToFolder(File file, File folder) throws IOException{
 		//noinspection ResultOfMethodCallIgnored
 		folder.mkdirs();
@@ -58,5 +85,6 @@ public class FileUtils {
 		Files.copy(file.toPath(), result.toPath());
 		return result;
 	}
+
 
 }

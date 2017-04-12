@@ -10,13 +10,23 @@ import "rxjs/add/observable/throw";
 @Injectable()
 export class EskimoService {
 
-    private apiUrl = 'http://localhost:8080/api/contests';
+    private urlHost = 'http://localhost:8080/api/';
+    private urlContests = this.urlHost + 'contests';
+    private urlContestCreate = this.urlHost + 'contest/create/from/zip';
 
     constructor(private http: Http) {
     }
 
     getContests(): Observable<Contest[]> {
-        return this.http.get(this.apiUrl)
+        return this.http.get(this.urlContests)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    createContest(file: File): Observable<Contest> {
+        let formData: FormData = new FormData();
+        formData.append('file', file, file.name);
+        return this.http.post(this.urlContestCreate, formData)
             .map(res => res.json())
             .catch(this.handleError);
     }

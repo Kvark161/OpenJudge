@@ -11,6 +11,7 @@ import {ContestsComponent} from "./pages/contests/contests.component";
 import {AppComponent} from "./app.component";
 import {AboutComponent} from "./pages/about/about.component";
 import {HomeComponent} from "./pages/home/home.component";
+import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
 
 @NgModule({
     imports: [
@@ -18,13 +19,14 @@ import {HomeComponent} from "./pages/home/home.component";
         FormsModule,
         HttpModule,
         RouterModule.forRoot(router),
-        NgbModule
+        NgbModule.forRoot()
     ],
     declarations: [
         AppComponent,
         AboutComponent,
         HomeComponent,
-        ContestsComponent
+        ContestsComponent,
+        NewContestComponent
     ],
     providers: [EskimoService],
     bootstrap: [AppComponent]

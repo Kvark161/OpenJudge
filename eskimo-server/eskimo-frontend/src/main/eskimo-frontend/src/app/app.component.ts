@@ -12,7 +12,6 @@ export class AppComponent {
 
   constructor(private eskimoService: EskimoService) {
     eskimoService.getContests().subscribe(contests => {
-      console.log(contests);
       this.numberContests = contests.length;
     });
   }

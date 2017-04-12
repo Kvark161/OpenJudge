@@ -9,7 +9,6 @@ import com.klevleev.eskimo.backend.domain.Statement;
 import com.klevleev.eskimo.backend.parsers.impl.ContestParserJson;
 import com.klevleev.eskimo.backend.services.ContestService;
 import com.klevleev.eskimo.backend.utils.FileUtils;
-import com.klevleev.eskimo.backend.utils.TemplateFile;
 import com.klevleev.eskimo.backend.utils.TemplateFolder;
 import lombok.Cleanup;
 import org.slf4j.Logger;
@@ -52,8 +51,7 @@ public class ContestServiceImpl implements ContestService {
 	@Override
 	@Transactional
 	public Contest saveContestZip(File contestZip) throws IOException {
-		@Cleanup TemplateFile contestZipFile = new TemplateFile(contestZip);
-		@Cleanup TemplateFolder unzippedFolder = new TemplateFolder(fileUtils.unzip(contestZipFile.getFile()));
+		@Cleanup TemplateFolder unzippedFolder = new TemplateFolder(fileUtils.unzip(contestZip));
 		File[] files = unzippedFolder.getFolder().listFiles();
 		if (files == null || files.length != 1 || !files[0].isDirectory()) {
 			throw new RuntimeException("zip should contain only one folder");

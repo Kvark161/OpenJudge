@@ -49,7 +49,7 @@ public class StatementsDaoImpl implements StatementDao {
 	public void insertStatement(Statement statement, Long contestId) {
 		try {
 			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-					.withTableName("statement")
+					.withTableName("statements")
 					.usingGeneratedKeyColumns("id");
 			Map<String, Object> params = new HashMap<>();
 			params.put("contest_id", contestId);
