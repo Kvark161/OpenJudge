@@ -12,6 +12,8 @@ create sequence statements_id_seq;
 
 create sequence problems_id_seq;
 
+create sequence programming_languages_id_seq;
+
 create table users
 (
 	id bigint default nextval('users_id_seq'::regclass) not null
@@ -77,4 +79,17 @@ create table problems
 	memory_limit bigint not null,
 	tests_count bigint not null
 );
+
+
+create table programming_languages
+(
+	id bigint default nextval('programming_languages_id_seq'::regclass) not null
+		constraint pk_problems
+		primary key,
+	name text not null
+		constraint programming_languages_name_key
+		unique,
+	description text not null
+)
+;
 
