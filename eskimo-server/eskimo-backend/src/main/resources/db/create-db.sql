@@ -84,7 +84,7 @@ create table problems
 create table programming_languages
 (
 	id bigint default nextval('programming_languages_id_seq'::regclass) not null
-		constraint pk_problems
+		constraint pk_programming_languages
 		primary key,
 	name text not null
 		constraint programming_languages_name_key
