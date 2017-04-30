@@ -1,10 +1,7 @@
 package com.klevleev.eskimo.backend.dao.impl;
 
 import com.klevleev.eskimo.backend.dao.DaoFactory;
-import com.klevleev.eskimo.backend.domain.Checker;
-import com.klevleev.eskimo.backend.domain.Problem;
-import com.klevleev.eskimo.backend.domain.Test;
-import com.klevleev.eskimo.backend.domain.Validator;
+import com.klevleev.eskimo.backend.domain.*;
 
 import java.util.List;
 
@@ -13,91 +10,133 @@ import java.util.List;
  */
 class LazyProblem extends Problem {
 
-	private boolean isNumberInContestSet;
-	private boolean isNameSet;
-	private boolean isTimeLimitSet;
-	private boolean isMemoryLimitSet;
+	private boolean isInfoSet;
+	private boolean isCheckerSet;
+	private boolean isValidatorSet;
+	private boolean isTestsSet;
+	private boolean isSolutionsSet;
 
-	 LazyProblem(Long id) {
+	LazyProblem(Long id) {
 		setId(id);
 	}
 
 	@Override
-	public void setNumberInContest(Long numberInContest) {
-		super.setNumberInContest(numberInContest);
-		isNumberInContestSet = true;
+	public void setIndex(Long numberInContest) {
+		checkProblemInfo();
+		super.setIndex(numberInContest);
 	}
 
 	@Override
-	public Long getNumberInContest() {
-		if (!isNumberInContestSet){
-			setProblemInfo(DaoFactory.getProblemDao().getProblemInfo(super.getId()));
-		}
-		return super.getNumberInContest();
+	public Long getIndex() {
+		checkProblemInfo();
+		return super.getIndex();
 	}
 
 	@Override
 	public void setName(String name) {
+		checkProblemInfo();
 		super.setName(name);
-		isNameSet = true;
 	}
 
 	@Override
 	public String getName() {
-		if (!isNameSet){
-			setProblemInfo(DaoFactory.getProblemDao().getProblemInfo(super.getId()));
-		}
+		checkProblemInfo();
 		return super.getName();
 	}
 
 	@Override
 	public void setTimeLimit(Long timeLimit) {
+		checkProblemInfo();
 		super.setTimeLimit(timeLimit);
-		isTimeLimitSet = true;
 	}
 
 	@Override
 	public Long getTimeLimit() {
-		if (!isTimeLimitSet){
-			setProblemInfo(DaoFactory.getProblemDao().getProblemInfo(super.getId()));
-		}
+		checkProblemInfo();
 		return super.getTimeLimit();
 	}
 
 	@Override
 	public void setMemoryLimit(Long memoryLimit) {
+		checkProblemInfo();
 		super.setMemoryLimit(memoryLimit);
-		isMemoryLimitSet = true;
 	}
 
 	@Override
 	public Long getMemoryLimit() {
-		if (!isMemoryLimitSet){
-			setProblemInfo(DaoFactory.getProblemDao().getProblemInfo(super.getId()));
-		}
+		checkProblemInfo();
 		return super.getMemoryLimit();
 	}
 
+	private void checkProblemInfo() {
+		if (!isInfoSet) {
+			setProblemInfo(DaoFactory.getProblemDao().getProblemInfo(getId()));
+			isInfoSet = true;
+		}
+	}
+
 	private void setProblemInfo(Problem other){
-		setId(other.getId());
-		setNumberInContest(other.getNumberInContest());
-		setName(other.getName());
-		setTimeLimit(other.getTimeLimit());
-		setMemoryLimit(other.getMemoryLimit());
+		super.setIndex(other.getIndex());
+		super.setName(other.getName());
+		super.setTimeLimit(other.getTimeLimit());
+		super.setMemoryLimit(other.getMemoryLimit());
+	}
+
+	@Override
+	public void setChecker(Checker checker) {
+		isCheckerSet = true;
+		super.setChecker(checker);
 	}
 
 	@Override
 	public Checker getChecker() {
-		throw new RuntimeException("not implemented");
+		if (!isCheckerSet) {
+			throw new RuntimeException("not implemented");
+		}
+		return super.getChecker();
 	}
 
 	@Override
+	public void setValidator(Validator validator) {
+		isValidatorSet = true;
+		super.setValidator(validator);
+	}
+
+
+	@Override
 	public Validator getValidator() {
-		throw new RuntimeException("not implemented");
+		if (!isValidatorSet) {
+			throw new RuntimeException("not implemented");
+		}
+		return super.getValidator();
+	}
+
+	@Override
+	public void setTests(List<Test> tests) {
+		isTestsSet = true;
+		super.setTests(tests);
 	}
 
 	@Override
 	public List<Test> getTests() {
-		throw new RuntimeException("not implemented");
+		if (!isTestsSet) {
+			throw new RuntimeException("not implemented");
+		}
+		return super.getTests();
 	}
+
+	@Override
+	public void setSolutions(List<Solution> solutions) {
+		isSolutionsSet = true;
+		super.setSolutions(solutions);
+	}
+
+	@Override
+	public List<Solution> getSolutions() {
+		if (!isSolutionsSet) {
+			throw new RuntimeException("not implemented");
+		}
+		return super.getSolutions();
+	}
+
 }

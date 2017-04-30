@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by Stepan Klevleev on 11-Aug-16.
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @Component
 public class FileUtils {
 
@@ -28,8 +29,9 @@ public class FileUtils {
 	private File tempRootFile;
 
 	@PostConstruct
-	public void init() {
+	public void init() throws IOException {
 		tempRootFile = new File(tempRoot);
+		tempRootFile.mkdirs();
 	}
 
 	public File unzip(File zipFile) throws IOException {

@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.utils;
+package com.klevleev.eskimo.backend.storage;
 
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -11,14 +11,14 @@ import java.io.IOException;
 /**
  * Created by Sokirkina Ekaterina on 02-Feb-2017.
  */
-public class TemplateFolder implements Closeable {
+public class TemporaryFolder implements Closeable {
 
-	private static final Logger logger = LoggerFactory.getLogger(TemplateFolder.class);
+	private static final Logger logger = LoggerFactory.getLogger(TemporaryFolder.class);
 
 	@Getter
 	private File folder;
 
-	public TemplateFolder(File folder) {
+	public TemporaryFolder(File folder) {
 		if (!folder.isDirectory())
 			logger.error(folder + "is not a folder");
 		this.folder = folder;

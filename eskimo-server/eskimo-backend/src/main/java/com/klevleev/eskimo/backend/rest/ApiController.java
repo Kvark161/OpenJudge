@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.klevleev.eskimo.backend.domain.Contest;
 import com.klevleev.eskimo.backend.services.ContestService;
+import com.klevleev.eskimo.backend.storage.TemporaryFile;
 import com.klevleev.eskimo.backend.utils.FileUtils;
-import com.klevleev.eskimo.backend.utils.TemplateFile;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class ApiController {
 
     @PostMapping("contest/create/from/zip")
     public String createContest(@RequestParam("file") MultipartFile file) throws IOException {
-        @Cleanup TemplateFile zip = new TemplateFile(fileUtils.saveFile(file, "contest-", "zip"));
+        @Cleanup TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"));
         Contest newContest = contestService.saveContestZip(zip.getFile());
         return toJson(newContest);
     }

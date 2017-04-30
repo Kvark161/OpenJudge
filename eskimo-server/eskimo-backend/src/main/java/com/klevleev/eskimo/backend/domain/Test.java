@@ -1,33 +1,17 @@
 package com.klevleev.eskimo.backend.domain;
 
-import com.klevleev.eskimo.backend.parsers.ParseUtils;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.io.File;
-import java.text.DecimalFormat;
 
 /**
  * Created by Sokirkina Ekaterina on 03-Feb-2017.
  */
+@Data
 public class Test {
 
-	@Getter @Setter
-	private Long id;
+	private long index;
+	private File inputFile;
+	private File answerFile;
 
-	@Getter @Setter
-	private File inputPath;
-
-	@Getter @Setter
-	private File answerPath;
-
-	private static final String TEST_ID_FORMAT = "000";
-
-	public static Test parseFormContainingFolder(File folder, int id){
-		Test test = new Test();
-		String testId = new DecimalFormat(TEST_ID_FORMAT).format(id);
-		test.inputPath = ParseUtils.getFile(folder, testId + ".in");
-		test.answerPath = ParseUtils.getFile(folder, testId + ".ans");
-		return test;
-	}
 }

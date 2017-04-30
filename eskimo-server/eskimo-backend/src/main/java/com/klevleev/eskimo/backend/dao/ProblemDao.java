@@ -2,7 +2,6 @@ package com.klevleev.eskimo.backend.dao;
 
 import com.klevleev.eskimo.backend.domain.Problem;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -10,15 +9,10 @@ import java.util.List;
  */
 public interface ProblemDao {
 
-	Problem insertProblem(Problem problem, Long contestId, Long numberInContest);
+	Long insertProblem(Problem problem, Long contestId);
 
 	List<Problem> getContestProblems(Long contestId);
 
 	Problem getProblemInfo(Long problemId);
 
-	InputStream getTestInput(Long problemId, Long testId);
-
-	InputStream getTestAnswer(Long problemId, Long testId);
-
-	InputStream getChecker(Long problemId);
 }

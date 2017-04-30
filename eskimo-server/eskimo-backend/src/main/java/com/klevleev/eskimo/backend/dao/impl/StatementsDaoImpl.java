@@ -2,8 +2,8 @@ package com.klevleev.eskimo.backend.dao.impl;
 
 import com.klevleev.eskimo.backend.dao.StatementDao;
 import com.klevleev.eskimo.backend.domain.Statement;
+import com.klevleev.eskimo.backend.storage.StorageService;
 import com.klevleev.eskimo.backend.utils.FileUtils;
-import com.klevleev.eskimo.backend.utils.StorageNamesGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class StatementsDaoImpl implements StatementDao {
 	private FileUtils fileUtils;
 
 	@Autowired
-	private StorageNamesGenerator storageNamesGenerator;
+	private StorageService storageService;
 
 	@PostConstruct
 	public void init() {
@@ -54,8 +54,8 @@ public class StatementsDaoImpl implements StatementDao {
 			Map<String, Object> params = new HashMap<>();
 			params.put("contest_id", contestId);
 			params.put("language", statement.getLanguage());
-			params.put("file_path", fileUtils.copyFileToFolder(statement.getFilePath(),
-					storageNamesGenerator.getStatementsFolder(contestId)));
+			params.put("file_path", fileUtils.copyFileToFolder(statement.getFile(),
+					storageService.getStatementsFolder(contestId)));
 			jdbcInsert.execute(new MapSqlParameterSource(params));
 		} catch (IOException e){
 			throw new RuntimeException(e);
@@ -90,7 +90,7 @@ public class StatementsDaoImpl implements StatementDao {
 			Statement statement = new Statement();
 			statement.setId(resultSet.getLong("id"));
 			statement.setLanguage(resultSet.getString("language"));
-			statement.setFilePath(new File(resultSet.getString("file_path")));
+			statement.setFile(new File(resultSet.getString("file_path")));
 			return statement;
 		}
 	}

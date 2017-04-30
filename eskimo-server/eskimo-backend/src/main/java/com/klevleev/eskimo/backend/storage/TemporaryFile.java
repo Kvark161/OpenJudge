@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.utils;
+package com.klevleev.eskimo.backend.storage;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +11,12 @@ import java.io.IOException;
  * Created by Sokirkina Ekaterina on 02-Feb-2017.
  */
 @Slf4j
-public class TemplateFile implements Closeable {
+public class TemporaryFile implements Closeable {
 
 	@Getter
 	private File file;
 
-	public TemplateFile(File file) {
+	public TemporaryFile(File file) {
 		if (!file.isFile()) {
 			log.warn(file + "is not a file");
 		}
