@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.dao.impl;
+package com.klevleev.eskimo.backend.dao;
 
 import com.klevleev.eskimo.backend.dao.UserDao;
 import com.klevleev.eskimo.backend.domain.User;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserDaoImplTest {
+public class UserDaoTest {
 
 	@Autowired
 	private UserDao userDao;

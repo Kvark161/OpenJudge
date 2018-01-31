@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.dao.impl;
+package com.klevleev.eskimo.backend.dao;
 
 import com.klevleev.eskimo.backend.dao.ContestDao;
 import com.klevleev.eskimo.backend.domain.Contest;
@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ContestDaoImplTest {
+public class ContestDaoTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(ContestDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ContestDao.class);
 
 	@Autowired
 	private ContestDao contestDao;

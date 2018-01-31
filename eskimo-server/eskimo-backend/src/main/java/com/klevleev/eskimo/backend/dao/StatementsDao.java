@@ -1,6 +1,5 @@
-package com.klevleev.eskimo.backend.dao.impl;
+package com.klevleev.eskimo.backend.dao;
 
-import com.klevleev.eskimo.backend.dao.StatementDao;
 import com.klevleev.eskimo.backend.domain.Statement;
 import com.klevleev.eskimo.backend.storage.StorageService;
 import com.klevleev.eskimo.backend.utils.FileUtils;
@@ -26,10 +25,10 @@ import java.util.Map;
 /**
  * Created by Sokirkina Ekaterina on 03-Feb-2017.
  */
-@Repository("statementsDao")
-public class StatementsDaoImpl implements StatementDao {
+@Repository
+public class StatementsDao {
 
-	private static final Logger logger = LoggerFactory.getLogger(StatementsDaoImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(StatementsDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -45,7 +44,6 @@ public class StatementsDaoImpl implements StatementDao {
 		int x = 2;
 	}
 
-	@Override
 	public void insertStatement(Statement statement, Long contestId) {
 		try {
 			SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
@@ -62,7 +60,6 @@ public class StatementsDaoImpl implements StatementDao {
 		}
 	}
 
-	@Override
 	public List<Statement> getAllStatements(Long contestId) {
 		try {
 			String sql = "SELECT id, language, file_path FROM statements WHERE contest_id = ?";
@@ -73,7 +70,6 @@ public class StatementsDaoImpl implements StatementDao {
 		}
 	}
 
-	@Override
 	public Statement getStatement(Long contestId, String language) {
 		try {
 			String sql = "SELECT id, language, file_path FROM statements WHERE contest_id = ? AND language = ?";

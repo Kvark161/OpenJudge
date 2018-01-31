@@ -1,26 +1,112 @@
 package com.klevleev.eskimo.backend.services;
 
+import com.klevleev.eskimo.backend.dao.ContestDao;
+import com.klevleev.eskimo.backend.dao.ProblemDao;
+import com.klevleev.eskimo.backend.dao.StatementsDao;
 import com.klevleev.eskimo.backend.domain.Contest;
+import com.klevleev.eskimo.backend.domain.Problem;
 import com.klevleev.eskimo.backend.domain.Statement;
+import com.klevleev.eskimo.backend.domain.Test;
+import com.klevleev.eskimo.backend.parsers.ContestParserEskimo;
+import com.klevleev.eskimo.backend.storage.*;
+import com.klevleev.eskimo.backend.utils.FileUtils;
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Stepan Klevleev on 25-Aug-16.
  */
-public interface ContestService {
+@Service("contestService")
+@Slf4j
+public class ContestService {
 
-	Contest saveContestZip(File contestRoot) throws IOException;
+	@Autowired
+	private ContestDao contestDao;
 
-	Contest getContestById(Long contestId);
+	@Autowired
+	private ProblemDao problemDao;
 
-	Boolean contestExists(Long id);
+	@Autowired
+	private StatementsDao statementDao;
 
-	List<Contest> getAllContests();
+	@Autowired
+	private StorageService storageService;
 
-	Statement getStatements(Long contestId, String language);
+	@Autowired
+	private FileUtils fileUtils;
 
-	Statement getStatements(Long contestId);
+	@Transactional
+	public Contest saveContestZip(File contestZip) throws IOException {
+		@Cleanup TemporaryFolder unzippedFolder = new TemporaryFolder(fileUtils.unzip(contestZip));
+		File[] files = unzippedFolder.getFolder().listFiles();
+		if (files == null || files.length != 1 || !files[0].isDirectory()) {
+			throw new RuntimeException("zip should contain only one folder");
+		}
+		File contestFolder = files[0];
+		Contest contest = new ContestParserEskimo(contestFolder).parse();
+		saveContest(contest);
+		return contest;
+	}
+
+	private void saveContest(Contest contest) {
+		Long contestId = contestDao.insertContest(contest);
+		contest.setId(contestId);
+		for (Statement s: contest.getStatements()) {
+			statementDao.insertStatement(s, contestId);
+		}
+		List<Problem> problems = contest.getProblems();
+		for (Problem problem : problems) {
+			Long id = problemDao.insertProblem(problem, contestId);
+			problem.setId(id);
+		}
+		List<StorageOrder> storageOrders = prepareStorageOrdersToSave(contest);
+		storageService.executeOrders(storageOrders);
+	}
+
+	private List<StorageOrder> prepareStorageOrdersToSave(Contest contest) {
+		List<StorageOrder> orders = new ArrayList<>();
+		Long contestId = contest.getId();
+		orders.add(new StorageOrderCreateFolder(storageService.getContestFolder(contestId)));
+		for (Statement statement : contest.getStatements()) {
+			File targetFile = storageService.getStatementFile(contestId, statement.getLanguage(), statement.getFormat());
+			orders.add(new StorageOrderCopyFile(statement.getFile(), targetFile));
+		}
+		for (Problem problem : contest.getProblems()) {
+			for (Test test : problem.getTests()) {
+				File targetInputFile = storageService.getTestInputFile(contestId, problem.getIndex(), test.getIndex());
+				File targetAnswerFile = storageService.getTestAnswerFile(contestId, problem.getIndex(), test.getIndex());
+				orders.add(new StorageOrderCopyFile(test.getInputFile(), targetInputFile));
+				orders.add(new StorageOrderCopyFile(test.getAnswerFile(), targetAnswerFile));
+			}
+		}
+		return orders;
+	}
+
+	public Contest getContestById(Long contestId) {
+		return contestDao.getContestInfo(contestId);
+	}
+
+	public Boolean contestExists(Long id) {
+		return contestDao.contestExists(id);
+	}
+
+	public List<Contest> getAllContests() {
+		return contestDao.getAllContests();
+	}
+
+	public Statement getStatements(Long contestId, String language) {
+		return statementDao.getStatement(contestId, language);
+	}
+
+	public Statement getStatements(Long contestId) {
+		return getStatements(contestId, Statement.DEFAULT_LANGUAGE);
+	}
 }

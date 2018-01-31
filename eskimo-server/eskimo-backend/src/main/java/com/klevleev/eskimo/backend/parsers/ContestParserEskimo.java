@@ -1,7 +1,6 @@
-package com.klevleev.eskimo.backend.parsers.impl;
+package com.klevleev.eskimo.backend.parsers;
 
 import com.klevleev.eskimo.backend.domain.*;
-import com.klevleev.eskimo.backend.parsers.ContestParser;
 import com.klevleev.eskimo.backend.parsers.ContestParserException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Created by Sokirkina Ekaterina on 02-Feb-2017.
  */
-public class ContestParserEskimo implements ContestParser {
+public class ContestParserEskimo {
 
     private File root;
     private InputFileNames inputFileNames;

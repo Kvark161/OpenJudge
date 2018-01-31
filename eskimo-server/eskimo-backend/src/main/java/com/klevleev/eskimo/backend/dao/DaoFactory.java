@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 public class DaoFactory {
 
     @Getter private static ContestDao contestDao;
-    @Getter private static StatementDao statementDao;
+    @Getter private static StatementsDao statementDao;
     @Getter private static ProblemDao problemDao;
 
     @Autowired
     public void init(ContestDao contestDao,
-              StatementDao statementDao,
+              StatementsDao statementDao,
               ProblemDao problemDao) {
         DaoFactory.contestDao = contestDao;
         DaoFactory.problemDao = problemDao;

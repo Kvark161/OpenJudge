@@ -1,17 +1,34 @@
 package com.klevleev.eskimo.backend.services;
 
+import com.klevleev.eskimo.backend.dao.UserDao;
 import com.klevleev.eskimo.backend.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by Ekaterina Sokirkina on 26-Aug-16.
  */
-public interface UserService {
+@Component
+public class UserService {
 
-	List<User> getAllUsers();
+	private UserDao userDao;
 
-	User getUserById(Long id);
+	@Autowired
+	public UserService(UserDao userDao) {
+		this.userDao = userDao;
+	}
 
-	User getUserByName(String name);
+	public List<User> getAllUsers() {
+		return userDao.getAllUsers();
+	}
+
+	public User getUserById(Long id) {
+		return userDao.getUserById(id);
+	}
+
+	public User getUserByName(String name) {
+		return userDao.getUserByName(name);
+	}
 }

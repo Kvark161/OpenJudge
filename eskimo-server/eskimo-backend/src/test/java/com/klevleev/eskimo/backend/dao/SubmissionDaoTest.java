@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.dao.impl;
+package com.klevleev.eskimo.backend.dao;
 
 import com.klevleev.eskimo.backend.dao.SubmissionDao;
 import com.klevleev.eskimo.backend.domain.Contest;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SubmissionDaoImplTest {
+public class SubmissionDaoTest {
 
 	@Autowired
 	private SubmissionDao submissionDao;

@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.invoker.Controllers;
+package com.klevleev.eskimo.invoker.сontrollers;
 
 import com.klevleev.eskimo.invoker.domain.CompilationParameter;
 import com.klevleev.eskimo.invoker.domain.CompilationResult;

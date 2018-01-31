@@ -1,4 +1,4 @@
-package com.klevleev.eskimo.backend.dao.impl;
+package com.klevleev.eskimo.backend.dao;
 
 import com.klevleev.eskimo.backend.dao.DaoFactory;
 import com.klevleev.eskimo.backend.domain.Contest;
