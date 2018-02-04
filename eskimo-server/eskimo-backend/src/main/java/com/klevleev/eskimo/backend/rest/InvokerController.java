@@ -1,6 +1,5 @@
 package com.klevleev.eskimo.backend.rest;
 
-import com.google.gson.Gson;
 import com.klevleev.eskimo.backend.services.ContestService;
 import com.klevleev.eskimo.backend.services.ProblemService;
 import com.klevleev.eskimo.backend.utils.FileUtils;
@@ -27,8 +26,6 @@ public class InvokerController {
 
     @Autowired
     private FileUtils fileUtils;
-
-    private Gson gson = new Gson();
 
     @RequestMapping("test")
     public String getAllContests(Long problemId, Long testId) throws IOException {

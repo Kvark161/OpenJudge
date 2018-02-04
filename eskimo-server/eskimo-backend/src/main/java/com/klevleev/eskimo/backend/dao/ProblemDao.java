@@ -37,7 +37,7 @@ public class ProblemDao {
 		params.put("name", problem.getName());
 		params.put("time_limit", problem.getTimeLimit());
 		params.put("memory_limit", problem.getMemoryLimit());
-		params.put("tests_count", problem.getTests().size());
+		params.put("tests_count", problem.getTestsCount());
 		params.put("number_in_contest", problem.getIndex());
 		return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
 	}
