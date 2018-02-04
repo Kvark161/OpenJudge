@@ -1,8 +1,7 @@
 package com.klevleev.eskimo.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.io.File;
 
 /**
  * Created by Sokirkina Ekaterina on 12-Mar-2017.
@@ -11,7 +10,8 @@ import java.io.File;
 public class Solution {
 
 	private Long id;
-	private File file;
+	private String name;
+	@JsonProperty("source_type")
 	private String programmingLanguage;
 
 }

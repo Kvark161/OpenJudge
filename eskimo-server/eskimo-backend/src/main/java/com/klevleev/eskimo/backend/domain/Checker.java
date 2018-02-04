@@ -1,10 +1,10 @@
 package com.klevleev.eskimo.backend.domain;
 
 
-import lombok.Data;
-
-import java.io.File;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 
 /**
@@ -13,8 +13,12 @@ import java.io.Serializable;
 @Data
 public class Checker implements Serializable {
 
-	private Long id;
-	private String programmingLanguage;
-	private File file;
+    private Long id;
+
+    @JsonProperty("type")
+    private String programmingLanguage;
+
+    @JsonProperty("name")
+    private String fileName;
 
 }

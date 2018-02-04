@@ -1,13 +1,13 @@
 package com.klevleev.eskimo.backend.services;
 
+import com.klevleev.eskimo.backend.containers.SavingContest;
+import com.klevleev.eskimo.backend.containers.SavingProblem;
 import com.klevleev.eskimo.backend.dao.ContestDao;
 import com.klevleev.eskimo.backend.dao.ProblemDao;
 import com.klevleev.eskimo.backend.dao.StatementsDao;
 import com.klevleev.eskimo.backend.domain.Contest;
-import com.klevleev.eskimo.backend.domain.Problem;
 import com.klevleev.eskimo.backend.domain.Statement;
-import com.klevleev.eskimo.backend.domain.Test;
-import com.klevleev.eskimo.backend.parsers.ContestParserEskimo;
+import com.klevleev.eskimo.backend.parsers.FolderContestParserEskimo;
 import com.klevleev.eskimo.backend.storage.*;
 import com.klevleev.eskimo.backend.utils.FileUtils;
 import lombok.Cleanup;
@@ -28,85 +28,93 @@ import java.util.List;
 @Slf4j
 public class ContestService {
 
-	@Autowired
-	private ContestDao contestDao;
+    @Autowired
+    private ContestDao contestDao;
 
-	@Autowired
-	private ProblemDao problemDao;
+    @Autowired
+    private ProblemDao problemDao;
 
-	@Autowired
-	private StatementsDao statementDao;
+    @Autowired
+    private StatementsDao statementDao;
 
-	@Autowired
-	private StorageService storageService;
+    @Autowired
+    private StorageService storageService;
 
-	@Autowired
-	private FileUtils fileUtils;
+    @Autowired
+    private FileUtils fileUtils;
 
-	@Transactional
-	public Contest saveContestZip(File contestZip) throws IOException {
-		@Cleanup TemporaryFolder unzippedFolder = new TemporaryFolder(fileUtils.unzip(contestZip));
-		File[] files = unzippedFolder.getFolder().listFiles();
-		if (files == null || files.length != 1 || !files[0].isDirectory()) {
-			throw new RuntimeException("zip should contain only one folder");
-		}
-		File contestFolder = files[0];
-		Contest contest = new ContestParserEskimo(contestFolder).parse();
-		saveContest(contest);
-		return contest;
-	}
+    @Transactional
+    public Contest saveContestZip(File contestZip) throws IOException {
+        @Cleanup TemporaryFolder unzippedFolder = new TemporaryFolder(fileUtils.unzip(contestZip));
+        File[] files = unzippedFolder.getFolder().listFiles();
+        if (files == null || files.length != 1 || !files[0].isDirectory()) {
+            throw new RuntimeException("zip should contain only one folder");
+        }
+        File contestFolder = files[0];
+        SavingContest savingContest = new FolderContestParserEskimo(contestFolder).parse();
+        saveContest(savingContest);
+        return savingContest.getContest();
+    }
 
-	private void saveContest(Contest contest) {
-		Long contestId = contestDao.insertContest(contest);
-		contest.setId(contestId);
-		for (Statement s: contest.getStatements()) {
-			statementDao.insertStatement(s, contestId);
-		}
-		List<Problem> problems = contest.getProblems();
-		for (Problem problem : problems) {
-			Long id = problemDao.insertProblem(problem, contestId);
-			problem.setId(id);
-		}
-		List<StorageOrder> storageOrders = prepareStorageOrdersToSave(contest);
-		storageService.executeOrders(storageOrders);
-	}
+    private void saveContest(SavingContest savingContest) {
+        Long contestId = contestDao.insertContest(savingContest.getContest());
+        savingContest.getContest().setId(contestId);
 
-	private List<StorageOrder> prepareStorageOrdersToSave(Contest contest) {
-		List<StorageOrder> orders = new ArrayList<>();
-		Long contestId = contest.getId();
-		orders.add(new StorageOrderCreateFolder(storageService.getContestFolder(contestId)));
-		for (Statement statement : contest.getStatements()) {
-			File targetFile = storageService.getStatementFile(contestId, statement.getLanguage(), statement.getFormat());
-			orders.add(new StorageOrderCopyFile(statement.getFile(), targetFile));
-		}
-		for (Problem problem : contest.getProblems()) {
-			for (Test test : problem.getTests()) {
-				File targetInputFile = storageService.getTestInputFile(contestId, problem.getIndex(), test.getIndex());
-				File targetAnswerFile = storageService.getTestAnswerFile(contestId, problem.getIndex(), test.getIndex());
-				orders.add(new StorageOrderCopyFile(test.getInputFile(), targetInputFile));
-				orders.add(new StorageOrderCopyFile(test.getAnswerFile(), targetAnswerFile));
-			}
-		}
-		return orders;
-	}
+        statementDao.insertStatement(savingContest.getStatements(), contestId);
+        List<SavingProblem> problems = savingContest.getProblems();
+        for (SavingProblem savingProblem : problems) {
+            Long id = problemDao.insertProblem(savingProblem.getProblem(), contestId);
+            savingProblem.getProblem().setId(id);
+        }
+        List<StorageOrder> storageOrders = prepareStorageOrdersToSave(savingContest);
+        storageService.executeOrders(storageOrders);
+    }
 
-	public Contest getContestById(Long contestId) {
-		return contestDao.getContestInfo(contestId);
-	}
+    private List<StorageOrder> prepareStorageOrdersToSave(SavingContest savingContest) {
+        List<StorageOrder> orders = new ArrayList<>();
+        Long contestId = savingContest.getContest().getId();
+        orders.add(new StorageOrderCreateFolder(storageService.getContestFolder(contestId)));
 
-	public Boolean contestExists(Long id) {
-		return contestDao.contestExists(id);
-	}
+        List<Statement> statements = savingContest.getStatements();
+        List<File> statementsFiles = savingContest.getStatementsFiles();
+        for (int i = 0; i < statements.size(); ++i) {
+            Statement statement = statements.get(i);
+            File targetFile =
+                    storageService.getStatementFile(contestId, statement.getLanguage(), statement.getFormat());
+            orders.add(new StorageOrderCopyFile(statementsFiles.get(i), targetFile));
+        }
 
-	public List<Contest> getAllContests() {
-		return contestDao.getAllContests();
-	}
+        List<SavingProblem> problems = savingContest.getProblems();
+        for (SavingProblem problem : problems) {
+            long problemId = problem.getProblem().getIndex();
+            File checkerFile = problem.getChecker();
+            orders.add(new StorageOrderCopyFile(checkerFile,
+                    new File(storageService.getCheckerFolder(savingContest.getContest().getId(), problemId)
+                            + File.separator + checkerFile.getName())));
 
-	public Statement getStatements(Long contestId, String language) {
-		return statementDao.getStatement(contestId, language);
-	}
+            File validatorFile = problem.getValidator();
+            orders.add(new StorageOrderCopyFile(validatorFile,
+                    new File(storageService.getValidatorFolder(savingContest.getContest().getId(), problemId)
+                            + File.separator + validatorFile.getName())));
 
-	public Statement getStatements(Long contestId) {
-		return getStatements(contestId, Statement.DEFAULT_LANGUAGE);
-	}
+            int testsCount = problem.getTestsInput().size();
+            List<File> testsInput = problem.getTestsInput();
+            List<File> testsAnswer = problem.getTestsAnswer();
+            for (int i = 0; i < testsCount; ++i) {
+                orders.add(new StorageOrderCopyFile(testsInput.get(i),
+                        storageService.getTestInputFile(contestId, problem.getProblem().getIndex(), i + 1)));
+                orders.add(new StorageOrderCopyFile(testsAnswer.get(i),
+                        storageService.getTestAnswerFile(contestId, problem.getProblem().getIndex(), i + 1)));
+            }
+        }
+        return orders;
+    }
+
+    public Contest getContestById(Long contestId) {
+        return contestDao.getContestInfo(contestId);
+    }
+
+    public List<Contest> getAllContests() {
+        return contestDao.getAllContests();
+    }
 }

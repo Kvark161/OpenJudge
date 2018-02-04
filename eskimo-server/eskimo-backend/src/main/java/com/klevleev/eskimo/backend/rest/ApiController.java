@@ -1,7 +1,8 @@
 package com.klevleev.eskimo.backend.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.util.List;
+
 import com.klevleev.eskimo.backend.domain.Contest;
 import com.klevleev.eskimo.backend.services.ContestService;
 import com.klevleev.eskimo.backend.storage.TemporaryFile;
@@ -9,15 +10,12 @@ import com.klevleev.eskimo.backend.utils.FileUtils;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
 
 /**
  * Created by stepank on 05.04.2017.
@@ -33,50 +31,15 @@ public class ApiController {
     @Autowired
     private FileUtils fileUtils;
 
-    private Gson gson = new Gson();
-
-    @RequestMapping("contests")
-    public String getAllContests() throws IOException {
-        List<Contest> contests = contestService.getAllContests();
-        return toJson(contests);
+    @GetMapping("contests")
+    public List<Contest> getAllContests() {
+        return contestService.getAllContests();
     }
 
     @PostMapping("contest/create/from/zip")
-    public String createContest(@RequestParam("file") MultipartFile file) throws IOException {
+    public Contest createContest(@RequestParam("file") MultipartFile file) throws IOException {
         @Cleanup TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"));
-        Contest newContest = contestService.saveContestZip(zip.getFile());
-        return toJson(newContest);
-    }
-
-    private String toJson(List<Contest> contests) throws IOException {
-        @Cleanup StringWriter result = new StringWriter();
-        @Cleanup JsonWriter jsonWriter = new JsonWriter(result);
-        jsonWriter.beginArray();
-        for (Contest contest : contests) {
-            writeJson(jsonWriter, contest);
-        }
-        jsonWriter.endArray();
-        jsonWriter.flush();
-        result.flush();
-        return result.toString();
-    }
-
-    private String toJson(Contest contest) throws IOException {
-        @Cleanup StringWriter result = new StringWriter();
-        @Cleanup JsonWriter jsonWriter = new JsonWriter(result);
-        writeJson(jsonWriter, contest);
-        jsonWriter.flush();
-        result.flush();
-        return result.toString();
-    }
-
-    private void writeJson(JsonWriter jsonWriter, Contest contest) throws IOException {
-        jsonWriter.beginObject();
-        jsonWriter.name("id").value(contest.getId());
-        jsonWriter.name("name").value(contest.getName());
-        jsonWriter.name("startTime").value(contest.getStartTime() != null ? contest.getStartTime().toString() : null);
-        jsonWriter.name("duration").value(contest.getDuration());
-        jsonWriter.endObject();
+        return contestService.saveContestZip(zip.getFile());
     }
 
 }

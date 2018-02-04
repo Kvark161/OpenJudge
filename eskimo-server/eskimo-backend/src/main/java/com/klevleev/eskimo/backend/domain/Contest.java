@@ -1,30 +1,28 @@
 package com.klevleev.eskimo.backend.domain;
 
-import com.google.gson.annotations.Expose;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonGetter;
+import lombok.Data;
 
 /**
  * Created by Sokirkina Ekaterina on 06-Feb-2017.
  */
 @Data
 public class Contest implements Serializable {
-	private static final long serialVersionUID = -7614541625538455702L;
+    private static final long serialVersionUID = -7614541625538455702L;
 
-	private Long id;
+    private Long id;
 
-	private String name;
+    private String name;
 
-	private LocalDateTime startTime;
+    private LocalDateTime startTime;
 
-	private Integer duration;
+    private Integer duration;
 
-	@Expose
-	private List<Statement> statements;
-
-	@Expose
-	private List<Problem> problems;
+    @JsonGetter("startTime")
+    public String getStartTimeString() {
+        return startTime.toString();
+    }
 }
