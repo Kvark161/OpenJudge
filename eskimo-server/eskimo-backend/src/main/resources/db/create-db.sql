@@ -45,7 +45,7 @@ CREATE TABLE statements
     CONSTRAINT fk_statements_contests
     REFERENCES contests,
   language   VARCHAR(128)          NOT NULL,
-  file_path  CLOB                  NOT NULL
+  file_name  CLOB                  NOT NULL
 );
 
 CREATE TABLE problems
