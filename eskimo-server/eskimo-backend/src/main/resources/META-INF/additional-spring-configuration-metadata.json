@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "eskimo.storage.path",
+      "type": "java.lang.String",
+      "description": "Path to storage files."
+    },
+    {
+      "name": "eskimo.temp.path",
+      "type": "java.lang.String",
+      "description": "Path to tmp folder."
+    },
+    {
+      "name": "eskimo.default.language",
+      "type": "java.lang.String",
+      "description": "Default eskimo language."
+    }
+  ]
+}

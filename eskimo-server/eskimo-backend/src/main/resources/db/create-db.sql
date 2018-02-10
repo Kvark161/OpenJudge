@@ -1,95 +1,76 @@
-drop SCHEMA IF EXISTS public CASCADE;
-
-CREATE SCHEMA public;
-
-create sequence users_id_seq;
-
-create sequence submissions_id_seq;
-
-create sequence contests_id_seq;
-
-create sequence statements_id_seq;
-
-create sequence problems_id_seq;
-
-create sequence programming_languages_id_seq;
-
-create table users
+CREATE TABLE users
 (
-	id bigint default nextval('users_id_seq'::regclass) not null
-		constraint pk_users
-			primary key,
-	name text not null
-		constraint users_name_key
-			unique,
-	password text not null,
-	is_admin boolean not null,
-	locale text not null
+  id       BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_users
+    PRIMARY KEY,
+  name     VARCHAR(128)          NOT NULL
+    CONSTRAINT users_name_key UNIQUE,
+  password VARCHAR(128)          NOT NULL,
+  is_admin BOOLEAN               NOT NULL,
+  locale   VARCHAR(128)          NOT NULL
 );
 
-create table submissions
+CREATE TABLE submissions
 (
-	id bigint default nextval('submissions_id_seq'::regclass) not null
-		constraint pk_submissions
-			primary key,
-	user_id bigint not null
-		constraint fk_submissions_users
-			references users,
-	contest_id bigint not null,
-	problem_id bigint not null,
-	source_code text not null,
-	verdict text not null,
-	sending_date_time timestamp not null,
-	test_number bigint
+  id                BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_submissions
+    PRIMARY KEY,
+  user_id           BIGINT                NOT NULL
+    CONSTRAINT fk_submissions_users
+    REFERENCES users,
+  contest_id        BIGINT                NOT NULL,
+  problem_id        BIGINT                NOT NULL,
+  source_code       CLOB                  NOT NULL,
+  verdict           CLOB                  NOT NULL,
+  sending_date_time TIMESTAMP             NOT NULL,
+  test_number       BIGINT
 );
 
-create table contests
+CREATE TABLE contests
 (
-	id bigint default nextval('contests_id_seq'::regclass) not null
-		constraint pk_contests
-			primary key,
-	name text not null,
-	start_time timestamp with time zone,
-	duration_in_minutes integer
+  id                  BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_contests
+    PRIMARY KEY,
+  name                VARCHAR(128)          NOT NULL,
+  start_time          TIMESTAMP WITH TIME ZONE,
+  duration_in_minutes INTEGER
 );
 
-create table statements
+CREATE TABLE statements
 (
-	id bigint default nextval('statements_id_seq'::regclass) not null
-		constraint pk_statements
-			primary key,
-	contest_id bigint not null
-		constraint fk_statements_contests
-			references contests,
-	language text not null,
-	file_path text not null
+  id         BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_statements
+    PRIMARY KEY,
+  contest_id BIGINT                NOT NULL
+    CONSTRAINT fk_statements_contests
+    REFERENCES contests,
+  language   VARCHAR(128)          NOT NULL,
+  file_path  CLOB                  NOT NULL
 );
 
-create table problems
+CREATE TABLE problems
 (
-	id bigint default nextval('problems_id_seq'::regclass) not null
-		constraint pk_problems
-			primary key,
-	contest_id bigint not null
-		constraint fk_problems_contests
-			references contests,
-	number_in_contest integer not null,
-	name text not null,
-	time_limit bigint not null,
-	memory_limit bigint not null,
-	tests_count bigint not null
+  id                BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_problems
+    PRIMARY KEY,
+  contest_id        BIGINT                NOT NULL
+    CONSTRAINT fk_problems_contests
+    REFERENCES contests,
+  number_in_contest INTEGER               NOT NULL,
+  name              VARCHAR(128)          NOT NULL,
+  time_limit        BIGINT                NOT NULL,
+  memory_limit      BIGINT                NOT NULL,
+  tests_count       BIGINT                NOT NULL
 );
 
 
-create table programming_languages
+CREATE TABLE programming_languages
 (
-	id bigint default nextval('programming_languages_id_seq'::regclass) not null
-		constraint pk_programming_languages
-		primary key,
-	name text not null
-		constraint programming_languages_name_key
-		unique,
-	description text not null
-)
-;
+  id          BIGINT AUTO_INCREMENT NOT NULL
+    CONSTRAINT pk_programming_languages
+    PRIMARY KEY,
+  name        VARCHAR(128)          NOT NULL
+    CONSTRAINT programming_languages_name_key UNIQUE,
+  description CLOB                  NOT NULL
+);
 
