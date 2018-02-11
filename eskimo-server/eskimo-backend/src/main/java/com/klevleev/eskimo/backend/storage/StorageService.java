@@ -28,12 +28,12 @@ public class StorageService {
     @Value("${eskimo.storage.path}")
     private String root;
 
-    public File getContestFolder(long contestId){
+    public File getContestFolder(long contestId) {
         return new File(root + File.separator + CONTEST_FOLDER_NAME + File.separator +
                 new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
     }
 
-    public File getStatementsFolder(long contestId){
+    public File getStatementsFolder(long contestId) {
         return new File(getContestFolder(contestId) + File.separator + STATEMENTS_FOLDER_NAME);
     }
 
@@ -50,11 +50,11 @@ public class StorageService {
                 + File.separator + problemIndex);
     }
 
-    public File getCheckerFolder(long contestId, long problemIndex){
+    public File getCheckerFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + CHECKERS_FOLDER_NAME);
     }
 
-    public File getTestsFolder(long contestId, long problemIndex){
+    public File getTestsFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + TESTS_FOLDER_NAME);
     }
 
@@ -66,11 +66,11 @@ public class StorageService {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".ans");
     }
 
-    public File getValidatorFolder(long contestId, long problemIndex){
+    public File getValidatorFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + VALIDATORS_FOLDER_NAME);
     }
 
-    public File getSolutionFolder(long contestId, long problemIndex){
+    public File getSolutionFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + SOLUTIONS_FOLDER_NAME);
     }
 
@@ -78,8 +78,8 @@ public class StorageService {
         int complete = 0;
         try {
             for (StorageOrder order : orders) {
-                    order.execute();
-                    ++complete;
+                order.execute();
+                ++complete;
             }
         } catch (Throwable e) {
             for (int i = complete - 1; i >= 0; --i) {

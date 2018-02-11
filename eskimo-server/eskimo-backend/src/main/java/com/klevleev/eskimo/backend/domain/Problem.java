@@ -1,10 +1,10 @@
 package com.klevleev.eskimo.backend.domain;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * Created by Sokirkina Ekaterina on 06-Feb-2017.

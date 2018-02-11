@@ -1,10 +1,10 @@
 package com.klevleev.eskimo.backend.domain;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * Created by Sokirkina Ekaterina on 06-Feb-2017.

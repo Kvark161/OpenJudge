@@ -10,21 +10,21 @@ import java.util.Locale;
  */
 @Data
 public class User implements Serializable {
-	private static final long serialVersionUID = 291660316680943555L;
+    private static final long serialVersionUID = 291660316680943555L;
 
-	private Long id;
-	private String username;
-	private String password;
-	private boolean isAdmin;
-	private Locale locale;
+    private Long id;
+    private String username;
+    private String password;
+    private boolean isAdmin;
+    private Locale locale;
 
-	@Override
-	public String toString() {
-		return "User{" +
-				"id=" + id +
-				", username='" + username + '\'' +
-				", isAdmin=" + isAdmin +
-				", locale=" + locale +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", isAdmin=" + isAdmin +
+                ", locale=" + locale +
+                '}';
+    }
 }

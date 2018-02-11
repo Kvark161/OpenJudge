@@ -20,7 +20,7 @@ public class StorageOrderCopyFile extends StorageOrder {
     }
 
     @Override
-    void execute() throws StorageOrderException{
+    void execute() throws StorageOrderException {
         try {
             targetFile.getParentFile().mkdirs();
             FileUtils.copyFile(sourceFile, targetFile);

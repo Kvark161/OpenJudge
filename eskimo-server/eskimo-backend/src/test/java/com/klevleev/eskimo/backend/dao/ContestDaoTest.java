@@ -1,6 +1,5 @@
 package com.klevleev.eskimo.backend.dao;
 
-import com.klevleev.eskimo.backend.dao.ContestDao;
 import com.klevleev.eskimo.backend.domain.Contest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,16 +20,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ContestDaoTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(ContestDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContestDao.class);
 
-	@Autowired
-	private ContestDao contestDao;
+    @Autowired
+    private ContestDao contestDao;
 
-	@Test
-	public void getAllContests() {
-		List<Contest> contestList = contestDao.getAllContests();
-		System.out.println(contestList.size());
-		assertThat(contestList).isNotNull();
-	}
+    @Test
+    public void getAllContests() {
+        List<Contest> contestList = contestDao.getAllContests();
+        System.out.println(contestList.size());
+        assertThat(contestList).isNotNull();
+    }
 
 }

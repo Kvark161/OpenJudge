@@ -13,22 +13,22 @@ import java.util.List;
 @Component
 public class UserService {
 
-	private UserDao userDao;
+    private UserDao userDao;
 
-	@Autowired
-	public UserService(UserDao userDao) {
-		this.userDao = userDao;
-	}
+    @Autowired
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
-	public List<User> getAllUsers() {
-		return userDao.getAllUsers();
-	}
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
 
-	public User getUserById(Long id) {
-		return userDao.getUserById(id);
-	}
+    public User getUserById(Long id) {
+        return userDao.getUserById(id);
+    }
 
-	public User getUserByName(String name) {
-		return userDao.getUserByName(name);
-	}
+    public User getUserByName(String name) {
+        return userDao.getUserByName(name);
+    }
 }

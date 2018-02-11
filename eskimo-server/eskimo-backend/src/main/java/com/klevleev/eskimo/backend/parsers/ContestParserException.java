@@ -5,23 +5,23 @@ package com.klevleev.eskimo.backend.parsers;
  */
 public class ContestParserException extends RuntimeException {
 
-	public ContestParserException() {
-		super();
-	}
+    public ContestParserException() {
+        super();
+    }
 
-	public ContestParserException(String message) {
-		super(message);
-	}
+    public ContestParserException(String message) {
+        super(message);
+    }
 
-	public ContestParserException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ContestParserException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ContestParserException(Throwable cause) {
-		super(cause);
-	}
+    public ContestParserException(Throwable cause) {
+        super(cause);
+    }
 
-	public static String getWrongJSONFormatMessage(String jsonObjectName, String fieldName){
-		return jsonObjectName + " json object has wrong format: " + fieldName + " doesn't exist";
-	}
+    public static String getWrongJSONFormatMessage(String jsonObjectName, String fieldName) {
+        return jsonObjectName + " json object has wrong format: " + fieldName + " doesn't exist";
+    }
 }

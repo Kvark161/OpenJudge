@@ -56,7 +56,7 @@ public class ApiController {
     public Contest createContest(@RequestParam("file") MultipartFile file) throws IOException {
         try (TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"))) {
             return contestService.saveContestZip(zip.getFile());
-        } catch (CreateContestException e){
+        } catch (CreateContestException e) {
             throw e;
         } catch (RuntimeException e) {
             throw new CreateContestException("cannot create contest", e);

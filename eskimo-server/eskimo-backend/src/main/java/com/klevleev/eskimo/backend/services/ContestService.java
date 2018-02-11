@@ -55,7 +55,7 @@ public class ContestService {
 
     @Transactional
     public Contest saveContestZip(File contestZip) {
-        try( TemporaryFile unzippedFolder = new TemporaryFile(fileUtils.unzip(contestZip))) {
+        try (TemporaryFile unzippedFolder = new TemporaryFile(fileUtils.unzip(contestZip))) {
             File[] files = unzippedFolder.getFile().listFiles();
             if (files == null || files.length != 1 || !files[0].isDirectory()) {
                 throw new CreateContestException("zip should contain only one folder");

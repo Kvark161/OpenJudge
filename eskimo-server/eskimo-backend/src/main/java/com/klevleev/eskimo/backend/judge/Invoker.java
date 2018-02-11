@@ -7,22 +7,22 @@ import java.net.URI;
  */
 class Invoker {
 
-	private URI uri;
+    private URI uri;
 
-	public URI getUri() {
-		return uri;
-	}
+    public URI getUri() {
+        return uri;
+    }
 
-	public void setUri(URI uri) {
-		this.uri = uri;
-	}
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
 
-	String getCompileUrl() {
-		return uri.toString() + "/invoke/compile";
-	}
+    String getCompileUrl() {
+        return uri.toString() + "/invoke/compile";
+    }
 
-	String getTestUrl() {
-		return uri.toString() + "/invoke/run-test";
-	}
+    String getTestUrl() {
+        return uri.toString() + "/invoke/run-test";
+    }
 
 }

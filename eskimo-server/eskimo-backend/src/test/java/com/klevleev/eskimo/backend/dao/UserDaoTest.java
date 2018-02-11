@@ -1,6 +1,5 @@
 package com.klevleev.eskimo.backend.dao;
 
-import com.klevleev.eskimo.backend.dao.UserDao;
 import com.klevleev.eskimo.backend.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,36 +18,36 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class UserDaoTest {
 
-	@Autowired
-	private UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
-	@Test
-	public void getAllUsers() throws Exception {
-		List<User> users = userDao.getAllUsers();
-		assertTrue(2 <= users.size());
-		users.forEach(user -> {
-			assertNotNull(user.getId());
-			assertNotNull(user.getUsername());
-			assertNotNull(user.getPassword());
-		});
-	}
+    @Test
+    public void getAllUsers() throws Exception {
+        List<User> users = userDao.getAllUsers();
+        assertTrue(2 <= users.size());
+        users.forEach(user -> {
+            assertNotNull(user.getId());
+            assertNotNull(user.getUsername());
+            assertNotNull(user.getPassword());
+        });
+    }
 
-	@Test
-	public void getUserById() throws Exception {
-		User user = userDao.getUserById(1L);
-		assertEquals(new Long(1L), user.getId());
-		assertEquals("admin", user.getUsername());
-		assertEquals("admin", user.getPassword());
-		assertEquals(true, user.isAdmin());
-	}
+    @Test
+    public void getUserById() throws Exception {
+        User user = userDao.getUserById(1L);
+        assertEquals(new Long(1L), user.getId());
+        assertEquals("admin", user.getUsername());
+        assertEquals("admin", user.getPassword());
+        assertEquals(true, user.isAdmin());
+    }
 
-	@Test
-	public void getUserByName() throws Exception {
-		User user = userDao.getUserByName("admin");
-		assertEquals(new Long(1L), user.getId());
-		assertEquals("admin", user.getUsername());
-		assertEquals("admin", user.getPassword());
-		assertEquals(true, user.isAdmin());
-	}
+    @Test
+    public void getUserByName() throws Exception {
+        User user = userDao.getUserByName("admin");
+        assertEquals(new Long(1L), user.getId());
+        assertEquals("admin", user.getUsername());
+        assertEquals("admin", user.getPassword());
+        assertEquals(true, user.isAdmin());
+    }
 
 }

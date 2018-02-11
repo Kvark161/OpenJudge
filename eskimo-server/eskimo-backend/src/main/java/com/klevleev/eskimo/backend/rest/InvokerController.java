@@ -41,7 +41,7 @@ public class InvokerController {
         List<Contest> contests = contestService.getAllContests();
         return toJson(contests);
 */
-return null;
+        return null;
     }
 
 }

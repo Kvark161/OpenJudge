@@ -9,9 +9,9 @@ import lombok.Data;
 @Data
 public class Solution {
 
-	private Long id;
-	private String name;
-	@JsonProperty("source_type")
-	private String programmingLanguage;
+    private Long id;
+    private String name;
+    @JsonProperty("source_type")
+    private String programmingLanguage;
 
 }

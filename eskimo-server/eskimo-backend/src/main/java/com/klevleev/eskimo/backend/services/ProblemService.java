@@ -13,18 +13,18 @@ import java.util.List;
 @Service
 public class ProblemService {
 
-	private final ProblemDao problemDao;
+    private final ProblemDao problemDao;
 
-	@Autowired
-	public ProblemService(ProblemDao problemDao) {
-		this.problemDao = problemDao;
-	}
+    @Autowired
+    public ProblemService(ProblemDao problemDao) {
+        this.problemDao = problemDao;
+    }
 
-	public List<Problem> getContestProblems(Long contestId) {
-		return problemDao.getContestProblems(contestId);
-	}
+    public List<Problem> getContestProblems(Long contestId) {
+        return problemDao.getContestProblems(contestId);
+    }
 
-	public Problem getProblemById(Long problemId) {
-		return problemDao.getProblem(problemId);
-	}
+    public Problem getProblemById(Long problemId) {
+        return problemDao.getProblem(problemId);
+    }
 }

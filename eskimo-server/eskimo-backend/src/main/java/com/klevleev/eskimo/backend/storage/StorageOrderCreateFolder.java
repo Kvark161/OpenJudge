@@ -17,7 +17,7 @@ public class StorageOrderCreateFolder extends StorageOrder {
     }
 
     @Override
-    void execute() throws StorageOrderException{
+    void execute() throws StorageOrderException {
         //noinspection ResultOfMethodCallIgnored
         folder.mkdirs();
     }

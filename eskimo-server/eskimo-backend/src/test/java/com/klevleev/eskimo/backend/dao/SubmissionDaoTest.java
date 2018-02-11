@@ -1,6 +1,5 @@
 package com.klevleev.eskimo.backend.dao;
 
-import com.klevleev.eskimo.backend.dao.SubmissionDao;
 import com.klevleev.eskimo.backend.domain.Contest;
 import com.klevleev.eskimo.backend.domain.Problem;
 import com.klevleev.eskimo.backend.domain.Submission;
@@ -22,32 +21,32 @@ import java.util.List;
 @SpringBootTest
 public class SubmissionDaoTest {
 
-	@Autowired
-	private SubmissionDao submissionDao;
+    @Autowired
+    private SubmissionDao submissionDao;
 
-	@Test
-	public void getAllSubmissions() throws Exception {
-		List<Submission> submissions = submissionDao.getAllSubmissions();
-		Assert.notNull(submissions);
-	}
+    @Test
+    public void getAllSubmissions() throws Exception {
+        List<Submission> submissions = submissionDao.getAllSubmissions();
+        Assert.notNull(submissions);
+    }
 
-	@Test
-	public void insertSubmission() throws Exception {
-		Submission submission = new Submission();
-		User user = new User();
-		user.setId(1L);
-		submission.setUser(user);
-		Contest contest = new Contest();
-		contest.setId(1L);
-		submission.setContest(contest);
-		Problem problem = new Problem();
-		problem.setId(1L);
-		submission.setProblem(problem);
-		submission.setSourceCode("This is a source code");
-		submission.setVerdict(Submission.Verdict.SUBMITTED);
-		submission.setSendingDateTime(LocalDateTime.now());
-		submissionDao.insertSubmission(submission);
-		Assert.notNull(submission.getId());
-	}
+    @Test
+    public void insertSubmission() throws Exception {
+        Submission submission = new Submission();
+        User user = new User();
+        user.setId(1L);
+        submission.setUser(user);
+        Contest contest = new Contest();
+        contest.setId(1L);
+        submission.setContest(contest);
+        Problem problem = new Problem();
+        problem.setId(1L);
+        submission.setProblem(problem);
+        submission.setSourceCode("This is a source code");
+        submission.setVerdict(Submission.Verdict.SUBMITTED);
+        submission.setSendingDateTime(LocalDateTime.now());
+        submissionDao.insertSubmission(submission);
+        Assert.notNull(submission.getId());
+    }
 
 }
