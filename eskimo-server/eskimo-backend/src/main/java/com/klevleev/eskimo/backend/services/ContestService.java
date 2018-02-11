@@ -12,36 +12,44 @@ import com.klevleev.eskimo.backend.storage.*;
 import com.klevleev.eskimo.backend.utils.FileUtils;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Stepan Klevleev on 25-Aug-16.
  */
-@Service("contestService")
+@Service
 @Slf4j
 public class ContestService {
 
-    @Autowired
     private ContestDao contestDao;
 
-    @Autowired
     private ProblemDao problemDao;
 
-    @Autowired
     private StatementsDao statementDao;
 
-    @Autowired
     private StorageService storageService;
 
-    @Autowired
     private FileUtils fileUtils;
+
+    @Autowired
+    public ContestService(ContestDao contestDao,
+                          ProblemDao problemDao,
+                          StatementsDao statementDao,
+                          StorageService storageService,
+                          FileUtils fileUtils) {
+        this.contestDao = contestDao;
+        this.problemDao = problemDao;
+        this.statementDao = statementDao;
+        this.storageService = storageService;
+        this.fileUtils = fileUtils;
+    }
 
     @Transactional
     public Contest saveContestZip(File contestZip) throws IOException {
@@ -102,9 +110,9 @@ public class ContestService {
             List<File> testsAnswer = problem.getTestsAnswer();
             for (int i = 0; i < testsCount; ++i) {
                 orders.add(new StorageOrderCopyFile(testsInput.get(i),
-                        storageService.getTestInputFile(contestId, problem.getProblem().getIndex(), i + 1)));
+                        storageService.getTestInputFile(contestId, problem.getProblem().getIndex(), i + 1L)));
                 orders.add(new StorageOrderCopyFile(testsAnswer.get(i),
-                        storageService.getTestAnswerFile(contestId, problem.getProblem().getIndex(), i + 1)));
+                        storageService.getTestAnswerFile(contestId, problem.getProblem().getIndex(), i + 1L)));
             }
         }
         return orders;
@@ -116,5 +124,10 @@ public class ContestService {
 
     public List<Contest> getAllContests() {
         return contestDao.getAllContests();
+    }
+
+    public byte[] getStatements(Long contestId) throws IOException {
+        FileInputStream statementsFileStream = new FileInputStream(storageService.getStatementFile(contestId));
+        return IOUtils.toByteArray(statementsFileStream);
     }
 }

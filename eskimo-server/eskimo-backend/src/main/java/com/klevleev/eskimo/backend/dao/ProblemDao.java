@@ -24,11 +24,14 @@ import java.util.Map;
 @Slf4j
 public class ProblemDao {
 
-
-	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	public Long insertProblem(Problem problem, Long contestId) {
+	@Autowired
+    public ProblemDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public Long insertProblem(Problem problem, Long contestId) {
 		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
 				.withTableName("problems")
 				.usingGeneratedKeyColumns("id");
@@ -44,14 +47,14 @@ public class ProblemDao {
 
 	@Transactional
 	public List<Problem> getContestProblems(Long contestId) {
-		String sql = "SELECT p.id FROM problems AS p" +
+		String sql = "SELECT p.id, p.number_in_contest, p.name, p.time_limit, p.memory_limit FROM problems AS p" +
 				" WHERE p.contest_id = ?" +
 				" ORDER BY p.number_in_contest";
-		return jdbcTemplate.query(sql, new Object[]{contestId}, new ProblemIdRowMapper());
+		return jdbcTemplate.query(sql, new Object[]{contestId}, new ProblemRowMapper());
 	}
 
 	@Transactional
-	public Problem getProblemInfo(Long id) {
+	public Problem getProblem(Long id) {
 		try {
 			String sql = "SELECT p.id, p.number_in_contest, p.name, p.time_limit, p.memory_limit FROM problems AS p" +
 					" WHERE p.id = ?";
@@ -62,17 +65,11 @@ public class ProblemDao {
 		}
 	}
 
-	private static class ProblemIdRowMapper implements RowMapper<Problem> {
-		@Override
-		public Problem mapRow(ResultSet resultSet, int i) throws SQLException {
-			return new LazyProblem(resultSet.getLong("id"));
-		}
-	}
-
 	private static class ProblemRowMapper implements RowMapper<Problem> {
 		@Override
 		public Problem mapRow(ResultSet resultSet, int i) throws SQLException {
-			Problem problem = new LazyProblem(resultSet.getLong("id"));
+			Problem problem = new Problem();
+			problem.setId(resultSet.getLong("id"));
 			problem.setIndex(resultSet.getLong("number_in_contest"));
 			problem.setName(resultSet.getString("name"));
 			problem.setTimeLimit(resultSet.getLong("time_limit"));

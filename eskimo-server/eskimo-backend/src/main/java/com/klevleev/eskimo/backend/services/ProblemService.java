@@ -25,6 +25,6 @@ public class ProblemService {
 	}
 
 	public Problem getProblemById(Long problemId) {
-		return problemDao.getProblemInfo(problemId);
+		return problemDao.getProblem(problemId);
 	}
 }

@@ -1,5 +1,6 @@
 package com.klevleev.eskimo.backend.storage;
 
+import com.klevleev.eskimo.backend.domain.Statement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,10 @@ public class StorageService {
 
     public File getStatementFile(long contestId, String language, String format) {
         return new File(getStatementsFolder(contestId) + File.separator + language + "." + format);
+    }
+
+    public File getStatementFile(long contestId) {
+        return getStatementFile(contestId, Statement.DEFAULT_LANGUAGE, Statement.DEFAULT_FORMAT);
     }
 
     public File getProblemFolder(long contestId, long problemIndex) {

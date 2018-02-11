@@ -1,21 +1,30 @@
 package com.klevleev.eskimo.backend.rest;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.klevleev.eskimo.backend.domain.Contest;
+import com.klevleev.eskimo.backend.domain.Problem;
+import com.klevleev.eskimo.backend.domain.Submission;
 import com.klevleev.eskimo.backend.services.ContestService;
+import com.klevleev.eskimo.backend.services.ProblemService;
+import com.klevleev.eskimo.backend.services.SubmissionService;
 import com.klevleev.eskimo.backend.storage.TemporaryFile;
 import com.klevleev.eskimo.backend.utils.FileUtils;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by stepank on 05.04.2017.
@@ -25,15 +34,27 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("api")
 public class ApiController {
 
-    @Autowired
-    private ContestService contestService;
+    private final ContestService contestService;
+    private final ProblemService problemService;
+    private final SubmissionService submissionService;
+    private final FileUtils fileUtils;
 
     @Autowired
-    private FileUtils fileUtils;
+    public ApiController(ContestService contestService, ProblemService problemService, SubmissionService submissionService, FileUtils fileUtils) {
+        this.contestService = contestService;
+        this.problemService = problemService;
+        this.submissionService = submissionService;
+        this.fileUtils = fileUtils;
+    }
 
     @GetMapping("contests")
     public List<Contest> getAllContests() {
         return contestService.getAllContests();
+    }
+
+    @GetMapping("contest/{id}")
+    public Contest getContest(@PathVariable("id") Long contestId) {
+        return contestService.getContestById(contestId);
     }
 
     @PostMapping("contest/create/from/zip")
@@ -42,4 +63,30 @@ public class ApiController {
         return contestService.saveContestZip(zip.getFile());
     }
 
+    @GetMapping("contest/{id}/problems")
+    public List<Problem> getProblems(@PathVariable("id") Long contestId) {
+        return problemService.getContestProblems(contestId);
+    }
+
+    @GetMapping("contest/{id}/statements")
+    public ResponseEntity<byte[]> getStatements(@PathVariable("id") Long contestId) {
+        try {
+            byte[] statements = contestService.getStatements(contestId);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/pdf"));
+            String filename = "statements.pdf";
+            headers.setContentDispositionFormData(filename, filename);
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+            return new ResponseEntity<>(statements, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            log.error("Couldn't read statements for contest " + contestId, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("contest/{id}/submissions")
+    public List<Submission> getSubmissions(@PathVariable("id") Long contestId) {
+        return submissionService.getAllSubmissions();
+    }
 }

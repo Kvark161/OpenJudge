@@ -13,6 +13,7 @@ public class Statement implements Serializable {
     private static final long serialVersionUID = -5623307237343174281L;
 
     public static final String DEFAULT_LANGUAGE = "en";
+    public static final String DEFAULT_FORMAT = ".pdf";
 
     private Long id;
 
@@ -21,6 +22,6 @@ public class Statement implements Serializable {
     @JsonProperty("name")
     private String fileName;
 
-    private String format = ".pdf";
+    private String format;
 
 }

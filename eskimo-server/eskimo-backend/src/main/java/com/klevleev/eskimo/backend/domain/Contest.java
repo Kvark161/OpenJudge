@@ -23,6 +23,6 @@ public class Contest implements Serializable {
 
     @JsonGetter("startTime")
     public String getStartTimeString() {
-        return startTime.toString();
+        return startTime == null ? null : startTime.toString();
     }
 }

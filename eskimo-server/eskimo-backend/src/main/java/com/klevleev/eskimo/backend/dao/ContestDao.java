@@ -24,60 +24,59 @@ import java.util.Map;
 @Repository
 public class ContestDao {
 
-	private static final Logger logger = LoggerFactory.getLogger(ContestDao.class);
+    private static final Logger logger = LoggerFactory.getLogger(ContestDao.class);
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	public List<Contest> getAllContests() {
-		String sql = "SELECT id FROM contests";
-		return jdbcTemplate.query(sql, new ContestIdRowMapper());
-	}
+    @Autowired
+    public ContestDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-	public Long insertContest(Contest contest) {
-		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-				.withTableName("contests")
-				.usingGeneratedKeyColumns("id");
-		Map<String, Object> params = new HashMap<>();
-		params.put("name", contest.getName());
-		return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
-	}
+    public List<Contest> getAllContests() {
+        String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests";
+        return jdbcTemplate.query(sql, new ContestRowMapper());
+    }
 
-	public Contest getContestInfo(long id) {
-		try {
-			String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests WHERE id = ?";
-			return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ContestDao.ContestRowMapper());
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("can not get contest by id = " + id, e);
-			return null;
-		}
-	}
+    public Long insertContest(Contest contest) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("contests")
+                .usingGeneratedKeyColumns("id");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", contest.getName());
+        return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
+    }
 
-	public boolean contestExists(long id) {
-		String sql = "SELECT count(*) FROM contests WHERE id = ?";
-		return jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class) > 0;
-	}
+    public Contest getContestInfo(long id) {
+        try {
+            String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ContestDao.ContestRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            logger.warn("can not get contest by id = " + id, e);
+            return null;
+        }
+    }
 
-	private static class ContestIdRowMapper implements RowMapper<Contest> {
-		@Override
-		public Contest mapRow(ResultSet resultSet, int i) throws SQLException {
-			return new LazyContest(resultSet.getLong("id"));
-		}
-	}
+    public boolean contestExists(long id) {
+        String sql = "SELECT count(*) FROM contests WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class) > 0;
+    }
 
-	private static class ContestRowMapper implements RowMapper<Contest> {
+    private static class ContestRowMapper implements RowMapper<Contest> {
 
-		@Override
-		public Contest mapRow(ResultSet resultSet, int i) throws SQLException {
-			Contest contest = new LazyContest(resultSet.getLong("id"));
-			contest.setName(resultSet.getString("name"));
-			Timestamp startTime = resultSet.getTimestamp("start_time");
-			if (startTime != null)
-				contest.setStartTime(startTime.toLocalDateTime());
-			else
-				contest.setStartTime(null);
-			contest.setDuration(resultSet.getInt("duration_in_minutes"));
-			return contest;
-		}
-	}
+        @Override
+        public Contest mapRow(ResultSet resultSet, int i) throws SQLException {
+            Contest contest = new Contest();
+            contest.setId(resultSet.getLong("id"));
+            contest.setName(resultSet.getString("name"));
+            Timestamp startTime = resultSet.getTimestamp("start_time");
+            if (startTime != null) {
+                contest.setStartTime(startTime.toLocalDateTime());
+            } else {
+                contest.setStartTime(null);
+            }
+            contest.setDuration(resultSet.getInt("duration_in_minutes"));
+            return contest;
+        }
+    }
 }
