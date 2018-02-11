@@ -1,9 +1,9 @@
 package com.klevleev.eskimo.invoker.сontrollers;
 
-import com.klevleev.eskimo.invoker.domain.CompilationParameter;
-import com.klevleev.eskimo.invoker.domain.CompilationResult;
-import com.klevleev.eskimo.invoker.domain.RunTestParameter;
-import com.klevleev.eskimo.invoker.enums.RunTestVerdict;
+import com.klevleev.eskimo.invoker.entity.CompilationParams;
+import com.klevleev.eskimo.invoker.entity.CompilationResult;
+import com.klevleev.eskimo.invoker.entity.TestParams;
+import com.klevleev.eskimo.invoker.entity.TestResult;
 import com.klevleev.eskimo.invoker.services.ExecuteService;
 import com.klevleev.eskimo.invoker.services.ServerService;
 import org.slf4j.Logger;
@@ -19,31 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class InvokeController {
 
-	private static final Logger logger = LoggerFactory.getLogger(InvokeController.class);
+    private static final Logger logger = LoggerFactory.getLogger(InvokeController.class);
 
-	private final ServerService serverService;
+    private final ServerService serverService;
 
-	private final ExecuteService executeService;
+    private final ExecuteService executeService;
 
-	@Autowired
-	public InvokeController(ServerService serverService, ExecuteService executeService) {
-		this.serverService = serverService;
-		this.executeService = executeService;
-	}
+    @Autowired
+    public InvokeController(ServerService serverService, ExecuteService executeService) {
+        this.serverService = serverService;
+        this.executeService = executeService;
+    }
 
-	@PostMapping(value = "/invoke/run-test")
-	public RunTestVerdict runTest(@RequestBody RunTestParameter runTestParameter) {
-		byte[] testInput = serverService.getTestInput(runTestParameter.getContestId(), runTestParameter.getProblemId(),
-				runTestParameter.getTestId());
-		byte[] testAnswer = serverService.getTestAnswer(runTestParameter.getContestId(), runTestParameter.getProblemId(),
-				runTestParameter.getTestId());
-		byte[] checker = serverService.getChecker(runTestParameter.getContestId(), runTestParameter.getProblemId());
-		logger.debug("successfully getting testInput");
-		return executeService.runOnTest(runTestParameter, testInput, testAnswer, checker);
-	}
+    @PostMapping(value = "/invoke/test")
+    public TestResult test(@RequestBody TestParams testParams) {
+        return executeService.test(testParams);
+    }
 
-	@PostMapping(value = "/invoke/compile")
-	public CompilationResult compile(@RequestBody CompilationParameter compilationParameter) {
-		return executeService.compile(compilationParameter);
-	}
+    @PostMapping(value = "/invoke/compile")
+    public CompilationResult compile(@RequestBody CompilationParams compilationParams) {
+        return executeService.compile(compilationParams);
+    }
 }
