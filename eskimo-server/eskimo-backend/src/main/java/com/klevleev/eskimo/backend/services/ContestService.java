@@ -7,17 +7,19 @@ import com.klevleev.eskimo.backend.dao.ProblemDao;
 import com.klevleev.eskimo.backend.dao.StatementsDao;
 import com.klevleev.eskimo.backend.domain.Contest;
 import com.klevleev.eskimo.backend.domain.Statement;
+import com.klevleev.eskimo.backend.exceptions.CreateContestException;
 import com.klevleev.eskimo.backend.parsers.FolderContestParserEskimo;
 import com.klevleev.eskimo.backend.storage.*;
 import com.klevleev.eskimo.backend.utils.FileUtils;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,16 +54,19 @@ public class ContestService {
     }
 
     @Transactional
-    public Contest saveContestZip(File contestZip) throws IOException {
-        @Cleanup TemporaryFolder unzippedFolder = new TemporaryFolder(fileUtils.unzip(contestZip));
-        File[] files = unzippedFolder.getFolder().listFiles();
-        if (files == null || files.length != 1 || !files[0].isDirectory()) {
-            throw new RuntimeException("zip should contain only one folder");
+    public Contest saveContestZip(File contestZip) {
+        try( TemporaryFile unzippedFolder = new TemporaryFile(fileUtils.unzip(contestZip))) {
+            File[] files = unzippedFolder.getFile().listFiles();
+            if (files == null || files.length != 1 || !files[0].isDirectory()) {
+                throw new CreateContestException("zip should contain only one folder");
+            }
+            File contestFolder = files[0];
+            SavingContest savingContest = new FolderContestParserEskimo(contestFolder).parse();
+            saveContest(savingContest);
+            return savingContest.getContest();
+        } catch (IOException e) {
+            throw new CreateContestException("exception while unzip archive");
         }
-        File contestFolder = files[0];
-        SavingContest savingContest = new FolderContestParserEskimo(contestFolder).parse();
-        saveContest(savingContest);
-        return savingContest.getContest();
     }
 
     private void saveContest(SavingContest savingContest) {

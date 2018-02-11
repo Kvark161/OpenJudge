@@ -3,21 +3,36 @@ import {EskimoService} from "../../../services/eskimo.service";
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-contest',
-  templateUrl: './new-contest.component.html',
-  styleUrls: ['./new-contest.component.css']
+    selector: 'app-contest',
+    templateUrl: './new-contest.component.html',
+    styleUrls: ['./new-contest.component.css']
 })
 export class NewContestComponent {
 
-  constructor(private eskimoService: EskimoService, private router: Router) {
-  }
+    error: string;
+    fileList: FileList;
 
-
-  fileChange(event) {
-    let fileList: FileList = event.target.files;
-    if (fileList.length > 0) {
-      this.eskimoService.createContest(fileList[0]).subscribe(contest => this.router.navigateByUrl("/contests"));
+    constructor(private eskimoService: EskimoService, private router: Router) {
     }
-  }
+
+
+    fileChange(event) {
+        this.error = null;
+        this.fileList = event.target.files;
+    }
+
+    onSubmit() {
+        if (this.fileList.length <= 0) {
+            this.error = "No file chosen";
+            return;
+        }
+        this.eskimoService.createContest(this.fileList[0]).subscribe(
+            contest => this.router.navigateByUrl("/contests"),
+            error => {
+                let json = error.json();
+                this.error = json.message;
+            }
+        );
+    }
 
 }

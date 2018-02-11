@@ -3,24 +3,19 @@ package com.klevleev.eskimo.backend.rest;
 import com.klevleev.eskimo.backend.domain.Contest;
 import com.klevleev.eskimo.backend.domain.Problem;
 import com.klevleev.eskimo.backend.domain.Submission;
+import com.klevleev.eskimo.backend.exceptions.CreateContestException;
 import com.klevleev.eskimo.backend.services.ContestService;
 import com.klevleev.eskimo.backend.services.ProblemService;
 import com.klevleev.eskimo.backend.services.SubmissionService;
 import com.klevleev.eskimo.backend.storage.TemporaryFile;
 import com.klevleev.eskimo.backend.utils.FileUtils;
-import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -59,8 +54,13 @@ public class ApiController {
 
     @PostMapping("contest/create/from/zip")
     public Contest createContest(@RequestParam("file") MultipartFile file) throws IOException {
-        @Cleanup TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"));
-        return contestService.saveContestZip(zip.getFile());
+        try (TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"))) {
+            return contestService.saveContestZip(zip.getFile());
+        } catch (CreateContestException e){
+            throw e;
+        } catch (RuntimeException e) {
+            throw new CreateContestException("cannot create contest", e);
+        }
     }
 
     @GetMapping("contest/{id}/problems")
