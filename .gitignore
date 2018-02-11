@@ -1,9 +1,9 @@
 *.iml
 *.idea
 
-eskimo-invoker/target
-eskimo-server/eskimo-backend/target
-eskimo-server/eskimo-frontend/target
-eskimo-server/eskimo-frontend/src/main/eskimo-frontend/node
-eskimo-server/eskimo-frontend/src/main/eskimo-frontend/node_modules
-eskimo-server/eskimo-frontend/src/main/eskimo-frontend/dist/
+invoker/target
+server/backend/target
+server/frontend/target
+server/frontend/src/main/frontend/node
+server/frontend/src/main/frontend/node_modules
+server/frontend/src/main/frontend/dist/

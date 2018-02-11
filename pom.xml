@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.klevleev</groupId>
+	<groupId>eskimo</groupId>
 	<artifactId>eskimo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>eskimo-server</module>
-		<module>eskimo-invoker</module>
+		<module>server</module>
+		<module>invoker</module>
 	</modules>
 
 	<properties>
