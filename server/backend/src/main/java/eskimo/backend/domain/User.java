@@ -15,7 +15,6 @@ public class User implements Serializable {
     private Long id;
     private String username;
     private String password;
-    private boolean isAdmin;
     private Locale locale;
 
     @Override
@@ -23,7 +22,6 @@ public class User implements Serializable {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", isAdmin=" + isAdmin +
                 ", locale=" + locale +
                 '}';
     }

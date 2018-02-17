@@ -25,8 +25,12 @@ import java.util.Map;
 @Repository
 public class SubmissionDao {
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public SubmissionDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Transactional
     public List<Submission> getAllSubmissions() {
@@ -68,7 +72,7 @@ public class SubmissionDao {
         params.put("contest_id", submission.getContest().getId());
         params.put("problem_id", submission.getProblem().getId());
         params.put("source_code", submission.getSourceCode());
-        params.put("verdict", submission.getVerdict());
+        params.put("verdict", submission.getVerdict().toString());
         params.put("sending_date_time", Timestamp.valueOf(submission.getSendingDateTime()));
         params.put("test_number", submission.getTestNumber());
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));

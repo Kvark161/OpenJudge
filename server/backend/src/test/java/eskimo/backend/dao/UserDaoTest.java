@@ -11,9 +11,6 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-/**
- * Created by Stepan Klevleev on 27-Jul-16.
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserDaoTest {
@@ -22,7 +19,7 @@ public class UserDaoTest {
     private UserDao userDao;
 
     @Test
-    public void getAllUsers() throws Exception {
+    public void getAllUsers() {
         List<User> users = userDao.getAllUsers();
         assertTrue(2 <= users.size());
         users.forEach(user -> {
@@ -33,21 +30,19 @@ public class UserDaoTest {
     }
 
     @Test
-    public void getUserById() throws Exception {
+    public void getUserById() {
         User user = userDao.getUserById(1L);
         assertEquals(new Long(1L), user.getId());
         assertEquals("admin", user.getUsername());
         assertEquals("admin", user.getPassword());
-        assertEquals(true, user.isAdmin());
     }
 
     @Test
-    public void getUserByName() throws Exception {
+    public void getUserByName() {
         User user = userDao.getUserByName("admin");
         assertEquals(new Long(1L), user.getId());
         assertEquals("admin", user.getUsername());
         assertEquals("admin", user.getPassword());
-        assertEquals(true, user.isAdmin());
     }
 
 }

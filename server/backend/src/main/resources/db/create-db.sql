@@ -6,7 +6,6 @@ CREATE TABLE users
   name     VARCHAR(128)          NOT NULL
     CONSTRAINT users_name_key UNIQUE,
   password VARCHAR(128)          NOT NULL,
-  is_admin BOOLEAN               NOT NULL,
   locale   VARCHAR(128)          NOT NULL
 );
 
@@ -74,3 +73,4 @@ CREATE TABLE programming_languages
   description CLOB                  NOT NULL
 );
 
+INSERT INTO USERS VALUES (0, 'user', 'user', 'ru'),(1, 'admin', 'admin', 'ru');
