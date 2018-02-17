@@ -83,6 +83,7 @@
                 <version>${spring.boot.version}</version>
                 <configuration>
                     <excludeDevtools>true</excludeDevtools>
+                    <outputDirectory>../../eskimo-target</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
