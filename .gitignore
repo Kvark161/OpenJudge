@@ -1,5 +1,6 @@
 *.iml
 *.idea
+*.jar
 
 invoker/target/**
 server/backend/target/**
@@ -7,4 +8,3 @@ server/frontend/target/**
 server/frontend/src/main/frontend/node/**
 server/frontend/src/main/frontend/node_modules/**
 server/frontend/src/main/frontend/dist/**
-eskimo-target/*.jar
