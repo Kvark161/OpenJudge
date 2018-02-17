@@ -2,11 +2,9 @@ package eskimo.invoker.enums;
 
 import java.io.Serializable;
 
-/**
- * Created by Sokirkina Ekaterina on 06-Oct-2016.
- */
 public enum TestVerdict implements Serializable {
     OK,
+    SKIPPED,
     WRONG_ANSWER,
     PRESENTATION_ERROR,
     FAIL,

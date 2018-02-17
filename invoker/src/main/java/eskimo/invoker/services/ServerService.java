@@ -1,6 +1,7 @@
 package eskimo.invoker.services;
 
 import eskimo.invoker.config.InvokerSettings;
+import eskimo.invoker.entity.TestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Created by Stepan Klevleev on 16-Aug-16.
- */
 @Component("serverService")
 public class ServerService {
 
@@ -27,19 +25,9 @@ public class ServerService {
         this.invokerConfig = invokerConfig;
     }
 
-    public byte[] getTestInput(Long contestId, Long problemId, Long testId) {
-        return restTemplate.getForObject(invokerConfig.getServerUrlGetTestInput() + "?"
-                + "contest=" + contestId + "&problem=" + problemId + "&test=" + testId, byte[].class);
-    }
-
-    public byte[] getTestAnswer(Long contestId, Long problemId, Long testId) {
-        return restTemplate.getForObject(invokerConfig.getServerUrlGetTestAnswer() + "?" +
-                "contest=" + contestId + "&problem=" + problemId + "&test=" + testId, byte[].class);
-    }
-
-    public byte[] getChecker(Long contestId, Long problemId) {
-        return restTemplate.getForObject(invokerConfig.getServerUrlGetChecker() + "?" +
-                "contest=" + contestId + "&problem=" + problemId, byte[].class);
+    public TestData getTestData(long contestId, long problemId, long testId) {
+        return restTemplate.getForObject(invokerConfig.getServerUrlGetTestData() + "?" +
+                "contest=" + contestId + "&problem=" + problemId + "&test=" + testId, TestData.class);
     }
 
 }

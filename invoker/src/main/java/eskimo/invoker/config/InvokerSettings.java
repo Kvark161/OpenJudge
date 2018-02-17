@@ -16,12 +16,8 @@ public class InvokerSettings {
     private static final String SERVER_PROTOCOL = "server.protocol";
     private static final String SERVER_HOST = "server.host";
     private static final String SERVER_PORT = "server.port";
-    private static final String SERVER_PATH_REGISTER = "server.path.register";
-    private static final String SERVER_PATH_GET_TEST_INPUT = "server.path.get.test.input";
-    private static final String SERVER_PATH_GET_TEST_ANSWER = "server.path.get.test.answer";
-    private static final String SERVER_PATH_GET_CHECKER = "server.path.get.checker";
+    private static final String SERVER_PATH_GET_TEST_DATA = "server.url.get.test.data";
 
-    private static final String INVOKER_MAX_THREADS = "invoker.max.threads";
     private static final String INVOKER_TEMP_PATH = "invoker.temp.path";
     private static final String INVOKER_STORAGE_PATH = "invoker.storage.path";
 
@@ -32,9 +28,7 @@ public class InvokerSettings {
         try (InputStream is = InvokerSettings.class.getClassLoader().getResourceAsStream(FILE_PROPERTIES_PATH)) {
             properties.load(is);
         }
-        //noinspection ResultOfMethodCallIgnored
         getInvokerTempPath().mkdirs();
-        //noinspection ResultOfMethodCallIgnored
         getInvokerStoragePath().mkdirs();
     }
 
@@ -58,28 +52,8 @@ public class InvokerSettings {
         return Integer.valueOf(getPropery(SERVER_PORT));
     }
 
-    public String getServerUrlRegister() {
-        return getServerRootUrl() + getPropery(SERVER_PATH_REGISTER);
-    }
-
-    public String getServerUrlGetTestInput() {
-        return getServerRootUrl() + getPropery(SERVER_PATH_GET_TEST_INPUT);
-    }
-
-    public String getServerUrlGetTestAnswer() {
-        return getServerRootUrl() + getPropery(SERVER_PATH_GET_TEST_ANSWER);
-    }
-
-    public String getServerUrlGetChecker() {
-        return getServerRootUrl() + getPropery(SERVER_PATH_GET_CHECKER);
-    }
-
-    public String getServerPathGetTestAnswer() {
-        return getPropery(SERVER_PATH_GET_TEST_ANSWER);
-    }
-
-    public int getInvokerMaxThreads() {
-        return Integer.valueOf(getPropery(INVOKER_MAX_THREADS));
+    public String getServerUrlGetTestData() {
+        return getServerRootUrl() + getPropery(SERVER_PATH_GET_TEST_DATA);
     }
 
     public File getInvokerStoragePath() {

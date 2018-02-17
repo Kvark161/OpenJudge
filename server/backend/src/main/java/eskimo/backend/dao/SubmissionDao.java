@@ -19,9 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Stepan Klevleev on 15-Aug-16.
- */
 @Repository
 public class SubmissionDao {
 
@@ -119,7 +116,7 @@ public class SubmissionDao {
             submission.setSourceCode(resultSet.getString("source_code"));
             submission.setVerdict(Submission.Verdict.valueOf(resultSet.getString("verdict")));
             submission.setSendingDateTime(resultSet.getTimestamp("sending_date_time").toLocalDateTime());
-            submission.setTestNumber(resultSet.getLong("test_number"));
+            submission.setTestNumber(resultSet.getInt("test_number"));
             return submission;
         }
     }

@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 public class ExecuteServiceMac implements ExecuteService {
 
@@ -62,13 +60,8 @@ public class ExecuteServiceMac implements ExecuteService {
     }
 
     @Override
-    public TestResult test(TestParams testParams) {
-        return test(Collections.singletonList(testParams), false).get(0);
-    }
-
-    @Override
-    public List<TestResult> test(List<TestParams> testParams, boolean stopOnFirstFail) {
-        return new TesterMac(invokerUtils, testParams, stopOnFirstFail).test();
+    public TestResult[] test(AbstractTestParams testParams) {
+        return new TesterMac(invokerUtils, testParams).test();
     }
 
 }

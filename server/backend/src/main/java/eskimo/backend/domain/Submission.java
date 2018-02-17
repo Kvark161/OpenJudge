@@ -1,10 +1,12 @@
 package eskimo.backend.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
-/**
- * Created by Stepan Klevleev on 15-Aug-16.
- */
+@Getter
+@Setter
 public class Submission {
 
     private Long id;
@@ -13,7 +15,7 @@ public class Submission {
     private Problem problem;
     private String sourceCode;
     private Verdict verdict;
-    private Long testNumber;
+    private int testNumber;
     private LocalDateTime sendingDateTime;
 
     public enum Verdict {
@@ -30,67 +32,4 @@ public class Submission {
         INTERNAL_ERROR
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getSourceCode() {
-        return sourceCode;
-    }
-
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
-
-    public Contest getContest() {
-        return contest;
-    }
-
-    public void setContest(Contest contest) {
-        this.contest = contest;
-    }
-
-    public Problem getProblem() {
-        return problem;
-    }
-
-    public void setProblem(Problem problem) {
-        this.problem = problem;
-    }
-
-    public Verdict getVerdict() {
-        return verdict;
-    }
-
-    public void setVerdict(Verdict verdict) {
-        this.verdict = verdict;
-    }
-
-    public LocalDateTime getSendingDateTime() {
-        return sendingDateTime;
-    }
-
-    public void setSendingDateTime(LocalDateTime sendingDateTime) {
-        this.sendingDateTime = sendingDateTime;
-    }
-
-    public Long getTestNumber() {
-        return testNumber;
-    }
-
-    public void setTestNumber(Long testNumber) {
-        this.testNumber = testNumber;
-    }
 }

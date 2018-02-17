@@ -20,12 +20,4 @@
 		<module>frontend</module>
 	</modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>eskimo</groupId>
-			<artifactId>invoker</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
-
 </project>

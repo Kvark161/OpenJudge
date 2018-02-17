@@ -1,16 +1,14 @@
 package eskimo.invoker.services;
 
+import eskimo.invoker.entity.AbstractTestParams;
 import eskimo.invoker.entity.CompilationParams;
 import eskimo.invoker.entity.CompilationResult;
-import eskimo.invoker.entity.TestParams;
 import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.utils.InvokerUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 
 public class ExecuteServiceWindows implements ExecuteService {
@@ -30,13 +28,9 @@ public class ExecuteServiceWindows implements ExecuteService {
     }
 
     @Override
-    public TestResult test(TestParams runTestParameter) {
+    public TestResult[] test(AbstractTestParams testParams) {
         throw new NotImplementedException("");
     }
 
-    @Override
-    public List<TestResult> test(List<TestParams> testParams, boolean stopOnFirstFail) {
-        throw new NotImplementedException("");
-    }
 
 }

@@ -13,9 +13,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Created by Stepan Klevleev on 20-Jul-16
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ContestDaoTest {

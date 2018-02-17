@@ -14,9 +14,6 @@ import org.springframework.util.Assert;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by Stepan Klevleev on 15-Aug-16.
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SubmissionDaoTest {

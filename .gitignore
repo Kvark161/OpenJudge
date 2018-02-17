@@ -1,9 +1,9 @@
 *.iml
 *.idea
 
-invoker/target
-server/backend/target
-server/frontend/target
-server/frontend/src/main/frontend/node
-server/frontend/src/main/frontend/node_modules
-server/frontend/src/main/frontend/dist/
+invoker/target/**
+server/backend/target/**
+server/frontend/target/**
+server/frontend/src/main/frontend/node/**
+server/frontend/src/main/frontend/node_modules/**
+server/frontend/src/main/frontend/dist/**

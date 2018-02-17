@@ -1,36 +1,31 @@
 package eskimo.backend.judge;
 
-import eskimo.invoker.entity.InvokerNodeInfo;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-/**
- * Created by Stepan Klevleev on 16-Aug-16.
- */
 @Component("invokerPool")
 class InvokerPool {
 
-    private final Set<InvokerNodeInfo> invokerNodes = ConcurrentHashMap.newKeySet();
+    private final Set<Invoker> invokers = ConcurrentHashMap.newKeySet();
+
+    private final Set<Invoker> unreachableInvokers = ConcurrentHashMap.newKeySet();
 
     private final BlockingQueue<Invoker> invokerQueue = new LinkedBlockingQueue<>();
 
-    boolean add(InvokerNodeInfo invokerNodeInfo) throws URISyntaxException {
-        if (this.invokerNodes.add(invokerNodeInfo)) {
-            for (int i = 0; i < invokerNodeInfo.getMaxThreads(); ++i) {
-                Invoker invoker = new Invoker();
-                invoker.setUri(new URI("http://" + invokerNodeInfo.getHost() +
-                        ":" + invokerNodeInfo.getPort()));
-                invokerQueue.add(invoker);
-            }
-            return true;
+    void add(Invoker[] invokers) {
+        for (Invoker invoker : invokers) {
+            add(invoker);
         }
-        return false;
+    }
+
+    void add(Invoker invoker) {
+        for (int i = 0; i < invoker.getNumberThreads(); ++i) {
+            invokerQueue.add(invoker);
+        }
     }
 
     Invoker take() {

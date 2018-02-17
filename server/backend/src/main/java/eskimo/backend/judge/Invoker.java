@@ -1,28 +1,28 @@
 package eskimo.backend.judge;
 
-import java.net.URI;
+import lombok.Data;
 
-/**
- * Created by Stepan Klevleev on 16-Aug-16.
- */
+import java.time.LocalDateTime;
+
+@Data
 class Invoker {
 
-    private URI uri;
+    private String protocol;
+    private String host;
+    private int port;
+    private int numberThreads;
+    private LocalDateTime lastSuccessPing;
 
-    public URI getUri() {
-        return uri;
-    }
-
-    public void setUri(URI uri) {
-        this.uri = uri;
+    private String getUrl() {
+        return protocol + "://" + host + ":" + port;
     }
 
     String getCompileUrl() {
-        return uri.toString() + "/invoke/compile";
+        return getUrl() + "/invoke/compile";
     }
 
     String getTestUrl() {
-        return uri.toString() + "/invoke/run-test";
+        return getUrl() + "/invoke/test-lazy";
     }
 
 }

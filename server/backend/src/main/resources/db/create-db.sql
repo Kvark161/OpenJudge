@@ -62,7 +62,6 @@ CREATE TABLE problems
   tests_count       BIGINT                NOT NULL
 );
 
-
 CREATE TABLE programming_languages
 (
   id          BIGINT AUTO_INCREMENT NOT NULL

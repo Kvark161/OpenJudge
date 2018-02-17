@@ -2,10 +2,12 @@ package eskimo.backend.storage;
 
 import eskimo.backend.domain.Statement;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -62,8 +64,16 @@ public class StorageService {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".in");
     }
 
+    public String getTestInputData(long contestId, long problemIndex, long testIndex) throws IOException {
+        return FileUtils.readFileToString(getTestInputFile(contestId, problemIndex, testIndex));
+    }
+
     public File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".ans");
+    }
+
+    public String getTestAnswerData(long contestId, long problemIndex, long testIndex) throws IOException {
+        return FileUtils.readFileToString(getTestAnswerFile(contestId, problemIndex, testIndex));
     }
 
     public File getValidatorFolder(long contestId, long problemIndex) {

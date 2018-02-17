@@ -1,10 +1,7 @@
 package eskimo.invoker.сontrollers;
 
 
-import eskimo.invoker.entity.CompilationParams;
-import eskimo.invoker.entity.CompilationResult;
-import eskimo.invoker.entity.TestParams;
-import eskimo.invoker.entity.TestResult;
+import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
 import org.apache.commons.io.FileUtils;
@@ -17,14 +14,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class InvokeControllerTest {
 
     private final String GCC_COMMAND = "g++ " + CompilationParams.SOURCE_CODE_FILE + " -o " + CompilationParams.OUTPUT_FILE;
-    private final String RUN_COMMAND = TestParams.SOLUTION_EXE + " < " + TestParams.INPUT + " > " + TestParams.OUTPUT;
-    private final String CHECK_COMMAND = TestParams.CHECKER_EXE;
+    private final String RUN_COMMAND = AbstractTestParams.SOLUTION_EXE + " < " + AbstractTestParams.INPUT + " > " + AbstractTestParams.OUTPUT;
+    private final String CHECK_COMMAND = AbstractTestParams.CHECKER_EXE;
 
     @Autowired
     private InvokeController invokeController;
@@ -49,10 +47,13 @@ public class InvokeControllerTest {
     @Test
     public void test() throws IOException {
         TestParams testParams = new TestParams();
-        testParams.setInputData("1");
-        testParams.setInputName("input.txt");
-        testParams.setAnswerData("1");
-        testParams.setAnswerName("answer.txt");
+        TestData testData = new TestData();
+        testData.setInputData("1");
+        testData.setInputName("input.txt");
+        testData.setAnswerData("1");
+        testData.setAnswerName("answer.txt");
+        testParams.setTestsData(new ArrayList<>());
+        testParams.getTestsData().add(testData);
         testParams.setOutputName("output.txt");
         testParams.setExecutable(compileFile("cpp/solutions/print_1.cpp"));
         testParams.setExecutableName("solution");
@@ -60,11 +61,12 @@ public class InvokeControllerTest {
         testParams.setCheckerName("checker");
         testParams.setRunCommand(RUN_COMMAND);
         testParams.setCheckCommand(CHECK_COMMAND);
-        TestResult testResult = invokeController.test(testParams);
+        TestResult[] testResult = invokeController.test(testParams);
+        Assert.assertEquals(1, testResult.length);
         System.out.println("OUTPUT:");
-        System.out.println(testResult.getOutputData());
-        Assert.assertEquals(TestVerdict.OK, testResult.getVerdict());
-        Assert.assertEquals("1", testResult.getOutputData());
+        System.out.println(testResult[0].getOutputData());
+        Assert.assertEquals(TestVerdict.OK, testResult[0].getVerdict());
+        Assert.assertEquals("1", testResult[0].getOutputData());
     }
 
     private byte[] compileFile(String fileName) throws IOException {

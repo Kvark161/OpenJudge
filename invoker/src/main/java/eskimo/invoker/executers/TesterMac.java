@@ -1,7 +1,8 @@
 package eskimo.invoker.executers;
 
+import eskimo.invoker.entity.AbstractTestParams;
 import eskimo.invoker.entity.ExecutionResult;
-import eskimo.invoker.entity.TestParams;
+import eskimo.invoker.entity.TestData;
 import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.enums.TestVerdict;
 import eskimo.invoker.utils.InvokerUtils;
@@ -11,15 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TesterMac implements Tester {
 
     private static final Logger logger = LoggerFactory.getLogger(TesterMac.class);
 
     private InvokerUtils invokerUtils;
-    private List<TestParams> testParams;
+    private AbstractTestParams testParams;
     private boolean stopOnFirstFail;
     private File executableFile;
     private File checkerFile;
@@ -29,35 +28,36 @@ public class TesterMac implements Tester {
     private ExecutionResult solutionExecutionResult;
     private ExecutionResult checkerExecutionResult;
 
-    public TesterMac(InvokerUtils invokerUtils, List<TestParams> testParams, boolean stopOnFirstFail) {
+    public TesterMac(InvokerUtils invokerUtils, AbstractTestParams testParams) {
         this.invokerUtils = invokerUtils;
         this.testParams = testParams;
-        this.stopOnFirstFail = stopOnFirstFail;
     }
 
     @Override
-    public List<TestResult> test() {
-        List<TestResult> results = new ArrayList<>();
-        for (TestParams params : testParams) {
+    public TestResult[] test() {
+        TestResult[] testResults = new TestResult[testParams.getNumberTests()];
+        for (int i = 0; i < testResults.length; ++i) {
+            testResults[i] = new TestResult();
+            testResults[i].setVerdict(TestVerdict.SKIPPED);
+        }
+        for (int i = 0; i < testParams.getNumberTests(); ++i) {
             File folder = null;
             try {
+                TestData testData = testParams.getTestData(i);
                 folder = invokerUtils.createTempFolder();
-                prepareFolder(params, folder);
-                runSolution(params, folder);
+                prepareFolder(testData, folder);
+                runSolution(folder);
                 if (solutionExecutionResult.getExitCode() == 0 && !solutionExecutionResult.getTimeOutExceeded()) {
-                    runChecker(params, folder);
+                    runChecker(folder);
                 }
-                TestResult testResult = getTestResult(params);
-                results.add(testResult);
-                if (stopOnFirstFail && !TestVerdict.OK.equals(testResult.getVerdict())) {
-                    return results;
+                testResults[i] = getTestResult();
+                if (stopOnFirstFail && !TestVerdict.OK.equals(testResults[i].getVerdict())) {
+                    return testResults;
                 }
             } catch (Throwable e) {
-                TestResult testResult = new TestResult();
-                testResult.setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-                results.add(testResult);
+                testResults[i].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
                 logger.error("Error during testing " + e.getMessage());
-                return results;
+                return testResults;
             } finally {
                 if (folder != null) {
                     try {
@@ -68,12 +68,12 @@ public class TesterMac implements Tester {
                 }
             }
         }
-        return results;
+        return testResults;
     }
 
-    private TestResult getTestResult(TestParams params) {
+    private TestResult getTestResult() {
         TestResult testResult = new TestResult();
-        testResult.setExecutionTime(solutionExecutionResult.getTimeOutExceeded() ? params.getTimeLimit() : 0);
+        testResult.setExecutionTime(solutionExecutionResult.getTimeOutExceeded() ? testParams.getTimeLimit() : 0);
         testResult.setUsedMemory(0);
         testResult.setOutputData(solutionExecutionResult.getStdout());
         if (solutionExecutionResult.getExitCode() != 0) {
@@ -96,26 +96,26 @@ public class TesterMac implements Tester {
         return testResult;
     }
 
-    private void runChecker(TestParams params, File folder) throws IOException, InterruptedException {
-        String command = params.prepareCheckCommand(checkerFile.getAbsolutePath(), answerFile.getAbsolutePath(), outputFile.getAbsolutePath());
+    private void runChecker(File folder) throws IOException, InterruptedException {
+        String command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), answerFile.getAbsolutePath(), outputFile.getAbsolutePath());
         checkerExecutionResult = invokerUtils.executeCommand(command, folder, 10000);
     }
 
-    private void runSolution(TestParams params, File folder) throws IOException, InterruptedException {
-        String command = params.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        solutionExecutionResult = invokerUtils.executeCommand(command, folder, params.getTimeLimit());
+    private void runSolution(File folder) throws IOException, InterruptedException {
+        String command = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        solutionExecutionResult = invokerUtils.executeCommand(command, folder, testParams.getTimeLimit());
     }
 
-    private void prepareFolder(TestParams params, File folder) throws IOException, InterruptedException {
-        executableFile = new File(folder.getAbsolutePath() + File.separator + params.getExecutableName());
-        checkerFile = new File(folder.getAbsolutePath() + File.separator + params.getCheckerName());
-        inputFile = new File(folder.getAbsolutePath() + File.separator + params.getInputName());
-        answerFile = new File(folder.getAbsolutePath() + File.separator + params.getAnswerName());
-        outputFile = new File(folder.getAbsolutePath() + File.separator + params.getOutputName());
-        FileUtils.writeByteArrayToFile(executableFile, params.getExecutable());
-        FileUtils.writeByteArrayToFile(checkerFile, params.getChecker());
-        FileUtils.writeStringToFile(inputFile, params.getInputData());
-        FileUtils.writeStringToFile(answerFile, params.getAnswerData());
+    private void prepareFolder(TestData testData, File folder) throws IOException, InterruptedException {
+        executableFile = new File(folder.getAbsolutePath() + File.separator + testParams.getExecutableName());
+        checkerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getCheckerName());
+        inputFile = new File(folder.getAbsolutePath() + File.separator + testData.getInputName());
+        answerFile = new File(folder.getAbsolutePath() + File.separator + testData.getAnswerName());
+        outputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getOutputName());
+        FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
+        FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
+        FileUtils.writeStringToFile(inputFile, testData.getInputData());
+        FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
         invokerUtils.executeCommand("chmod +x " + executableFile.getAbsolutePath(), null, 0);
         invokerUtils.executeCommand("chmod +x " + checkerFile.getAbsolutePath(), null, 0);
     }
