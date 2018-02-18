@@ -2,16 +2,17 @@ package eskimo.backend.services;
 
 import eskimo.backend.dao.SubmissionDao;
 import eskimo.backend.domain.Contest;
+import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
+import eskimo.backend.domain.User;
+import eskimo.backend.domain.request.SubmitProblemWebRequest;
 import eskimo.backend.judge.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by Stepan Klevleev on 23-Aug-16.
- */
 @Component
 public class SubmissionService {
 
@@ -40,28 +41,28 @@ public class SubmissionService {
         return submissions;
     }
 
-    public Submission getSubmissionById(Long id) {
-        Submission submission = submissionDao.getSubmissionById(id);
-        fillSubmission(submission);
-        return submission;
-    }
-
-    public List<Submission> getUserSubmissions(Long userId) {
-        List<Submission> submissions = submissionDao.getUserSubmissions(userId);
-        fillSubmissions(submissions);
-        return submissions;
-    }
-
-    public void submit(Submission submission) {
+    public void submit(SubmitProblemWebRequest submitProblemWebRequest) {
+        Submission submission = createSubmission(submitProblemWebRequest);
         submission.setVerdict(Submission.Verdict.SUBMITTED);
         submissionDao.insertSubmission(submission);
         judgeService.judge(submission);
     }
 
-    public List<Submission> getUserSubmissions(Long userId, Long contestId) {
-        List<Submission> submissions = submissionDao.getUserSubmissions(userId, contestId);
-        fillSubmissions(submissions);
-        return submissions;
+    private Submission createSubmission(SubmitProblemWebRequest submitProblemWebRequest) {
+        Submission submission = new Submission();
+        Contest contest = new Contest();
+        contest.setId(submitProblemWebRequest.getContestId());
+        submission.setContest(contest);
+        Problem problem = new Problem();
+        problem.setId(submitProblemWebRequest.getProblemId());
+        submission.setProblem(problem);
+        submission.setSourceCode(submitProblemWebRequest.getSourceCode());
+        User user = new User();
+        user.setId(1L);
+        submission.setUser(user);
+        submission.setSendingDateTime(LocalDateTime.now());
+        fillSubmission(submission);
+        return submission;
     }
 
     private void fillSubmission(Submission submission) {

@@ -11,6 +11,10 @@ import {AppComponent} from "./app.component";
 import {AboutComponent} from "./pages/about/about.component";
 import {HomeComponent} from "./pages/home/home.component";
 import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
+import {CommonToolbarComponent} from "./toolbars/common-toolbar.component";
+import {ContestToolbarComponent} from "./toolbars/contest-toolbar.component";
+import {ContestComponent} from "./pages/contests/info/contest.component";
+import {SubmitComponent} from "./pages/contests/submit/submit.component";
 
 @NgModule({
     imports: [
@@ -24,7 +28,11 @@ import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
         AboutComponent,
         HomeComponent,
         ContestsComponent,
-        NewContestComponent
+        NewContestComponent,
+        CommonToolbarComponent,
+        ContestToolbarComponent,
+        ContestComponent,
+        SubmitComponent
     ],
     providers: [EskimoService],
     bootstrap: [AppComponent]

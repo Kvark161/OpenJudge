@@ -3,6 +3,7 @@ package eskimo.backend.rest;
 import eskimo.backend.domain.Contest;
 import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
+import eskimo.backend.domain.request.SubmitProblemWebRequest;
 import eskimo.backend.exceptions.CreateContestException;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
@@ -21,9 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by stepank on 05.04.2017.
- */
 @RestController
 @Slf4j
 @RequestMapping("api")
@@ -88,5 +86,10 @@ public class ApiController {
     @GetMapping("contest/{id}/submissions")
     public List<Submission> getSubmissions(@PathVariable("id") Long contestId) {
         return submissionService.getAllSubmissions();
+    }
+
+    @PostMapping("contest/submit")
+    public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) {
+        submissionService.submit(submitProblemWebRequest);
     }
 }

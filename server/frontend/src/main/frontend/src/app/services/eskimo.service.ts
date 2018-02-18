@@ -6,6 +6,7 @@ import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
+import {Problem} from "../shared/problem";
 
 @Injectable()
 export class EskimoService {
@@ -13,6 +14,15 @@ export class EskimoService {
     private urlHost = 'http://localhost:8080/api/';
     private urlContests = this.urlHost + 'contests';
     private urlContestCreate = this.urlHost + 'contest/create/from/zip';
+    private urlSubmit = this.urlHost + "contest/submit";
+
+    private getUrlContest(contestId: number) {
+        return this.urlHost + "contest/" + contestId;
+    }
+
+    private getUrlProblems(contestId: number) {
+        return this.urlHost + "contest/" + contestId + "/problems";
+    }
 
     constructor(private http: Http) {
     }
@@ -29,6 +39,22 @@ export class EskimoService {
         return this.http.post(this.urlContestCreate, formData)
             .map(res => res.json())
             .catch(this.handleError);
+    }
+
+    getContest(contestId: number) : Observable<Contest> {
+        return this.http.get(this.getUrlContest(contestId))
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getProblems(contestId: number) : Observable<Problem[]> {
+        return this.http.get(this.getUrlProblems(contestId))
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    submitProblem(contestId: number, problemId: number, sourceCode: string) : Observable<any> {
+        return this.http.post(this.urlSubmit, {contestId: contestId, problemId: problemId, sourceCode: sourceCode});
     }
 
     private handleError(error: any) {

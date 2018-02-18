@@ -4,8 +4,7 @@ import {Router} from "@angular/router";
 
 @Component({
     selector: 'app-contest',
-    templateUrl: './new-contest.component.html',
-    styleUrls: ['./new-contest.component.css']
+    templateUrl: './new-contest.component.html'
 })
 export class NewContestComponent {
 

@@ -1,9 +1,12 @@
-<br>
-<form>
-    <div class="form-group row">
-        <label for="file"></label>
-        <input type="file" id="file" class="form-control-file" (change)="fileChange($event)">
-        <span class="help-block">{{error}}</span>
-    </div>
-    <button type="button" class="btn btn-primary" (click)="onSubmit()">Create contest</button>
-</form>
+<common-toolbar></common-toolbar>
+<div class="container">
+    <br>
+    <form>
+        <div class="form-group row">
+            <label for="file"></label>
+            <input type="file" id="file" class="form-control-file" (change)="fileChange($event)">
+            <span class="help-block">{{error}}</span>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Create contest</button>
+    </form>
+</div>

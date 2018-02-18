@@ -7,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@Component("invokerPool")
+@Component
 class InvokerPool {
 
     private final Set<Invoker> invokers = ConcurrentHashMap.newKeySet();
