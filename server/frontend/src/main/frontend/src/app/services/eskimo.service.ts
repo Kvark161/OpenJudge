@@ -24,6 +24,10 @@ export class EskimoService {
         return this.urlHost + "contest/" + contestId + "/problems";
     }
 
+    private getUrlSubmissions(contestId: number) {
+        return this.urlHost + "contest/" + contestId + "/submissions";
+    }
+
     constructor(private http: Http) {
     }
 
@@ -57,6 +61,13 @@ export class EskimoService {
         return this.http.post(this.urlSubmit, {contestId: contestId, problemId: problemId, sourceCode: sourceCode});
     }
 
+    getSubmissions(contestId: number) {
+        return this.http.get(this.getUrlSubmissions(contestId))
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    // noinspection JSMethodCanBeStatic
     private handleError(error: any) {
         console.error('errror', error);
         return Observable.throw(error.message || error);

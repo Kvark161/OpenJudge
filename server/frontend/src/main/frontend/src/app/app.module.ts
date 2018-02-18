@@ -15,6 +15,8 @@ import {CommonToolbarComponent} from "./toolbars/common-toolbar.component";
 import {ContestToolbarComponent} from "./toolbars/contest-toolbar.component";
 import {ContestComponent} from "./pages/contests/info/contest.component";
 import {SubmitComponent} from "./pages/contests/submit/submit.component";
+import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";
+import {ProblemsComponent} from "./pages/contests/problems/problems.component";
 
 @NgModule({
     imports: [
@@ -32,7 +34,9 @@ import {SubmitComponent} from "./pages/contests/submit/submit.component";
         CommonToolbarComponent,
         ContestToolbarComponent,
         ContestComponent,
-        SubmitComponent
+        SubmitComponent,
+        SubmissionsComponent,
+        ProblemsComponent
     ],
     providers: [EskimoService],
     bootstrap: [AppComponent]

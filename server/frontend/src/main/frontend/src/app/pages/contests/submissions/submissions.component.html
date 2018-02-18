@@ -1,0 +1,23 @@
+<contest-toolbar [contestId]="contestId"></contest-toolbar>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>User</th>
+            <th>Contest id</th>
+            <th>Problem id</th>
+            <th>Verdict</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let submission of submissions">
+            <td>{{submission.id}}</td>
+            <td>{{submission.username}}</td>
+            <td>{{submission.contest.id}}</td>
+            <td>{{submission.problem.id}}</td>
+            <td>{{submission.verdict}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
