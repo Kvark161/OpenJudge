@@ -20,10 +20,8 @@ public class Problem implements Serializable {
 
     private String name;
 
-    @JsonProperty("time-limit")
     private Long timeLimit;
 
-    @JsonProperty("memory-limit")
     private Long memoryLimit;
 
     @JsonProperty("tests-count")

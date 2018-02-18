@@ -1,0 +1,21 @@
+<contest-toolbar [contestId]="contestId"></contest-toolbar>
+<div class="container">
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Time limit</th>
+            <th>Memory limit</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let problem of problems">
+            <td>{{problem.id}}</td>
+            <td>{{problem.name}}</td>
+            <td>{{problem.timeLimit}}</td>
+            <td>{{problem.memoryLimit}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
