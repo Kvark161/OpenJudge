@@ -15,4 +15,8 @@ export class ProblemsComponent {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
     }
+
+    openStatements() {
+        this.eskimoService.openStatements(this.contestId);
+    }
 }
