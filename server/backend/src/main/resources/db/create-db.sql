@@ -49,17 +49,17 @@ CREATE TABLE statements
 
 CREATE TABLE problems
 (
-  id                BIGINT AUTO_INCREMENT NOT NULL
+  id            BIGINT AUTO_INCREMENT NOT NULL
     CONSTRAINT pk_problems
     PRIMARY KEY,
-  contest_id        BIGINT                NOT NULL
+  contest_id    BIGINT                NOT NULL
     CONSTRAINT fk_problems_contests
     REFERENCES contests,
-  number_in_contest INTEGER               NOT NULL,
-  name              VARCHAR(128)          NOT NULL,
-  time_limit        BIGINT                NOT NULL,
-  memory_limit      BIGINT                NOT NULL,
-  tests_count       BIGINT                NOT NULL
+  contest_index INTEGER               NOT NULL,
+  name          VARCHAR(128)          NOT NULL,
+  time_limit    BIGINT                NOT NULL,
+  memory_limit  BIGINT                NOT NULL,
+  tests_count   BIGINT                NOT NULL
 );
 
 CREATE TABLE programming_languages

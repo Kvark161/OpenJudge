@@ -10,9 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SavingContest {
+public class ContestContainer {
     private Contest contest;
-    private List<SavingProblem> problems;
+    private List<ProblemContainer> problems;
     private List<Statement> statements;
     private List<File> statementsFiles;
 }

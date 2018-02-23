@@ -53,7 +53,7 @@ public class ApiController {
     @PostMapping("contest/create/from/zip")
     public Contest createContest(@RequestParam("file") MultipartFile file) throws IOException {
         try (TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"))) {
-            return contestService.saveContestZip(zip.getFile());
+            return null; // contestService.saveContestZip(zip.getFile());
         } catch (CreateContestException e) {
             throw e;
         } catch (RuntimeException e) {
@@ -63,7 +63,7 @@ public class ApiController {
 
     @PostMapping("contest/create")
     public Contest createContest(@RequestBody Contest contest) {
-        return contestService.saveContest(contest);
+        return contestService.createContest(contest);
     }
 
     @GetMapping("contest/{id}/problems")

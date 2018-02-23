@@ -74,6 +74,8 @@ public class JudgeService {
         parameter.setCompilationCommand("g++ " + CompilationParams.SOURCE_CODE_FILE +
                 " -o " + CompilationParams.OUTPUT_FILE);
         parameter.setSourceCode(submission.getSourceCode());
+        parameter.setExecutableFileName("main.exe");
+        parameter.setSourceFileName("main.cpp");
         return restTemplate.postForObject(invoker.getCompileUrl(), parameter, CompilationResult.class);
     }
 
@@ -83,12 +85,13 @@ public class JudgeService {
         TestLazyParams testParams = new TestLazyParams();
         testParams.setExecutable(compilationResult.getExecutable());
         testParams.setExecutableName("main.exe");
+        testParams.setCheckerName("checker.exe");
 
         testParams.setContestId(submission.getContest().getId());
         testParams.setProblemId(submission.getProblem().getId());
         testParams.setNumberTests(submission.getTestNumber());
 
-        TestResult[] testResults = restTemplate.postForObject(invoker.getCompileUrl(), testParams, TestResult[].class);
+        TestResult[] testResults = restTemplate.postForObject(invoker.getTestUrl(), testParams, TestResult[].class);
     }
 
     private Submission.Verdict parseVerdict(TestVerdict runTestVerdict) {
@@ -140,7 +143,7 @@ public class JudgeService {
                     });
                 }
             } catch (InterruptedException e) {
-                throw new IllegalStateException("can't get pending submission", e);
+                logger.error("The judge thread was interrupted", e);
             }
         }
     }

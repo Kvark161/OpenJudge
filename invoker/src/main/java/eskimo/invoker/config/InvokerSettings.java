@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-@Component("invokerSettings")
+@Component
 public class InvokerSettings {
 
     private static final String FILE_PROPERTIES_PATH = "invoker.properties";

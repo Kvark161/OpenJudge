@@ -1,16 +1,15 @@
 package eskimo.backend.storage;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.File;
 
-/**
- * Created by Sokirkina Ekaterina on 02-Feb-2017.
- */
-@Slf4j
 public class TemporaryFile implements Closeable {
+
+    private static final Logger logger = LoggerFactory.getLogger(TemporaryFile.class);
 
     @Getter
     private final File file;
@@ -24,7 +23,7 @@ public class TemporaryFile implements Closeable {
         try {
             org.apache.commons.io.FileUtils.forceDelete(file);
         } catch (Exception e) {
-            log.error("can't delete temp file = " + file, e);
+            logger.error("Can't delete temp file: " + file, e);
         }
     }
 }

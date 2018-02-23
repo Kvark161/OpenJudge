@@ -9,11 +9,13 @@ import java.util.List;
 
 @Getter
 @Setter
-public class SavingProblem {
+public class ProblemContainer {
+
     private Problem problem;
     private File checker;
     private File validator;
-    private List<File> solutions;
-    private List<File> testsInput;
-    private List<File> testsAnswer;
+    private List<SolutionContainer> solutions;
+    private List<TestContainer> tests;
+    private List<StatementContainer> statements;
+
 }

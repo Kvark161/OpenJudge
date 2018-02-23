@@ -1,12 +1,12 @@
 package eskimo.backend.utils;
 
+import eskimo.backend.config.AppSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,20 +23,16 @@ public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
-    @Value("${eskimo.temp.path}")
-    private String tempRoot;
-
-    private File tempRootFile;
-
-    @PostConstruct
-    public void init() throws IOException {
-        tempRootFile = new File(tempRoot);
-        tempRootFile.mkdirs();
-    }
+    @Autowired
+    private AppSettings appSettings;
 
     public File unzip(File zipFile) throws IOException {
+        return unzip(zipFile, "zip");
+    }
+
+    public File unzip(File zipFile, String prefix) throws IOException {
         byte[] buffer = new byte[1024];
-        Path outputFolder = Files.createTempDirectory(Paths.get(tempRoot), "contest-");
+        Path outputFolder = Files.createTempDirectory(Paths.get(appSettings.getTempPath().getAbsolutePath()), prefix);
         try (FileInputStream fis = new FileInputStream(zipFile);
              ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry ze = zis.getNextEntry();
@@ -60,7 +56,7 @@ public class FileUtils {
     }
 
     public File saveFile(MultipartFile file, String prefix, String suffix) throws IOException {
-        File filePath = File.createTempFile(prefix, suffix, tempRootFile);
+        File filePath = File.createTempFile(prefix, suffix, appSettings.getTempPath());
         byte[] bytes = file.getBytes();
         try (FileOutputStream fos = new FileOutputStream(filePath);
              BufferedOutputStream stream = new BufferedOutputStream(fos)) {
