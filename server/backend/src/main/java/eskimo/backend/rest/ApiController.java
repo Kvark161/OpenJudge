@@ -97,4 +97,9 @@ public class ApiController {
     public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) {
         submissionService.submit(submitProblemWebRequest);
     }
+
+    @PostMapping("contest/{id}/problem/add")
+    public void addProblem(@PathVariable("id") Long contestId, @RequestParam("file") MultipartFile file) {
+        //todo implement
+    }
 }

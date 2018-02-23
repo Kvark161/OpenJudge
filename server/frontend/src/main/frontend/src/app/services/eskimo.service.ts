@@ -13,7 +13,8 @@ export class EskimoService {
 
     private urlHost = 'http://localhost:8080/api/';
     private urlContests = this.urlHost + 'contests';
-    private urlContestCreate = this.urlHost + 'contest/create/from/zip';
+    private urlContestCreateFromZip = this.urlHost + 'contest/create/from/zip';
+    private urlContestCreate = this.urlHost + 'contest/create';
     private urlSubmit = this.urlHost + "contest/submit";
 
     private getUrlContest(contestId: number) {
@@ -32,6 +33,10 @@ export class EskimoService {
         return this.urlHost + "contest/" + contestId + "/statements";
     }
 
+    private getUrlAddProblem(contestId: number) {
+        return this.urlHost + "contest/" + contestId + "/problem/add";
+    }
+
     constructor(private http: Http) {
     }
 
@@ -41,11 +46,24 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    createContest(file: File): Observable<Contest> {
+    createContestFormZip(file: File): Observable<Contest> {
         let formData: FormData = new FormData();
         formData.append('file', file, file.name);
-        return this.http.post(this.urlContestCreate, formData)
+        return this.http.post(this.urlContestCreateFromZip, formData)
             .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    createContest(contest: Contest): Observable<Contest> {
+        return this.http.post(this.urlContestCreate, contest)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    addProblems(contestId: number, file: File) : Observable<void> {
+        let formData: FormData = new FormData();
+        formData.append('file', file, file.name);
+        return this.http.post(this.getUrlAddProblem(contestId), formData)
             .catch(this.handleError);
     }
 
