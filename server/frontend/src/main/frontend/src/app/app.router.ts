@@ -6,6 +6,7 @@ import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
 import {ContestComponent} from "./pages/contests/info/contest.component";
 import {SubmitComponent} from "./pages/contests/submit/submit.component";
 import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";
+import {AddProblemComponent} from "./pages/contests/problems/add-problem.component";
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
 
 export const router: Routes = [
@@ -17,5 +18,6 @@ export const router: Routes = [
     {path: 'contest/:contestId', component: ContestComponent},
     {path: 'contest/:contestId/submit', component: SubmitComponent},
     {path: 'contest/:contestId/submissions', component: SubmissionsComponent},
-    {path: 'contest/:contestId/problems', component: ProblemsComponent}
+    {path: 'contest/:contestId/problems', component: ProblemsComponent},
+    {path: 'contest/:contestId/problem/add', component: AddProblemComponent}
 ];
