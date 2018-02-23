@@ -11,7 +11,6 @@ import eskimo.backend.exceptions.CreateContestException;
 import eskimo.backend.parsers.FolderContestParserEskimo;
 import eskimo.backend.storage.*;
 import eskimo.backend.utils.FileUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Stepan Klevleev on 25-Aug-16.
- */
 @Service
-@Slf4j
 public class ContestService {
 
     private ContestDao contestDao;
@@ -67,6 +62,16 @@ public class ContestService {
         } catch (IOException e) {
             throw new CreateContestException("exception while unzip archive");
         }
+    }
+
+    public Contest saveContest(Contest contest) {
+        SavingContest savingContest = new SavingContest();
+        savingContest.setContest(contest);
+        savingContest.setProblems(new ArrayList<>());
+        savingContest.setStatements(new ArrayList<>());
+        savingContest.setStatementsFiles(new ArrayList<>());
+        saveContest(savingContest);
+        return contest;
     }
 
     private void saveContest(SavingContest savingContest) {

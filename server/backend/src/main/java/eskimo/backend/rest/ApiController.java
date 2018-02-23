@@ -61,6 +61,11 @@ public class ApiController {
         }
     }
 
+    @PostMapping("contest/create")
+    public Contest createContest(@RequestBody Contest contest) {
+        return contestService.saveContest(contest);
+    }
+
     @GetMapping("contest/{id}/problems")
     public List<Problem> getProblems(@PathVariable("id") Long contestId) {
         return problemService.getContestProblems(contestId);
