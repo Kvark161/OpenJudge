@@ -6,7 +6,7 @@ import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.StatementsDao;
 import eskimo.backend.domain.Contest;
 import eskimo.backend.domain.Statement;
-import eskimo.backend.exceptions.CreateContestException;
+import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import eskimo.backend.storage.*;
 import eskimo.backend.utils.FileUtils;
@@ -104,12 +104,12 @@ public class ContestService {
         try (TemporaryFile unzippedFolder = new TemporaryFile(fileUtils.unzip(problemZip, "problem-zip-"))) {
             File[] files = unzippedFolder.getFile().listFiles();
             if (files == null || files.length != 1 || !files[0].isDirectory()) {
-                throw new CreateContestException("Zip should contains exactly one folder");
+                throw new AddEskimoEntityException("Zip should contains exactly one folder");
             }
             ProblemContainer problemContainer = new ProblemParserPolygonZip(files[0]).parse();
             addProblem(contestId, problemContainer);
         } catch (IOException e) {
-            throw new CreateContestException("exception while unzip archive", e);
+            throw new AddEskimoEntityException("Exception occurred while unzipping the archive", e);
         }
     }
 

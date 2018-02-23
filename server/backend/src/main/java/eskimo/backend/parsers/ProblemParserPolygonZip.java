@@ -5,6 +5,7 @@ import eskimo.backend.containers.SolutionContainer;
 import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
 import eskimo.backend.domain.Problem;
+import eskimo.backend.exceptions.AddEskimoEntityException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class ProblemParserPolygonZip {
             parseProblemDoc();
         } catch (ParserConfigurationException | IOException | SAXException e) {
             logger.error("Can not parse problem.xml", e);
-            throw new ParseException("Can not parse problem.xml", e);
+            throw new AddEskimoEntityException("Can not parse problem.xml", e);
         }
         ProblemContainer problemContainer = new ProblemContainer();
         problemContainer.setProblem(getProblem());

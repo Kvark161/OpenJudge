@@ -4,13 +4,15 @@ import eskimo.backend.domain.Contest;
 import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
 import eskimo.backend.domain.request.SubmitProblemWebRequest;
-import eskimo.backend.exceptions.CreateContestException;
+import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.SubmissionService;
 import eskimo.backend.storage.TemporaryFile;
 import eskimo.backend.utils.FileUtils;
-import lombok.extern.slf4j.Slf4j;
+import eskimo.invoker.InvokerApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,9 +25,10 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequestMapping("api")
 public class ApiController {
+
+    private static final Logger logger = LoggerFactory.getLogger(InvokerApp.class);
 
     private final ContestService contestService;
     private final ProblemService problemService;
@@ -54,10 +57,10 @@ public class ApiController {
     public Contest createContest(@RequestParam("file") MultipartFile file) throws IOException {
         try (TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "contest-", "zip"))) {
             return null; // contestService.saveContestZip(zip.getFile());
-        } catch (CreateContestException e) {
+        } catch (AddEskimoEntityException e) {
             throw e;
         } catch (RuntimeException e) {
-            throw new CreateContestException("cannot create contest", e);
+            throw new AddEskimoEntityException("cannot create contest", e);
         }
     }
 
@@ -83,7 +86,7 @@ public class ApiController {
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             return new ResponseEntity<>(statements, headers, HttpStatus.OK);
         } catch (IOException e) {
-            log.error("Couldn't read statements for contest " + contestId, e);
+            logger.error("Can't read statements for contest " + contestId, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -100,6 +103,13 @@ public class ApiController {
 
     @PostMapping("contest/{id}/problem/add")
     public void addProblem(@PathVariable("id") Long contestId, @RequestParam("file") MultipartFile file) {
-        //todo implement
+        try (TemporaryFile zip = new TemporaryFile(fileUtils.saveFile(file, "problem-", ".zip"))) {
+            contestService.addProblemFromZip(contestId, zip.getFile());
+        } catch (AddEskimoEntityException e) {
+            throw e;
+        } catch (RuntimeException | IOException e) {
+            logger.error("Can't add problem", e);
+            throw new AddEskimoEntityException("Can't add problem", e);
+        }
     }
 }
