@@ -90,6 +90,7 @@
                 <configuration>
                     <excludeDevtools>true</excludeDevtools>
                     <outputDirectory>../../eskimo-target</outputDirectory>
+                    <classifier>exec</classifier>
                 </configuration>
                 <executions>
                     <execution>
