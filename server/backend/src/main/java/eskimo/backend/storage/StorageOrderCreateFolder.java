@@ -5,9 +5,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by Stepan Klevleev on 30-Apr-17.
- */
 public class StorageOrderCreateFolder extends StorageOrder {
 
     private File folder;

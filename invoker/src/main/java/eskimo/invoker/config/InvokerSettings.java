@@ -1,5 +1,7 @@
 package eskimo.invoker.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +13,8 @@ import java.util.Properties;
 @Component
 public class InvokerSettings {
 
+    private static final Logger logger = LoggerFactory.getLogger(InvokerSettings.class);
+
     private static final String FILE_PROPERTIES_PATH = "invoker.properties";
 
     private static final String SERVER_PROTOCOL = "server.protocol";
@@ -20,6 +24,9 @@ public class InvokerSettings {
 
     private static final String INVOKER_TEMP_PATH = "invoker.temp.path";
     private static final String INVOKER_STORAGE_PATH = "invoker.storage.path";
+    private static final String INVOKER_RUNNER_PATH = "invoker.runner.path";
+    private static final String INVOKER_RUNNER_LOGIN = "invoker.runner.login";
+    private static final String INVOKER_RUNNER_PASSWORD = "invoker.runner.password";
 
     private final Properties properties = new Properties();
 
@@ -30,6 +37,7 @@ public class InvokerSettings {
         }
         getInvokerTempPath().mkdirs();
         getInvokerStoragePath().mkdirs();
+        getRunnerTempPath().mkdirs();
     }
 
     public String getPropery(String key) {
@@ -37,7 +45,7 @@ public class InvokerSettings {
     }
 
     public File getFileProperty(String key) {
-        return new File(properties.getProperty(key).replaceFirst("^~", System.getProperty("user.home")));
+        return new File(properties.getProperty(key).replace("~", System.getProperty("user.home")));
     }
 
     public String getServerProtocol() {
@@ -62,6 +70,10 @@ public class InvokerSettings {
 
     public File getInvokerTempPath() {
         return getFileProperty(INVOKER_TEMP_PATH);
+    }
+
+    public File getRunnerTempPath() {
+        return getFileProperty(INVOKER_RUNNER_PATH);
     }
 
     public String getServerRootUrl() {

@@ -14,9 +14,6 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * Created by Stepan Klevleev on 11-Aug-16.
- */
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @Component
 public class FileUtils {

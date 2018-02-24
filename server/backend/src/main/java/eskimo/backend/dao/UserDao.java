@@ -15,9 +15,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by Stepan Klevleev on 27-Jul-16.
- */
 @Repository
 public class UserDao {
 

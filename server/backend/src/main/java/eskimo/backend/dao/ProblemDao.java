@@ -16,9 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Sokirkina Ekaterina on 27-Dec-2016.
- */
 @Repository
 @Slf4j
 public class ProblemDao {

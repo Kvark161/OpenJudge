@@ -2,6 +2,7 @@ package eskimo.invoker;
 
 import eskimo.invoker.services.ExecuteService;
 import eskimo.invoker.services.ExecuteServiceMac;
+import eskimo.invoker.services.ExecuteServiceWindows;
 import eskimo.invoker.utils.InvokerUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ public class InvokerApp {
     @Bean
     public ExecuteService getExecuteService(InvokerUtils invokerUtils) {
         if (SystemUtils.IS_OS_WINDOWS) {
-            return new ExecuteServiceMac(invokerUtils);
+            return new ExecuteServiceWindows(invokerUtils);
         }
         logger.warn("Invoker can be ran only in testing mode on this operation system. Use Windows OS for production.");
         return new ExecuteServiceMac(invokerUtils);

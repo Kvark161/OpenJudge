@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -14,8 +15,8 @@ public abstract class AbstractTestParams {
     public static final String ANSWER = "{ANSWER}";
     public static final String OUTPUT = "{OUTPUT}";
 
-    private String runCommand;
-    private String checkCommand;
+    private List<String> runCommand;
+    private List<String> checkCommand;
     private byte[] executable;
     private String executableName;
     private byte[] checker;
@@ -26,18 +27,34 @@ public abstract class AbstractTestParams {
     private String outputName;
     private boolean stopOnFirstFail;
 
-    public String prepareRunCommand(String solutionPath, String inputPath, String outputPath) {
-        return runCommand
-                .replace(SOLUTION_EXE, solutionPath)
-                .replace(INPUT, inputPath)
-                .replace(OUTPUT, outputPath);
+    public List<String> prepareRunCommand(String solutionPath, String inputPath, String outputPath) {
+        return runCommand.stream().map(el -> {
+            if (SOLUTION_EXE.equals(el)) {
+                return solutionPath;
+            }
+            if (INPUT.equals(el)) {
+                return inputPath;
+            }
+            if (OUTPUT.equals(outputPath)) {
+                return outputPath;
+            }
+            return el;
+        }).collect(Collectors.toList());
     }
 
-    public String prepareCheckCommand(String checkerPath, String answerPath, String outputPath) {
-        return checkCommand
-                .replace(CHECKER_EXE, checkerPath)
-                .replace(ANSWER, answerPath)
-                .replace(OUTPUT, outputPath);
+    public List<String> prepareCheckCommand(String checkerPath, String answerPath, String outputPath) {
+        return checkCommand.stream().map(el -> {
+            if (CHECKER_EXE.equals(el)) {
+                return checkerPath;
+            }
+            if (ANSWER.equals(el)) {
+                return answerPath;
+            }
+            if (OUTPUT.equals(outputPath)) {
+                return outputPath;
+            }
+            return el;
+        }).collect(Collectors.toList());
     }
 
     public abstract TestData getTestData(int testIndex);

@@ -7,9 +7,6 @@ import lombok.Data;
 import java.io.Serializable;
 
 
-/**
- * Created by Sokirkina Ekaterina on 03-Feb-2017.
- */
 @Data
 public class Checker implements Serializable {
 

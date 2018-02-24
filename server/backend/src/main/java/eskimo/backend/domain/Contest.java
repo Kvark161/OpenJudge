@@ -6,9 +6,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Created by Sokirkina Ekaterina on 06-Feb-2017.
- */
 @Data
 public class Contest implements Serializable {
     private static final long serialVersionUID = -7614541625538455702L;

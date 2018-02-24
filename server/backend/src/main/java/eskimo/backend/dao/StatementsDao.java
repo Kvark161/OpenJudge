@@ -17,9 +17,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Created by Sokirkina Ekaterina on 03-Feb-2017.
- */
 @Repository
 public class StatementsDao {
 

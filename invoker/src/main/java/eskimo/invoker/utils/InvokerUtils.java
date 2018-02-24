@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -23,12 +24,24 @@ public class InvokerUtils {
     private InvokerSettings settings;
 
     public File createTempFolder() throws IOException {
-        return Files.createTempDirectory(settings.getInvokerTempPath().toPath(), "invoker-").toFile();
+        File temp = settings.getRunnerTempPath();
+        temp.mkdirs();
+        return Files.createTempDirectory(temp.toPath(), "invoker-").toFile();
     }
 
-    public ExecutionResult executeCommand(String command, File workingFolder, long timeLimit) throws IOException, InterruptedException {
-        logger.info("execute command: " + command);
-        Process process = Runtime.getRuntime().exec(command, null, workingFolder);
+    public File createRunnerTempFolder(String prefix) throws IOException {
+        File temp = settings.getRunnerTempPath();
+        temp.mkdirs();
+        return Files.createTempDirectory(temp.toPath(), prefix).toFile();
+    }
+
+    public ExecutionResult executeCommand(List<String> commands, long timeLimit) throws IOException, InterruptedException {
+        return executeCommand(commands.toArray(new String[0]), timeLimit);
+    }
+
+    public ExecutionResult executeCommand(String[] commands, long timeLimit) throws IOException, InterruptedException {
+        logger.info("execute command: " + commands.toString());
+        Process process = Runtime.getRuntime().exec(commands);
         boolean timeOutExceeded = false;
         if (timeLimit == 0)
             process.waitFor();

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -12,16 +14,22 @@ public class CompilationParams implements Serializable {
     public static final String SOURCE_CODE_FILE = "{SOURCE_CODE}";
     public static final String OUTPUT_FILE = "{OUTPUT_FILE}";
 
-    private String compilationCommand;
+    private List<String> compilationCommand;
     private String sourceCode;
     private String sourceFileName;
     private String executableFileName;
-    private long timelimit;
+    private long timeLimit;
+    private long memoryLimit;
 
-    public String prepareCompilationComman(String sourceFile, String outputFile) {
-        String command = compilationCommand;
-        command = command.replace(CompilationParams.SOURCE_CODE_FILE, sourceFile);
-        command = command.replace(CompilationParams.OUTPUT_FILE, outputFile);
-        return command;
+    public List<String> prepareCompilationCommand(String sourceFile, String outputFile) {
+        return compilationCommand.stream().map(el -> {
+            if (CompilationParams.SOURCE_CODE_FILE.equals(el)) {
+                return sourceFile;
+            }
+            if (CompilationParams.OUTPUT_FILE.equals(el)) {
+                return outputFile;
+            }
+            return el;
+        }).collect(Collectors.toList());
     }
 }

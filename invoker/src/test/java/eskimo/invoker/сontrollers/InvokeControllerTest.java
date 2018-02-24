@@ -5,7 +5,10 @@ import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +18,28 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class InvokeControllerTest {
 
-    private final String GCC_COMMAND = "g++ " + CompilationParams.SOURCE_CODE_FILE + " -o " + CompilationParams.OUTPUT_FILE;
-    private final String RUN_COMMAND = AbstractTestParams.SOLUTION_EXE + " < " + AbstractTestParams.INPUT + " > " + AbstractTestParams.OUTPUT;
-    private final String CHECK_COMMAND = AbstractTestParams.CHECKER_EXE;
+    private final List<String> GCC_COMMAND = Arrays.asList("g++", CompilationParams.SOURCE_CODE_FILE, "-o", CompilationParams.OUTPUT_FILE);
+    private final List<String> RUN_COMMAND = Arrays.asList(AbstractTestParams.SOLUTION_EXE, "<", AbstractTestParams.INPUT, ">", AbstractTestParams.OUTPUT);
+    private final List<String> CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE);
 
     @Autowired
     private InvokeController invokeController;
 
     @Test
-    public void compile() {
+    public void compileMac() {
+        Assume.assumeThat(SystemUtils.IS_OS_WINDOWS, Matchers.is(false));
         CompilationParams compilationParams = new CompilationParams();
         compilationParams.setCompilationCommand(GCC_COMMAND);
         compilationParams.setSourceCode("int main(){return 0;}\n");
-        compilationParams.setTimelimit(0);
+        compilationParams.setTimeLimit(1000);
+        compilationParams.setMemoryLimit(512000);
         compilationParams.setSourceFileName("main.cpp");
         compilationParams.setExecutableFileName("main");
         CompilationResult result = invokeController.compile(compilationParams);
@@ -45,7 +52,8 @@ public class InvokeControllerTest {
     }
 
     @Test
-    public void test() throws IOException {
+    public void testMac() throws IOException {
+        Assume.assumeThat(SystemUtils.IS_OS_WINDOWS, Matchers.is(false));
         TestParams testParams = new TestParams();
         TestData testData = new TestData();
         testData.setInputData("1");
@@ -69,13 +77,34 @@ public class InvokeControllerTest {
         Assert.assertEquals("1", testResult[0].getOutputData());
     }
 
+    @Test
+    public void compileWin() {
+        Assume.assumeThat(SystemUtils.IS_OS_WINDOWS, Matchers.is(true));
+        CompilationParams compilationParams = new CompilationParams();
+        compilationParams.setCompilationCommand(GCC_COMMAND);
+        compilationParams.setSourceCode("int main(){return 0;}\n");
+        compilationParams.setTimeLimit(1000);
+        compilationParams.setMemoryLimit(512000);
+        compilationParams.setSourceFileName("main.cpp");
+        compilationParams.setExecutableFileName("main.exe");
+        CompilationResult result = invokeController.compile(compilationParams);
+        System.out.println("STDOUT");
+        System.out.println(result.getCompilerStdout());
+        System.out.println("STDERR");
+        System.out.println(result.getCompilerStderr());
+        Assert.assertEquals(CompilationVerdict.SUCCESS, result.getVerdict());
+        Assert.assertNotNull(result.getExecutable());
+    }
+
+
     private byte[] compileFile(String fileName) throws IOException {
         File file = new File(getClass().getClassLoader().getResource(fileName).getFile());
         String source = FileUtils.readFileToString(file);
         CompilationParams compilationParams = new CompilationParams();
         compilationParams.setCompilationCommand(GCC_COMMAND);
         compilationParams.setSourceCode(source);
-        compilationParams.setTimelimit(0);
+        compilationParams.setTimeLimit(1000);
+        compilationParams.setMemoryLimit(512000);
         compilationParams.setSourceFileName("main.cpp");
         compilationParams.setExecutableFileName("main");
         CompilationResult result = invokeController.compile(compilationParams);

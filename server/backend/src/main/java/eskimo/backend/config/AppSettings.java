@@ -34,7 +34,7 @@ public class AppSettings {
     }
 
     public File getFileProperty(String key) {
-        return new File(properties.getProperty(key).replaceFirst("^~", System.getProperty("user.home")));
+        return new File(properties.getProperty(key).replace("~", System.getProperty("user.home")));
     }
 
     public File getStoragePath() {

@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Sokirkina Ekaterina on 29-Apr-2017.
- */
 @Repository
 public class ProgrammingLanguageDao {
 

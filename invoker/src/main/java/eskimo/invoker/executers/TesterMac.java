@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class TesterMac implements Tester {
 
@@ -46,9 +47,9 @@ public class TesterMac implements Tester {
                 TestData testData = testParams.getTestData(i);
                 folder = invokerUtils.createTempFolder();
                 prepareFolder(testData, folder);
-                runSolution(folder);
+                runSolution();
                 if (solutionExecutionResult.getExitCode() == 0 && !solutionExecutionResult.getTimeOutExceeded()) {
-                    runChecker(folder);
+                    runChecker();
                 }
                 testResults[i] = getTestResult();
                 if (stopOnFirstFail && !TestVerdict.OK.equals(testResults[i].getVerdict())) {
@@ -96,14 +97,14 @@ public class TesterMac implements Tester {
         return testResult;
     }
 
-    private void runChecker(File folder) throws IOException, InterruptedException {
-        String command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), answerFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        checkerExecutionResult = invokerUtils.executeCommand(command, folder, 10000);
+    private void runChecker() throws IOException, InterruptedException {
+        List<String> command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), answerFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        checkerExecutionResult = invokerUtils.executeCommand(command, 30000);
     }
 
-    private void runSolution(File folder) throws IOException, InterruptedException {
-        String command = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        solutionExecutionResult = invokerUtils.executeCommand(command, folder, testParams.getTimeLimit());
+    private void runSolution() throws IOException, InterruptedException {
+        List<String> command = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        solutionExecutionResult = invokerUtils.executeCommand(command, 30000);
     }
 
     private void prepareFolder(TestData testData, File folder) throws IOException, InterruptedException {
@@ -116,7 +117,7 @@ public class TesterMac implements Tester {
         FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
         FileUtils.writeStringToFile(inputFile, testData.getInputData());
         FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
-        invokerUtils.executeCommand("chmod +x " + executableFile.getAbsolutePath(), null, 0);
-        invokerUtils.executeCommand("chmod +x " + checkerFile.getAbsolutePath(), null, 0);
+        invokerUtils.executeCommand(new String[]{"chmod", "+x", executableFile.getAbsolutePath()}, 0);
+        invokerUtils.executeCommand(new String[]{"chmod", "+x", checkerFile.getAbsolutePath()}, 0);
     }
 }
