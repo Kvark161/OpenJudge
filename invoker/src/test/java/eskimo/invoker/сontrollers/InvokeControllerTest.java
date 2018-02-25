@@ -25,9 +25,11 @@ import java.util.List;
 @SpringBootTest
 public class InvokeControllerTest {
 
-    private final List<String> GCC_COMMAND = Arrays.asList("g++", CompilationParams.SOURCE_CODE_FILE, "-o", CompilationParams.OUTPUT_FILE);
-    private final List<String> RUN_COMMAND = Arrays.asList(AbstractTestParams.SOLUTION_EXE, "<", AbstractTestParams.INPUT, ">", AbstractTestParams.OUTPUT);
-    private final List<String> CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE);
+    private final List<String> GCC_COMMAND = Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE);
+    private final List<String> RUN_COMMAND = Arrays.asList(AbstractTestParams.SOLUTION_EXE, "<", AbstractTestParams.INPUT_FILE, ">", AbstractTestParams.OUTPUT_FILE);
+    private final List<String> CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE, AbstractTestParams.INPUT_FILE, AbstractTestParams.OUTPUT_FILE, AbstractTestParams.ANSWER_FILE, AbstractTestParams.CHECKER_REPORT_FILE, "-appes");
+
+    private final List<String> RUN_COMMAND_WIN = Arrays.asList(AbstractTestParams.SOLUTION_EXE);
 
     @Autowired
     private InvokeController invokeController;
@@ -57,21 +59,21 @@ public class InvokeControllerTest {
         TestParams testParams = new TestParams();
         TestData testData = new TestData();
         testData.setInputData("1");
-        testData.setInputName("input.txt");
         testData.setAnswerData("1");
-        testData.setAnswerName("answer.txt");
+        testParams.setInputName("input.txt");
+        testParams.setAnswerName("answer.txt");
         testParams.setTestsData(new ArrayList<>());
         testParams.getTestsData().add(testData);
         testParams.setOutputName("output.txt");
-        testParams.setExecutable(compileFile("cpp/solutions/print_1.cpp"));
+        testParams.setExecutable(compileFile("cpp/solutions/print_1.cpp", false));
         testParams.setExecutableName("solution");
-        testParams.setChecker(compileFile("cpp/checkers/checker_ok.cpp"));
+        testParams.setChecker(compileFile("cpp/checkers/checker_ok.cpp", false));
         testParams.setCheckerName("checker");
         testParams.setRunCommand(RUN_COMMAND);
         testParams.setCheckCommand(CHECK_COMMAND);
         TestResult[] testResult = invokeController.test(testParams);
         Assert.assertEquals(1, testResult.length);
-        System.out.println("OUTPUT:");
+        System.out.println("OUTPUT_FILE:");
         System.out.println(testResult[0].getOutputData());
         Assert.assertEquals(TestVerdict.OK, testResult[0].getVerdict());
         Assert.assertEquals("1", testResult[0].getOutputData());
@@ -96,8 +98,39 @@ public class InvokeControllerTest {
         Assert.assertNotNull(result.getExecutable());
     }
 
+    @Test
+    public void testWin() throws IOException {
+        Assume.assumeThat(SystemUtils.IS_OS_WINDOWS, Matchers.is(true));
+        TestParams testParams = new TestParams();
+        TestData testData = new TestData();
+        testData.setInputData("1");
+        testData.setAnswerData("1");
+        testParams.setInputName("input.txt");
+        testParams.setAnswerName("answer.txt");
+        testParams.setTestsData(new ArrayList<>());
+        testParams.getTestsData().add(testData);
+        testParams.setOutputName("output.txt");
+        testParams.setExecutable(compileFile("cpp/solutions/print_input.cpp", false));
+        testParams.setExecutableName("main.exe");
+        testParams.setChecker(compileFile("cpp/checkers/check_two_int.cpp", true));
+        testParams.setCheckerName("checker.exe");
+        testParams.setCheckerTimeLimit(10000);
+        testParams.setCheckerMemoryLimit(512000);
+        testParams.setTimeLimit(1000);
+        testParams.setMemoryLimit(512000);
+        testParams.setRunCommand(RUN_COMMAND_WIN);
+        testParams.setCheckCommand(CHECK_COMMAND);
+        TestResult[] testResult = invokeController.test(testParams);
+        Assert.assertEquals(1, testResult.length);
+        System.out.println(testResult[0]);
+        Assert.assertEquals(TestVerdict.OK, testResult[0].getVerdict());
+        Assert.assertEquals("1", testResult[0].getOutputData());
+        Assert.assertEquals("answer is '1'", testResult[0].getMessage());
+        Assert.assertTrue(testResult[0].getUsedMemory() > 0);
+        Assert.assertTrue(testResult[0].getUsedTime() > 0);
+    }
 
-    private byte[] compileFile(String fileName) throws IOException {
+    private byte[] compileFile(String fileName, boolean useTestLib) throws IOException {
         File file = new File(getClass().getClassLoader().getResource(fileName).getFile());
         String source = FileUtils.readFileToString(file);
         CompilationParams compilationParams = new CompilationParams();
@@ -106,7 +139,12 @@ public class InvokeControllerTest {
         compilationParams.setTimeLimit(1000);
         compilationParams.setMemoryLimit(512000);
         compilationParams.setSourceFileName("main.cpp");
-        compilationParams.setExecutableFileName("main");
+        compilationParams.setExecutableFileName("main.exe");
+        if (useTestLib) {
+            File testLib = new File(getClass().getClassLoader().getResource("cpp/testlib.h").getFile());
+            compilationParams.setTestLib(FileUtils.readFileToString(testLib));
+            compilationParams.setTestLibName("testlib.h");
+        }
         CompilationResult result = invokeController.compile(compilationParams);
         if (result.getVerdict() != CompilationVerdict.SUCCESS) {
             throw new RuntimeException("Can not compile file: " + fileName);

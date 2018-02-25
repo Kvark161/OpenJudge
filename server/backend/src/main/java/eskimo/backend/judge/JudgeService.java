@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,8 +72,7 @@ public class JudgeService {
 
     private CompilationResult compile(Submission submission, Invoker invoker) {
         CompilationParams parameter = new CompilationParams();
-        parameter.setCompilationCommand("g++ " + CompilationParams.SOURCE_CODE_FILE +
-                " -o " + CompilationParams.OUTPUT_FILE);
+        parameter.setCompilationCommand(Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE));
         parameter.setSourceCode(submission.getSourceCode());
         parameter.setExecutableFileName("main.exe");
         parameter.setSourceFileName("main.cpp");
@@ -101,7 +101,7 @@ public class JudgeService {
             return Submission.Verdict.WRONG_ANSWER;
         } else if (runTestVerdict == TestVerdict.PRESENTATION_ERROR) {
             return Submission.Verdict.PRESENTATION_ERROR;
-        } else if (runTestVerdict == TestVerdict.FAIL) {
+        } else if (runTestVerdict == TestVerdict.RUNTIME_ERROR) {
             return Submission.Verdict.FAIL;
         } else if (runTestVerdict == TestVerdict.TIME_LIMIT_EXCEED) {
             return Submission.Verdict.TIME_LIMIT_EXCEED;

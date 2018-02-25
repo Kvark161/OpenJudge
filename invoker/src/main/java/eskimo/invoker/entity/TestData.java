@@ -9,8 +9,6 @@ public class TestData {
 
     private int index;
     private String inputData;
-    private String inputName;
     private String answerData;
-    private String answerName;
 
 }

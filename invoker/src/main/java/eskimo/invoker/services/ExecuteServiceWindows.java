@@ -2,15 +2,14 @@ package eskimo.invoker.services;
 
 import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
+import eskimo.invoker.executers.TesterWindows;
 import eskimo.invoker.utils.InvokerUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,18 +33,19 @@ public class ExecuteServiceWindows implements ExecuteService {
             File stdout = new File(folder.getAbsolutePath() + File.separator + "stdout.txt");
             File stderr = new File(folder.getAbsolutePath() + File.separator + "stderr.txt");
             File stat = new File(folder.getAbsolutePath() + File.separator + "stat.txt");
+            if (compilationParams.getTestLib() != null) {
+                File testLib = new File(folder.getAbsolutePath() + File.separator + compilationParams.getTestLibName());
+                FileUtils.writeStringToFile(testLib, compilationParams.getTestLib());
+            }
             FileUtils.writeStringToFile(sourceFile, compilationParams.getSourceCode());
             List<String> commands = compilationParams.prepareCompilationCommand(sourceFile.getAbsolutePath(), executableFile.getAbsolutePath());
-            ExecutionResult executionResult = execute(commands, null, stdout, stderr, stat, compilationParams.getTimeLimit(), compilationParams.getMemoryLimit(), folder, true);
+            ExecutionResult executionResult = invokerUtils.executeRunner(commands, null, stdout, stderr, stat, compilationParams.getTimeLimit(), compilationParams.getMemoryLimit(), folder, true);
             CompilationResult compilationResult = new CompilationResult();
             if (stdout.exists()) {
                 compilationResult.setCompilerStdout(FileUtils.readFileToString(stdout));
             }
             if (stderr.exists()) {
                 compilationResult.setCompilerStderr(FileUtils.readFileToString(stderr));
-            }
-            if (stat.exists()) {
-                logger.error("stats:\n" + FileUtils.readFileToString(stat));
             }
             if (executionResult.getExitCode() == 0) {
                 compilationResult.setVerdict(CompilationVerdict.SUCCESS);
@@ -72,44 +72,7 @@ public class ExecuteServiceWindows implements ExecuteService {
 
     @Override
     public TestResult[] test(AbstractTestParams testParams) {
-        throw new NotImplementedException("");
-    }
-
-
-    private ExecutionResult execute(List<String> programCommand, File input, File output, File stderr, File stat, long timeLimit, long memoryLimit, File workingFolder, boolean allowCreateProcesses) throws IOException, InterruptedException {
-        File runner = new File(getClass().getClassLoader().getResource("runner/x64/run.exe").getFile());
-        List<String> command = new ArrayList<>();
-        command.add(runner.getAbsolutePath());
-        command.add("-t");
-        command.add(timeLimit + "ms");
-        command.add("-m");
-        command.add(memoryLimit + "K");
-        command.add("-y");
-        command.add("10");
-        command.add("-d");
-        command.add(workingFolder.getAbsolutePath());
-        command.add("-x");
-        if (input != null) {
-            command.add("-i");
-            command.add(input.getAbsolutePath());
-        }
-        if (output != null) {
-            command.add("-o");
-            command.add(output.getAbsolutePath());
-        }
-        if (stderr != null) {
-            command.add("-e");
-            command.add(stderr.getAbsolutePath());
-        }
-        if (stat != null) {
-            command.add("-s");
-            command.add(stat.getAbsolutePath());
-        }
-        if (allowCreateProcesses) {
-            command.add("--allow-create-processes");
-        }
-        command.addAll(programCommand);
-        return invokerUtils.executeCommand(command, 60000);
+        return new TesterWindows(invokerUtils, testParams).test();
     }
 
 }

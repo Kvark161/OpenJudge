@@ -74,11 +74,11 @@ public class TesterMac implements Tester {
 
     private TestResult getTestResult() {
         TestResult testResult = new TestResult();
-        testResult.setExecutionTime(solutionExecutionResult.getTimeOutExceeded() ? testParams.getTimeLimit() : 0);
+        testResult.setUsedTime(solutionExecutionResult.getTimeOutExceeded() ? testParams.getTimeLimit() : 0);
         testResult.setUsedMemory(0);
         testResult.setOutputData(solutionExecutionResult.getStdout());
         if (solutionExecutionResult.getExitCode() != 0) {
-            testResult.setVerdict(TestVerdict.FAIL);
+            testResult.setVerdict(TestVerdict.RUNTIME_ERROR);
         } else if (solutionExecutionResult.getTimeOutExceeded()) {
             testResult.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
         } else if (checkerExecutionResult.getExitCode() != 0 || checkerExecutionResult.getTimeOutExceeded()) {
@@ -89,8 +89,8 @@ public class TesterMac implements Tester {
             testResult.setVerdict(TestVerdict.WRONG_ANSWER);
         } else if (checkerExecutionResult.getStderr().startsWith("wrong output format")) {
             testResult.setVerdict(TestVerdict.PRESENTATION_ERROR);
-        } else if (checkerExecutionResult.getStderr().startsWith("FAIL")) {
-            testResult.setVerdict(TestVerdict.FAIL);
+        } else if (checkerExecutionResult.getStderr().startsWith("RUNTIME_ERROR")) {
+            testResult.setVerdict(TestVerdict.RUNTIME_ERROR);
         } else {
             testResult.setVerdict(TestVerdict.CHECKER_ERROR);
         }
@@ -98,7 +98,7 @@ public class TesterMac implements Tester {
     }
 
     private void runChecker() throws IOException, InterruptedException {
-        List<String> command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), answerFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        List<String> command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), "");
         checkerExecutionResult = invokerUtils.executeCommand(command, 30000);
     }
 
@@ -110,8 +110,8 @@ public class TesterMac implements Tester {
     private void prepareFolder(TestData testData, File folder) throws IOException, InterruptedException {
         executableFile = new File(folder.getAbsolutePath() + File.separator + testParams.getExecutableName());
         checkerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getCheckerName());
-        inputFile = new File(folder.getAbsolutePath() + File.separator + testData.getInputName());
-        answerFile = new File(folder.getAbsolutePath() + File.separator + testData.getAnswerName());
+        inputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getInputName());
+        answerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getInputName());
         outputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getOutputName());
         FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
         FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
