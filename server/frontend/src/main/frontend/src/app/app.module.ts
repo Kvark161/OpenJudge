@@ -18,6 +18,7 @@ import {SubmitComponent} from "./pages/contests/submit/submit.component";
 import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";
 import {AddProblemComponent} from "./pages/contests/problems/add-problem.component";
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
+import {UserService} from "./services/user.service";
 
 @NgModule({
     imports: [
@@ -40,7 +41,7 @@ import {ProblemsComponent} from "./pages/contests/problems/problems.component";
         ProblemsComponent,
         AddProblemComponent
     ],
-    providers: [EskimoService],
+    providers: [EskimoService, UserService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

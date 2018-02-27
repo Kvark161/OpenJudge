@@ -3,14 +3,9 @@
         <ul class="nav navbar-nav">
             <li><a routerLink="">Home</a></li>
             <li><a routerLink="/contest/{{contestId}}">Info</a></li>
-            <li><a routerLink="/contest/{{contestId}}/problems">Problems</a></li>
-            <li><a routerLink="/contest/{{contestId}}/submissions">Submissions</a></li>
-            <li><a routerLink="/contest/{{contestId}}/submit">Submit</a></li>
+            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/problems">Problems</a></li>
+            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/submissions">Submissions</a></li>
+            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/submit">Submit</a></li>
         </ul>
-        <form class="navbar-form navbar-right">
-            <input class="form-control" type="text" placeholder="Login">
-            <input class="form-control" type="password" placeholder="Password">
-            <button class="btn btn-outline-success " type="submit">Log-in</button>
-        </form>
     </div>
 </nav>

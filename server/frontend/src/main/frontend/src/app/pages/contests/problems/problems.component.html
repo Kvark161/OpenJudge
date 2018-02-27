@@ -1,11 +1,8 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
     <div class="row">
-        <div class="col-sm-10">
-            <a (click)="openStatements()">Open statements</a>
-        </div>
         <div class="col-sm-2">
-            <button type="button" class="btn btn-primary" routerLink="/contest/{{contestId}}/problem/add">
+            <button *ngIf="role == 'ADMIN'" type="button" class="btn btn-primary" routerLink="/a/contest/{{contestId}}/problem/add">
                 Add problem
             </button>
         </div>
