@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
 import {EskimoService} from "../../services/eskimo.service";
 import {Contest} from "../../shared/contest";
+import {UserService} from "../../services/user.service";
 
 @Component({
     selector: 'app-contests',
@@ -8,10 +9,12 @@ import {Contest} from "../../shared/contest";
 })
 export class ContestsComponent {
 
+    role: string = "ANONYMOUS";
     contests: Contest[];
 
-    constructor(private eskimoService: EskimoService) {
+    constructor(private eskimoService: EskimoService, private userService: UserService) {
         eskimoService.getContests().subscribe(contests => this.contests = contests);
+        userService.getCurrentRole().subscribe(role => this.role = role);
     }
 
 }

@@ -1,24 +1,15 @@
 package eskimo.backend.domain;
 
+import eskimo.backend.authorization.Role;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 @Data
-public class User implements Serializable {
-
+public class User {
     private Long id;
     private String username;
     private String password;
     private Locale locale;
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", locale=" + locale +
-                '}';
-    }
+    private Role role;
 }

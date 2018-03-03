@@ -8,16 +8,17 @@ import {SubmitComponent} from "./pages/contests/submit/submit.component";
 import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";
 import {AddProblemComponent} from "./pages/contests/problems/add-problem.component";
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
+import {UserService} from "./services/user.service";
 
 export const router: Routes = [
-    {path: '', component: HomeComponent},
-    {path: 'home', component: HomeComponent},
-    {path: 'contests', component: ContestsComponent},
-    {path: 'contests/new', component: NewContestComponent},
-    {path: 'about', component: AboutComponent},
-    {path: 'contest/:contestId', component: ContestComponent},
-    {path: 'contest/:contestId/submit', component: SubmitComponent},
-    {path: 'contest/:contestId/submissions', component: SubmissionsComponent},
-    {path: 'contest/:contestId/problems', component: ProblemsComponent},
-    {path: 'contest/:contestId/problem/add', component: AddProblemComponent}
+    {path: '', canActivate: [UserService], component: HomeComponent},
+    {path: 'home', canActivate: [UserService], component: HomeComponent},
+    {path: 'contests', canActivate: [UserService], component: ContestsComponent},
+    {path: 'a/contests/new', canActivate: [UserService], component: NewContestComponent},
+    {path: 'about', canActivate: [UserService], component: AboutComponent},
+    {path: 'contest/:contestId', canActivate: [UserService], component: ContestComponent},
+    {path: 'u/contest/:contestId/submit', canActivate: [UserService], component: SubmitComponent},
+    {path: 'u/contest/:contestId/submissions', canActivate: [UserService], component: SubmissionsComponent},
+    {path: 'u/contest/:contestId/problems', canActivate: [UserService], component: ProblemsComponent},
+    {path: 'a/contest/:contestId/problem/add', canActivate: [UserService], component: AddProblemComponent}
 ];
