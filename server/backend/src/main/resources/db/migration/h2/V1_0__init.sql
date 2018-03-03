@@ -72,4 +72,8 @@ CREATE TABLE programming_languages
   description CLOB                  NOT NULL
 );
 
-INSERT INTO USERS VALUES (0, 'user', 'user', 'ru'),(1, 'admin', 'admin', 'ru');
+INSERT INTO USERS
+(name, password, locale)
+VALUES
+  ('a', 'a', 'ru'),
+  ('u', 'u', 'ru');
