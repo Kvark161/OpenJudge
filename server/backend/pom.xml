@@ -94,9 +94,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
-                    <excludeDevtools>true</excludeDevtools>
                     <outputDirectory>../../eskimo-target</outputDirectory>
-                    <classifier>exec</classifier>
+                    <finalName>backend</finalName>
+                    <classifier>eskimo</classifier>
                 </configuration>
                 <executions>
                     <execution>

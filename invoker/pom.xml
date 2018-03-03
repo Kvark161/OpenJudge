@@ -67,7 +67,8 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <outputDirectory>../eskimo-target</outputDirectory>
-                    <classifier>exec</classifier>
+                    <finalName>invoker</finalName>
+                    <classifier>eskimo</classifier>
                 </configuration>
                 <executions>
                     <execution>

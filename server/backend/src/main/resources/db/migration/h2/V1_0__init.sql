@@ -1,83 +1,66 @@
-CREATE TABLE users
+CREATE TABLE USERS
 (
-  id       BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_users
-    PRIMARY KEY,
-  name     VARCHAR(128)          NOT NULL
-    CONSTRAINT users_name_key UNIQUE,
-  password VARCHAR(128)          NOT NULL,
-  locale   VARCHAR(128)          NOT NULL,
-  role     VARCHAR(128)          NOT NULL
+  ID       BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME     VARCHAR(128)                      NOT NULL,
+  PASSWORD VARCHAR(128)                      NOT NULL,
+  LOCALE   VARCHAR(128)                      NOT NULL,
+  ROLE     VARCHAR(128)                      NOT NULL
 );
 
-CREATE TABLE submissions
+CREATE TABLE SUBMISSIONS
 (
-  id                BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_submissions
-    PRIMARY KEY,
-  user_id           BIGINT                NOT NULL
-    CONSTRAINT fk_submissions_users
-    REFERENCES users,
-  contest_id        BIGINT                NOT NULL,
-  problem_id        BIGINT                NOT NULL,
-  source_code       CLOB                  NOT NULL,
-  verdict           CLOB                  NOT NULL,
-  sending_date_time TIMESTAMP             NOT NULL,
-  test_number       BIGINT
+  ID                BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  USER_ID           BIGINT                            NOT NULL,
+  CONTEST_ID        BIGINT                            NOT NULL,
+  PROBLEM_ID        BIGINT                            NOT NULL,
+  SOURCE_CODE       CLOB                              NOT NULL,
+  VERDICT           CLOB                              NOT NULL,
+  SENDING_DATE_TIME TIMESTAMP                         NOT NULL,
+  TEST_NUMBER       BIGINT,
+  CONSTRAINT FK_SUBMISSIONS_USERS FOREIGN KEY (USER_ID) REFERENCES USERS (ID)
 );
 
-CREATE TABLE contests
+CREATE TABLE CONTESTS
 (
-  id                  BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_contests
-    PRIMARY KEY,
-  name                VARCHAR(128)          NOT NULL,
-  start_time          TIMESTAMP WITH TIME ZONE,
-  duration_in_minutes INTEGER
+  ID                  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME                VARCHAR(128)                      NOT NULL,
+  START_TIME          TIMESTAMP WITH TIME ZONE,
+  DURATION_IN_MINUTES INTEGER
 );
 
-CREATE TABLE statements
+CREATE TABLE STATEMENTS
 (
-  id         BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_statements
-    PRIMARY KEY,
-  contest_id BIGINT                NOT NULL
-    CONSTRAINT fk_statements_contests
-    REFERENCES contests,
-  language   VARCHAR(128)          NOT NULL,
-  file_name  CLOB                  NOT NULL
+  ID         BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  CONTEST_ID BIGINT                            NOT NULL,
+  LANGUAGE   VARCHAR(128)                      NOT NULL,
+  FILE_NAME  CLOB                              NOT NULL,
+  CONSTRAINT FK_STATEMENTS_CONTESTS FOREIGN KEY (CONTEST_ID) REFERENCES CONTESTS (ID)
 );
 
-CREATE TABLE problems
+CREATE TABLE PROBLEMS
 (
-  id            BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_problems
-    PRIMARY KEY,
-  contest_id    BIGINT                NOT NULL
-    CONSTRAINT fk_problems_contests
-    REFERENCES contests,
-  contest_index INTEGER               NOT NULL,
-  name          VARCHAR(128)          NOT NULL,
-  time_limit    BIGINT                NOT NULL,
-  memory_limit  BIGINT                NOT NULL,
-  tests_count   BIGINT                NOT NULL
+  ID            BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  CONTEST_ID    BIGINT                            NOT NULL,
+  CONTEST_INDEX INTEGER                           NOT NULL,
+  NAME          VARCHAR(128)                      NOT NULL,
+  TIME_LIMIT    BIGINT                            NOT NULL,
+  MEMORY_LIMIT  BIGINT                            NOT NULL,
+  TESTS_COUNT   BIGINT                            NOT NULL,
+  CONSTRAINT FK_PROBLEMS_CONTESTS FOREIGN KEY (CONTEST_ID) REFERENCES CONTESTS (ID)
 );
 
-CREATE TABLE programming_languages
+CREATE TABLE PROGRAMMING_LANGUAGES
 (
-  id          BIGINT AUTO_INCREMENT NOT NULL
-    CONSTRAINT pk_programming_languages
-    PRIMARY KEY,
-  name        VARCHAR(128)          NOT NULL
-    CONSTRAINT programming_languages_name_key UNIQUE,
-  description CLOB                  NOT NULL
+  ID          BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME        VARCHAR(128) UNIQUE               NOT NULL,
+  DESCRIPTION CLOB                              NOT NULL
 );
 
 CREATE TABLE USER_SESSIONS
 (
   ID                BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   USER_ID           BIGINT                            NOT NULL,
-  TOKEN             VARCHAR(128)                       NOT NULL,
+  TOKEN             VARCHAR(128)                      NOT NULL,
   USER_AGENT        VARCHAR(256)                      NOT NULL,
   IP                VARCHAR(128)                      NOT NULL,
   LAST_REQUEST_TIME TIMESTAMP                         NOT NULL,
@@ -85,7 +68,7 @@ CREATE TABLE USER_SESSIONS
 );
 
 INSERT INTO USERS
-(name, password, locale)
+(name, password, locale, role)
 VALUES
-  ('a', 'a', 'ru'),
-  ('u', 'u', 'ru');
+  ('admin', 'admin', 'ru', 'ADMIN'),
+  ('user', 'user', 'ru', 'USER');

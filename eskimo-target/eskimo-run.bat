@@ -1,4 +1,4 @@
-javaw -jar backend-0.0.1-SNAPSHOT.jar
+start javaw -jar backend-eskimo.jar
 echo "SERVER STARTED ---------------------------------------------------------"
-javaw -jar invoker-0.0.1-SNAPSHOT.jar
+start javaw -jar invoker-eskimo.jar
 echo "INVOKER STARTED ---------------------------------------------------------"

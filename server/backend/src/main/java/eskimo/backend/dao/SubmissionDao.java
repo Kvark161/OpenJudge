@@ -108,7 +108,7 @@ public class SubmissionDao {
             user.setId(resultSet.getLong("user_id"));
             submission.setUser(user);
             Contest contest = new Contest();
-            contest.setId(resultSet.getLong("contestId"));
+            contest.setId(resultSet.getLong("contest_id"));
             submission.setContest(contest);
             Problem problem = new Problem();
             problem.setId(resultSet.getLong("problem_id"));
