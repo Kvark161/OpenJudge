@@ -1,6 +1,7 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.domain.ProgrammingLanguage;
+import org.apache.tools.ant.types.Commandline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,7 +26,7 @@ public class ProgrammingLanguageDao {
     }
 
     public List<ProgrammingLanguage> getAllProgrammingLanguages() {
-        String sql = "SELECT id, name, description FROM programming_languages";
+        String sql = "SELECT * FROM programming_languages ORDER BY name";
         return jdbcTemplate.query(sql, new ProgrammingLanguageRowMapper());
     }
 
@@ -40,7 +41,7 @@ public class ProgrammingLanguageDao {
     }
 
     public ProgrammingLanguage getProgrammingLanguage(Long id) {
-        String sql = "SELECT id, name, description FROM programming_languages WHERE id = ?";
+        String sql = "SELECT * FROM programming_languages WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ProgrammingLanguageRowMapper());
     }
 
@@ -52,7 +53,14 @@ public class ProgrammingLanguageDao {
             programmingLanguage.setId(resultSet.getLong("id"));
             programmingLanguage.setName(resultSet.getString("name"));
             programmingLanguage.setDescription(resultSet.getString("description"));
+            programmingLanguage.setCompilerPath(resultSet.getString("compilerPath"));
+            programmingLanguage.setCompiled(resultSet.getBoolean("is_compiled"));
+            programmingLanguage.setInterpreterPath(resultSet.getString("interpreter_path"));
+            programmingLanguage.setExtention(resultSet.getString("extension"));
+            programmingLanguage.setCompilerCommand(Commandline.translateCommandline(resultSet.getString("compile_command")));
+            programmingLanguage.setRunCommand(Commandline.translateCommandline(resultSet.getString("run_command")));
             return programmingLanguage;
         }
+
     }
 }

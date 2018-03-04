@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-class Invoker {
+public class Invoker {
 
     private String protocol;
     private String host;
@@ -17,11 +17,11 @@ class Invoker {
         return protocol + "://" + host + ":" + port;
     }
 
-    String getCompileUrl() {
+    public String getCompileUrl() {
         return getUrl() + "/invoke/compile";
     }
 
-    String getTestUrl() {
+    public String getTestUrl() {
         return getUrl() + "/invoke/test-lazy";
     }
 

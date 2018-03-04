@@ -75,7 +75,7 @@ public class InvokeControllerTest {
         Assert.assertEquals(1, testResult.length);
         System.out.println("OUTPUT_FILE:");
         System.out.println(testResult[0].getOutputData());
-        Assert.assertEquals(TestVerdict.OK, testResult[0].getVerdict());
+        Assert.assertEquals(TestVerdict.ACCEPTED, testResult[0].getVerdict());
         Assert.assertEquals("1", testResult[0].getOutputData());
     }
 
@@ -123,7 +123,7 @@ public class InvokeControllerTest {
         TestResult[] testResult = invokeController.test(testParams);
         Assert.assertEquals(1, testResult.length);
         System.out.println(testResult[0]);
-        Assert.assertEquals(TestVerdict.OK, testResult[0].getVerdict());
+        Assert.assertEquals(TestVerdict.ACCEPTED, testResult[0].getVerdict());
         Assert.assertEquals("1", testResult[0].getOutputData());
         Assert.assertEquals("answer is '1'", testResult[0].getMessage());
         Assert.assertTrue(testResult[0].getUsedMemory() > 0);

@@ -8,16 +8,16 @@
             <th>User</th>
             <th>Contest id</th>
             <th>Problem id</th>
-            <th>Verdict</th>
+            <th>Status</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let submission of submissions">
             <td>{{submission.id}}</td>
-            <td>{{submission.username}}</td>
-            <td>{{submission.contest.id}}</td>
-            <td>{{submission.problem.id}}</td>
-            <td>{{submission.verdict}}</td>
+            <td>{{submission.user.username}}</td>
+            <td>{{submission.contestId}}</td>
+            <td>{{submission.problemId}}</td>
+            <td>{{submission.status}}</td>
         </tr>
         </tbody>
     </table>

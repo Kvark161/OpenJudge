@@ -52,7 +52,7 @@ public class TesterMac implements Tester {
                     runChecker();
                 }
                 testResults[i] = getTestResult();
-                if (stopOnFirstFail && !TestVerdict.OK.equals(testResults[i].getVerdict())) {
+                if (stopOnFirstFail && TestVerdict.ACCEPTED != testResults[i].getVerdict()) {
                     return testResults;
                 }
             } catch (Throwable e) {
@@ -84,7 +84,7 @@ public class TesterMac implements Tester {
         } else if (checkerExecutionResult.getExitCode() != 0 || checkerExecutionResult.getTimeOutExceeded()) {
             testResult.setVerdict(TestVerdict.CHECKER_ERROR);
         } else if (checkerExecutionResult.getStderr().startsWith("ok")) {
-            testResult.setVerdict(TestVerdict.OK);
+            testResult.setVerdict(TestVerdict.ACCEPTED);
         } else if (checkerExecutionResult.getStderr().startsWith("wrong answer")) {
             testResult.setVerdict(TestVerdict.WRONG_ANSWER);
         } else if (checkerExecutionResult.getStderr().startsWith("wrong output format")) {

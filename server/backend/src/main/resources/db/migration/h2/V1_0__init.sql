@@ -14,9 +14,13 @@ CREATE TABLE SUBMISSIONS
   CONTEST_ID        BIGINT                            NOT NULL,
   PROBLEM_ID        BIGINT                            NOT NULL,
   SOURCE_CODE       CLOB                              NOT NULL,
-  VERDICT           CLOB                              NOT NULL,
+  STATUS            VARCHAR(64)                       NOT NULL,
   SENDING_DATE_TIME TIMESTAMP                         NOT NULL,
-  TEST_NUMBER       BIGINT,
+  USED_TIME         BIGINT                            NOT NULL,
+  USED_MEMORY       BIGINT                            NOT NULL,
+  RESULT_DATA       CLOB                              NOT NULL,
+  NUMBER_TESTS      BIGINT                            NOT NULL,
+  PASSED_TESTS      BIGINT                            NOT NULL,
   CONSTRAINT FK_SUBMISSIONS_USERS FOREIGN KEY (USER_ID) REFERENCES USERS (ID)
 );
 
@@ -41,9 +45,15 @@ CREATE TABLE PROBLEMS
 
 CREATE TABLE PROGRAMMING_LANGUAGES
 (
-  ID          BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  NAME        VARCHAR(128) UNIQUE               NOT NULL,
-  DESCRIPTION CLOB                              NOT NULL
+  ID               BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME             VARCHAR(128) UNIQUE               NOT NULL,
+  DESCRIPTION      VARCHAR(256)                      NOT NULL,
+  COMPILER_PATH    VARCHAR(4096),
+  IS_COMPILED      BOOLEAN                           NOT NULL,
+  INTERPRETER_PATH VARCHAR(4096),
+  EXTENSION        VARCHAR(10)                       NOT NULL,
+  COMPILE_COMMAND  VARCHAR(4096),
+  RUN_COMMAND      VARCHAR(4096)                     NOT NULL
 );
 
 CREATE TABLE STATEMENTS
@@ -75,7 +85,14 @@ CREATE TABLE USER_SESSIONS
 );
 
 INSERT INTO USERS
-(name, password, locale, role)
+(NAME, PASSWORD, LOCALE, ROLE)
 VALUES
   ('admin', 'admin', 'ru', 'ADMIN'),
   ('user', 'user', 'ru', 'USER');
+
+INSERT INTO PROGRAMMING_LANGUAGES
+(name, DESCRIPTION, COMPILER_PATH, IS_COMPILED, INTERPRETER_PATH, EXTENSION, COMPILE_COMMAND, RUN_COMMAND)
+VALUES
+  ('g++17', 'C++ 17', 'g++', TRUE, NULL, 'cpp', '{COMPILER_PATH} {SOURCE_CODE} -o {OUTPUT_EXE}', '{SOLUTION_EXE}'),
+  ('java8', 'Java 8', 'javac', TRUE, 'java', 'java', '{COMPILER_PATH} {SOURCE_CODE}',
+   '{INTERPRETER_PATH} {SOLUTION_EXE}');

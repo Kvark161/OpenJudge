@@ -3,14 +3,12 @@ package eskimo.backend.judge;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eskimo.backend.dao.SubmissionDao;
+import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
-import eskimo.invoker.entity.CompilationParams;
-import eskimo.invoker.entity.CompilationResult;
-import eskimo.invoker.entity.TestLazyParams;
-import eskimo.invoker.entity.TestResult;
-import eskimo.invoker.enums.CompilationVerdict;
-import eskimo.invoker.enums.TestVerdict;
+import eskimo.backend.judge.jobs.JudgeJob;
+import eskimo.backend.judge.jobs.JudgeSubmissionJob;
+import eskimo.backend.services.SubmissionService;
+import eskimo.backend.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -37,10 +34,13 @@ public class JudgeService {
     private InvokerPool invokerPool;
 
     @Autowired
-    private SubmissionDao submissionDao;
+    private SubmissionService submissionService;
+
+    @Autowired
+    private StorageService storageService;
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final BlockingQueue<Submission> pendingSubmissions = new LinkedBlockingQueue<>();
+    private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -61,53 +61,15 @@ public class JudgeService {
     }
 
     public void judge(Submission submission) {
-        submission.setVerdict(Submission.Verdict.PENDING);
-        submissionDao.updateSubmission(submission);
+        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, restTemplate);
         try {
-            pendingSubmissions.put(submission);
+            judgeQueue.put(job);
         } catch (InterruptedException e) {
             throw new IllegalStateException("can't put new submission", e);
         }
     }
 
-    private CompilationResult compile(Submission submission, Invoker invoker) {
-        CompilationParams parameter = new CompilationParams();
-        parameter.setCompilationCommand(Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE));
-        parameter.setSourceCode(submission.getSourceCode());
-        parameter.setExecutableFileName("main.exe");
-        parameter.setSourceFileName("main.cpp");
-        return restTemplate.postForObject(invoker.getCompileUrl(), parameter, CompilationResult.class);
-    }
-
-    private void runTests(Submission submission,
-                          Invoker invoker,
-                          CompilationResult compilationResult) throws IOException {
-        TestLazyParams testParams = new TestLazyParams();
-        testParams.setExecutable(compilationResult.getExecutable());
-        testParams.setExecutableName("main.exe");
-        testParams.setCheckerName("checker.exe");
-
-        testParams.setContestId(submission.getContest().getId());
-        testParams.setProblemId(submission.getProblem().getId());
-        testParams.setNumberTests(submission.getTestNumber());
-
-        TestResult[] testResults = restTemplate.postForObject(invoker.getTestUrl(), testParams, TestResult[].class);
-    }
-
-    private Submission.Verdict parseVerdict(TestVerdict runTestVerdict) {
-        if (runTestVerdict == TestVerdict.OK) {
-            return Submission.Verdict.OK;
-        } else if (runTestVerdict == TestVerdict.WRONG_ANSWER) {
-            return Submission.Verdict.WRONG_ANSWER;
-        } else if (runTestVerdict == TestVerdict.PRESENTATION_ERROR) {
-            return Submission.Verdict.PRESENTATION_ERROR;
-        } else if (runTestVerdict == TestVerdict.RUNTIME_ERROR) {
-            return Submission.Verdict.FAIL;
-        } else if (runTestVerdict == TestVerdict.TIME_LIMIT_EXCEED) {
-            return Submission.Verdict.TIME_LIMIT_EXCEED;
-        } else {
-            return Submission.Verdict.INTERNAL_ERROR;
-        }
+    public void generateAnswers(Problem problem) {
     }
 
     private class JudgeThread extends Thread {
@@ -116,27 +78,13 @@ public class JudgeService {
             try {
                 //noinspection InfiniteLoopStatement
                 while (true) {
-                    Submission submission = pendingSubmissions.take();
+                    JudgeJob job = judgeQueue.take();
                     Invoker invoker = invokerPool.take();
                     executorService.execute(() -> {
                         try {
-                            submission.setVerdict(Submission.Verdict.RUNNING);
-                            submissionDao.updateSubmission(submission);
-                            CompilationResult compilationResult = compile(submission, invoker);
-                            if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
-                                submission.setVerdict(Submission.Verdict.COMPILATION_SUCCESS);
-                            } else {
-                                submission.setVerdict(Submission.Verdict.COMPILATION_ERROR);
-                                submissionDao.updateSubmission(submission);
-                                return;
-                            }
-                            submissionDao.updateSubmission(submission);
-                            runTests(submission, invoker, compilationResult);
-                            submissionDao.updateSubmission(submission);
+                            job.execute(invoker);
                         } catch (Throwable e) {
-                            logger.error("error occurred while compilation", e);
-                            submission.setVerdict(Submission.Verdict.INTERNAL_ERROR);
-                            submissionDao.updateSubmission(submission);
+                            logger.error("Error occurred while job execution", e);
                         } finally {
                             invokerPool.release(invoker);
                         }

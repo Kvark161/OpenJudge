@@ -73,7 +73,7 @@ public class TesterWindows implements Tester {
                     prepareToCheck(testData);
                     runCheck();
                     testResults[i] = prepareTestResult();
-                    if (!TestVerdict.OK.equals(testResults[i].getVerdict()) && testParams.isStopOnFirstFail()) {
+                    if (TestVerdict.ACCEPTED != testResults[i].getVerdict() && testParams.isStopOnFirstFail()) {
                         return testResults;
                     }
                     releaseAfterTest();
@@ -212,14 +212,14 @@ public class TesterWindows implements Tester {
             logger.error("checkerResult = " + checkerResult);
             result.setMessage(checkerMessage);
             if ("accepted".equals(checkerResult)) {
-                result.setVerdict(TestVerdict.OK);
+                result.setVerdict(TestVerdict.ACCEPTED);
             } else if ("wrong-answer".equals(checkerResult)) {
                 result.setVerdict(TestVerdict.WRONG_ANSWER);
             } else if ("presentation-error".equals(checkerResult)) {
                 result.setVerdict(TestVerdict.PRESENTATION_ERROR);
             } else {
                 result.setVerdict(TestVerdict.CHECKER_ERROR);
-                result.setMessage("unknown checker verdict");
+                result.setMessage("unknown checker status");
             }
         }
         return result;

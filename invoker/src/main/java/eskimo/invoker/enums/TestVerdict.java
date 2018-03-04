@@ -3,7 +3,7 @@ package eskimo.invoker.enums;
 import java.io.Serializable;
 
 public enum TestVerdict implements Serializable {
-    OK,
+    ACCEPTED,
     SKIPPED,
     WRONG_ANSWER,
     PRESENTATION_ERROR,
