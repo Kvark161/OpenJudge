@@ -1,15 +1,12 @@
 package eskimo.backend.containers;
 
+import eskimo.backend.domain.Statement;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.File;
 
 @Getter
 @Setter
 public class StatementContainer {
-
     String language;
-    File statement;
-
+    Statement statement;
 }

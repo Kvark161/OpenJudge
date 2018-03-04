@@ -1,10 +1,12 @@
 package eskimo.backend.parsers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.containers.ProblemContainer;
 import eskimo.backend.containers.SolutionContainer;
 import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
 import eskimo.backend.domain.Problem;
+import eskimo.backend.domain.Statement;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -20,13 +22,18 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class ProblemParserPolygonZip {
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemParserPolygonZip.class);
+    private static final Map<String, String> LANGUAGE_MAPPING;
+
+    static {
+        LANGUAGE_MAPPING = new HashMap<>();
+        LANGUAGE_MAPPING.put("english", "en");
+        LANGUAGE_MAPPING.put("russian", "ru");
+    }
 
     private File root;
     private Document problemDoc;
@@ -122,16 +129,29 @@ public class ProblemParserPolygonZip {
         if (!statementsFolder.exists()) {
             return result;
         }
+        //noinspection ConstantConditions
         for (File file : statementsFolder.listFiles(File::isDirectory)) {
             StatementContainer statementContainer = new StatementContainer();
             statementContainer.setLanguage(file.getName().toLowerCase());
             File statementData = new File(file + File.separator + "problem-properties.json");
-            if (statementData.exists()) {
-                statementContainer.setStatement(statementData);
-                result.add(statementContainer);
+            if (!statementData.exists()) {
+                continue;
             }
+            ObjectMapper jsonMapper = new ObjectMapper();
+            try {
+                Statement statement = jsonMapper.readValue(statementData, Statement.class);
+                statement.setLanguage(convertLanguage(statement.getLanguage()));
+                statementContainer.setStatement(statement);
+            } catch (IOException e) {
+                throw new AddEskimoEntityException("cannot parse statements: " + statementContainer.getLanguage(), e);
+            }
+            result.add(statementContainer);
         }
         return result;
+    }
+
+    private String convertLanguage(String inputLanguage) {
+        return LANGUAGE_MAPPING.getOrDefault(inputLanguage, inputLanguage);
     }
 
     private List<File> getSourceFiles(String tagname) {
@@ -168,7 +188,6 @@ public class ProblemParserPolygonZip {
         Problem problem = new Problem();
         problem.setTimeLimit(getLongValue("time-limit", 1000));
         problem.setMemoryLimit(getLongValue("memory-limit", 268435456));
-        problem.setName("");
         return problem;
     }
 

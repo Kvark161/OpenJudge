@@ -28,21 +28,11 @@ CREATE TABLE CONTESTS
   DURATION_IN_MINUTES INTEGER
 );
 
-CREATE TABLE STATEMENTS
-(
-  ID         BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  CONTEST_ID BIGINT                            NOT NULL,
-  LANGUAGE   VARCHAR(128)                      NOT NULL,
-  FILE_NAME  CLOB                              NOT NULL,
-  CONSTRAINT FK_STATEMENTS_CONTESTS FOREIGN KEY (CONTEST_ID) REFERENCES CONTESTS (ID)
-);
-
 CREATE TABLE PROBLEMS
 (
   ID            BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   CONTEST_ID    BIGINT                            NOT NULL,
   CONTEST_INDEX INTEGER                           NOT NULL,
-  NAME          VARCHAR(128)                      NOT NULL,
   TIME_LIMIT    BIGINT                            NOT NULL,
   MEMORY_LIMIT  BIGINT                            NOT NULL,
   TESTS_COUNT   BIGINT                            NOT NULL,
@@ -55,6 +45,23 @@ CREATE TABLE PROGRAMMING_LANGUAGES
   NAME        VARCHAR(128) UNIQUE               NOT NULL,
   DESCRIPTION CLOB                              NOT NULL
 );
+
+CREATE TABLE STATEMENTS
+(
+  ID          BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  PROBLEM_ID  BIGINT                            NOT NULL,
+  LANGUAGE    VARCHAR(128)                      NOT NULL,
+  INPUT_FILE  VARCHAR(128)                      NOT NULL,
+  OUTPUT_FILE VARCHAR(128)                      NOT NULL,
+  NAME        VARCHAR(128)                      NOT NULL,
+  LEGEND      CLOB                              NOT NULL,
+  INPUT       CLOB                              NOT NULL,
+  OUTPUT      CLOB                              NOT NULL,
+  SAMPLES     CLOB                              NOT NULL,
+  NOTES       CLOB                              NOT NULL,
+  CONSTRAINT STATEMENTS_PROBLEMS_ID_FK FOREIGN KEY (PROBLEM_ID) REFERENCES PROBLEMS (ID)
+);
+
 
 CREATE TABLE USER_SESSIONS
 (

@@ -22,6 +22,7 @@ import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.math.NumberUtils.createLong;
 
 /**
  * Intercepts all requests to backend controllers. Decides can user do this request or not according to user role.
@@ -63,10 +64,14 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         } else {
             Map<String, String> cookies = getAuthorizationCookies(
                     Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{}));
-            User user = getUser(cookies);
+
+            Long userId = createLong(cookies.get(ESKIMO_UID_COOKIE_NAME));
+            User user = userId == null ? null : userService.getUserById(userId);
             authenticationHolder.setUser(user);
+
             UserSession userSession = getUserSession(request, cookies, user);
             authenticationHolder.setUserSession(userSession);
+
             Role userRole = userSession == null ? Role.ANONYMOUS : user.getRole();
             Class<?> controllerType = handlerMethod.getBeanType();
             boolean badUserRequest = userRole == Role.USER && controllerType.equals(AdminApiController.class);
@@ -79,23 +84,6 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             }
         }
         return true;
-    }
-
-    /**
-     * Gets user if exists or null
-     */
-    private User getUser(Map<String, String> cookies) {
-        String eskimoUid = cookies.get(ESKIMO_UID_COOKIE_NAME);
-        if (eskimoUid == null) {
-            return null;
-        }
-        try {
-            long userId = Long.parseLong(eskimoUid);
-            //successful - maybe user exists
-            return userService.getUserById(userId);
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     /**
@@ -117,14 +105,10 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         UserSession userSession = userService.getUserSession(user.getId(), token, userAgent, ip);
         if (userSession == null) {
             return null;
-        } else if (userSession.getLastRequestTime().isBefore(LocalDateTime.now().minus(7, ChronoUnit.DAYS))) {
-            userService.deleteUserSession(userSession.getId());
-            return null;
         } else {
-            userService.updateLastRequestTime(userSession.getId());
+            userService.updateLastRequestTime(userSession);
             return userSession;
         }
-
     }
 
     private void authenticateInvoker() {

@@ -1,19 +1,29 @@
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-            <li><a routerLink="">Home</a></li>
-            <li><a routerLink="/contests">Contests</a></li>
-            <li><a routerLink="/about">About</a></li>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a routerLink="" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/contests" class="nav-link">Contests</a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/about" class="nav-link">About</a>
+            </li>
         </ul>
-        <form *ngIf="!username || username == ''" class="navbar-form navbar-right">
-            <input class="form-control" type="text" placeholder="Login" [(ngModel)]="usernameInput" name="username" required>
-            <input class="form-control" type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
-            <button class="btn btn-success" type="submit" (click)="logIn()">Log-in</button>
-            <button class="btn btn-primary" type="submit" (click)="signIn()">Sign-in</button>
+        <form *ngIf="!username || username == ''" class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Login" [(ngModel)]="usernameInput" name="username" required>
+            <input class="form-control mr-sm-2" type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
+            <button class="btn btn-success my-2 my-sm-0" type="submit" (click)="logIn()">Log-in</button>
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit" (click)="signIn()">Sign-in</button>
         </form>
-        <div *ngIf="username && username != ''" class="navbar-right">
-            <span>Welcome, {{username}}</span>
-            <button class="btn btn-outline-success " (click)="logOut()">Log-out</button>
-        </div>
+        <ul *ngIf="username && username != ''" class="nav navbar-nav navbar-right">
+            <li>
+                <p class="navbar-text">Logged in as {{username}}</p>
+            </li>
+            <li>
+                <a class="nav-link " (click)="logOut()">| Log-out</a>
+            </li>
+        </ul>
     </div>
 </nav>

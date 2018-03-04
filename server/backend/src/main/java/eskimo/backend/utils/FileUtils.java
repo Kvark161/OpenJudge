@@ -23,10 +23,6 @@ public class FileUtils {
     @Autowired
     private AppSettings appSettings;
 
-    public File unzip(File zipFile) throws IOException {
-        return unzip(zipFile, "zip");
-    }
-
     public File unzip(File zipFile, String prefix) throws IOException {
         byte[] buffer = new byte[1024];
         Path outputFolder = Files.createTempDirectory(Paths.get(appSettings.getTempPath().getAbsolutePath()), prefix);
@@ -72,14 +68,4 @@ public class FileUtils {
             logger.error("can't delete temp file=" + file, e);
         }
     }
-
-    public File copyFileToFolder(File file, File folder) throws IOException {
-        //noinspection ResultOfMethodCallIgnored
-        folder.mkdirs();
-        File result = new File(folder + File.separator + file.getName());
-        Files.copy(file.toPath(), result.toPath());
-        return result;
-    }
-
-
 }

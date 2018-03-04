@@ -1,5 +1,6 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
+    <div class="row"><p></p></div>
     <div class="row">
         <div class="col-sm-2">
             <button *ngIf="role == 'ADMIN'" type="button" class="btn btn-primary" routerLink="/a/contest/{{contestId}}/problem/add">
@@ -7,7 +8,7 @@
             </button>
         </div>
     </div>
-
+    <div class="row"><p></p></div>
     <table class="table">
         <thead>
         <tr>
@@ -19,8 +20,8 @@
         </thead>
         <tbody>
         <tr *ngFor="let problem of problems">
-            <td>{{problem.id}}</td>
-            <td>{{problem.name}}</td>
+            <td>{{problem.index}}</td>
+            <td><a routerLink="/u/contest/{{contestId}}/problem/{{problem.index}}">{{problem.name}}</a></td>
             <td>{{problem.timeLimit}}</td>
             <td>{{problem.memoryLimit}}</td>
         </tr>

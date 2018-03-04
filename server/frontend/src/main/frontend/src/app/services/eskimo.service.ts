@@ -1,5 +1,5 @@
 import {Contest} from "../shared/contest";
-import {Http, RequestOptions} from "@angular/http";
+import {Http, RequestOptions, URLSearchParams} from "@angular/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 
@@ -7,6 +7,8 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import {Problem} from "../shared/problem";
+import {StatementsResponse} from "../shared/statements.response";
+
 
 @Injectable()
 export class EskimoService {
@@ -23,15 +25,19 @@ export class EskimoService {
     }
 
     private getUrlProblems(contestId: number) {
-        return this.urlHost + "contest/" + contestId + "/problems";
+        return this.getUrlContest(contestId) + "/problems";
     }
 
     private getUrlSubmissions(contestId: number) {
-        return this.urlHost + "contest/" + contestId + "/submissions";
+        return this.getUrlContest(contestId) + "/submissions";
     }
 
     private getUrlAddProblem(contestId: number) {
-        return this.urlHost + "contest/" + contestId + "/problem/add";
+        return this.getUrlContest(contestId) + "/problem/add";
+    }
+
+    private getStatementsUrl(contestId: number, problemIndex: number) {
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex;
     }
 
     constructor(private http: Http) {
@@ -64,6 +70,16 @@ export class EskimoService {
 
     getProblems(contestId: number) : Observable<Problem[]> {
         return this.http.get(this.getUrlProblems(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getStatements(contestId: number, problemIndex: number, language: string): Observable<StatementsResponse> {
+        let params = new URLSearchParams();
+        params.set('language', language);
+        let options = this.optionsWithCredentials;
+        options.params = params;
+        return this.http.get(this.getStatementsUrl(contestId, problemIndex), options)
             .map(res => res.json())
             .catch(this.handleError);
     }

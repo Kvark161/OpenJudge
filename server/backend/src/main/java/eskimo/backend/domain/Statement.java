@@ -1,24 +1,25 @@
 package eskimo.backend.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Data
-public class Statement implements Serializable {
-    private static final long serialVersionUID = -5623307237343174281L;
-
-    public static final String DEFAULT_LANGUAGE = "en";
-    public static final String DEFAULT_FORMAT = "pdf";
-
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Statement {
     private Long id;
-
+    private Long problemId;
     private String language;
 
-    @JsonProperty("name")
-    private String fileName;
+    private String inputFile;
+    private String outputFile;
 
-    private String format;
+    private String name;
+    private String legend;
+    private String input;
+    private String output;
+    private List<SampleTest> sampleTests;
+    private String notes;
 
 }

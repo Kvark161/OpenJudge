@@ -1,7 +1,6 @@
 package eskimo.backend.storage;
 
 import eskimo.backend.config.AppSettings;
-import eskimo.backend.domain.Statement;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,36 +25,50 @@ public class StorageService {
     private static final String VALIDATORS_FILE_NAME = "validator.cpp";
     private static final String SOLUTIONS_FOLDER_NAME = "solutions";
     private static final String TESTS_FOLDER_NAME = "tests";
+    private static final String STATEMENTS_ENGLISH = "english";
+    private static final String STATEMENTS_RUSSIAN = "russian";
+
+    private AppSettings appSettings;
 
     @Autowired
-    private AppSettings appSettings;
+    public StorageService(AppSettings appSettings) {
+        this.appSettings = appSettings;
+    }
 
     public File getContestFolder(long contestId) {
         return new File(appSettings.getStoragePath() + File.separator + CONTEST_FOLDER_NAME + File.separator +
                 new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
     }
 
-    public File getStatementsFolder(long contestId) {
-        return new File(getContestFolder(contestId) + File.separator + STATEMENTS_FOLDER_NAME);
-    }
-
-    public File getStatementsFolder(long contestId, long problemIndex) {
+    private File getStatementsFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + STATEMENTS_FOLDER_NAME);
     }
 
-    public File getStatementFile(long contestId, String language, String format) {
-        return new File(getStatementsFolder(contestId) + File.separator + language + "." + format);
+    /**
+     * Returns path to existing json file with statements for appropriate contest and problem.
+     * If file for given language doesn't exist, returns another one (only english and russian supported).
+     * If both files don't exist or input language is bad, returns null.
+     */
+    public File getStatementFile(long contestId, long problemIndex, String language) {
+        String storageLanguage = language.toLowerCase();
+        if (!storageLanguage.equals(STATEMENTS_ENGLISH) && !storageLanguage.equals(STATEMENTS_RUSSIAN)) {
+            logger.error("wrong language: {}", storageLanguage);
+            return null;
+        }
+        String statementFileTemplate = getStatementsFolder(contestId, problemIndex) + File.separator + "%s" + ".json";
+        File result = new File(String.format(statementFileTemplate, storageLanguage));
+        if (!result.exists()) {
+            String secondLanguage = storageLanguage.equals(STATEMENTS_ENGLISH) ? STATEMENTS_RUSSIAN : STATEMENTS_ENGLISH;
+            result = new File(String.format(statementFileTemplate, secondLanguage));
+        }
+        if (!result.exists()) {
+            logger.error("statements doesn't exists: {}.json", result.getName());
+            return null;
+        }
+        return result;
     }
 
-    public File getStatementFile(long contestId, long problemIndex, String language, String format) {
-        return new File(getStatementsFolder(contestId, problemIndex) + File.separator + language.toLowerCase() + "." + format.toLowerCase());
-    }
-
-    public File getStatementFile(long contestId) {
-        return getStatementFile(contestId, Statement.DEFAULT_LANGUAGE, Statement.DEFAULT_FORMAT);
-    }
-
-    public File getProblemFolder(long contestId, long problemIndex) {
+    private File getProblemFolder(long contestId, long problemIndex) {
         return new File(getContestFolder(contestId) + File.separator + PROBLEMS_FOLDER_NAME
                 + File.separator + problemIndex);
     }
@@ -64,7 +77,7 @@ public class StorageService {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + CHECKERS_FILE_NAME);
     }
 
-    public File getTestsFolder(long contestId, long problemIndex) {
+    private File getTestsFolder(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + TESTS_FOLDER_NAME);
     }
 
@@ -76,7 +89,7 @@ public class StorageService {
         return FileUtils.readFileToString(getTestInputFile(contestId, problemIndex, testIndex));
     }
 
-    public File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
+    private File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".ans");
     }
 

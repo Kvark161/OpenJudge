@@ -48,7 +48,8 @@ public class PublicApiController {
     @GetMapping("role")
     public Role getRole() {
         User user = authenticationHolder.getUser();
-        return user == null ? Role.ANONYMOUS : user.getRole();
+        UserSession userSession = authenticationHolder.getUserSession();
+        return user == null || userSession == null ? Role.ANONYMOUS : user.getRole();
     }
 
     //в user должны присутствовать username, password
@@ -89,6 +90,7 @@ public class PublicApiController {
     @GetMapping("username")
     public String getCurrentUsername() {
         User user = authenticationHolder.getUser();
-        return user.getUsername();
+        UserSession userSession = authenticationHolder.getUserSession();
+        return userSession == null ? null : user.getUsername();
     }
 }

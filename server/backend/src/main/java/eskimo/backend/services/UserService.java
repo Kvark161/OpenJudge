@@ -10,11 +10,14 @@ import org.springframework.stereotype.Component;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.UUID;
 
 @Component
 public class UserService {
+    private static final Duration TOKEN_LIVE_TIME = Duration.ofDays(7);
 
     private final UserDao userDao;
     private final UserSessionsDao userSessionsDao;
@@ -37,9 +40,7 @@ public class UserService {
         if (userDao.userExists(user.getUsername())) {
             throw new IllegalArgumentException("user already exists");
         }
-        if (user.getLocale() == null || user.getLocale() != new Locale("ru")) {
-            user.setLocale(Locale.ENGLISH);
-        }
+        user.setLocale(Locale.ENGLISH);
         user.setRole(Role.USER);
         return userDao.addUser(user);
     }
@@ -69,15 +70,24 @@ public class UserService {
         return userSessionsDao.getUserSession(userId, token, userAgent, ip);
     }
 
+    /**
+     * Returns user session which is always not out of date
+     */
     public UserSession getUserSession(Long userId, String token, String userAgent, String ip) {
-        return userSessionsDao.getUserSession(userId, token, userAgent, ip);
+        UserSession userSession = userSessionsDao.getUserSession(userId, token, userAgent, ip);
+        if (userSession == null
+                || userSession.getLastRequestTime().isBefore(LocalDateTime.now().minus(TOKEN_LIVE_TIME))) {
+            return null;
+        }
+        return userSession;
     }
 
     public void deleteUserSession(Long userSessionId) {
         userSessionsDao.delete(userSessionId);
     }
 
-    public void updateLastRequestTime(Long userSessionId) {
-        userSessionsDao.updateRequestTime(userSessionId);
+    public void updateLastRequestTime(UserSession userSession) {
+        userSession.setLastRequestTime(LocalDateTime.now());
+        userSessionsDao.updateRequestTime(userSession);
     }
 }

@@ -10,7 +10,6 @@ public class Problem implements Serializable {
     private Long id;
     private long contestId;
     private long index;
-    private String name;
     private long timeLimit;
     private long memoryLimit;
     private int testsCount;

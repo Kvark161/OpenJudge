@@ -20,6 +20,8 @@ import java.util.Map;
 @Slf4j
 public class ProblemDao {
 
+    private static final ProblemRowMapper ROW_MAPPER = new ProblemRowMapper();
+
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -33,7 +35,6 @@ public class ProblemDao {
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
         params.put("contest_id", problem.getContestId());
-        params.put("name", problem.getName());
         params.put("time_limit", problem.getTimeLimit());
         params.put("memory_limit", problem.getMemoryLimit());
         params.put("tests_count", problem.getTestsCount());
@@ -43,17 +44,23 @@ public class ProblemDao {
 
     @Transactional
     public List<Problem> getContestProblems(Long contestId) {
-        String sql = "SELECT id, contest_index, name, time_limit, memory_limit, contest_id FROM problems " +
+        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit, contest_id FROM problems " +
                 " WHERE contest_id = ?" +
                 " ORDER BY contest_index";
-        return jdbcTemplate.query(sql, new Object[]{contestId}, new ProblemRowMapper());
+        return jdbcTemplate.query(sql, new Object[]{contestId}, ROW_MAPPER);
     }
 
     @Transactional
     public Problem getProblem(Long id) {
-        String sql = "SELECT id, contest_index, name, time_limit, memory_limit FROM problems " +
+        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit FROM problems " +
                 " WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ProblemDao.ProblemRowMapper());
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, ROW_MAPPER);
+    }
+
+    public Problem getContestProblem(Long contestId, Integer problemIndex) {
+        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit FROM problems " +
+                " WHERE contest_id = ? AND contest_index = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{contestId, problemIndex}, ROW_MAPPER);
     }
 
     @Transactional
@@ -73,7 +80,6 @@ public class ProblemDao {
             Problem problem = new Problem();
             problem.setId(resultSet.getLong("id"));
             problem.setIndex(resultSet.getLong("contest_index"));
-            problem.setName(resultSet.getString("name"));
             problem.setTimeLimit(resultSet.getLong("time_limit"));
             problem.setMemoryLimit(resultSet.getLong("memory_limit"));
             problem.setContestId(resultSet.getLong("contest_id"));

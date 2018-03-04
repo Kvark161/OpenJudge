@@ -1,11 +1,21 @@
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-            <li><a routerLink="">Home</a></li>
-            <li><a routerLink="/contest/{{contestId}}">Info</a></li>
-            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/problems">Problems</a></li>
-            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/submissions">Submissions</a></li>
-            <li *ngIf="role != 'ANONYMOUS'"><a routerLink="/u/contest/{{contestId}}/submit">Submit</a></li>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a routerLink="" class="nav-link">Home</a>
+            </li>
+            <li class="nav-item">
+                <a routerLink="/contest/{{contestId}}" class="nav-link">Info</a>
+            </li>
+            <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
+                <a routerLink="/u/contest/{{contestId}}/problems" class="nav-link">Problems</a>
+            </li>
+            <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
+                <a routerLink="/u/contest/{{contestId}}/submissions" class="nav-link">Submissions</a>
+            </li>
+            <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
+                <a routerLink="/u/contest/{{contestId}}/submit" class="nav-link">Submit</a>
+            </li>
         </ul>
     </div>
 </nav>

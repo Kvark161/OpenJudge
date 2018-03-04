@@ -53,9 +53,13 @@ public class UserSessionsDao {
         jdbcTemplate.update(sql, id);
     }
 
-    public void updateRequestTime(Long id) {
-        String sql = "UPDATE user_sessions SET last_request_time = ? WHERE id = ?";
-        jdbcTemplate.update(sql, LocalDateTime.now(), id);
+    public void updateRequestTime(UserSession userSession) {
+        String sql = "INSERT INTO user_sessions(id, user_id, token, user_agent, ip, last_request_time) " +
+                "VALUES(?, ?, ?, ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE last_request_time = ?";
+        jdbcTemplate.update(sql, userSession.getId(), userSession.getUserId(), userSession.getToken(),
+                userSession.getUserAgent(), userSession.getIp(), userSession.getLastRequestTime(),
+                userSession.getLastRequestTime());
     }
 
     private static class UserSessionsRowMapper implements RowMapper<UserSession> {

@@ -27,7 +27,7 @@ export class AddProblemComponent {
             return;
         }
         this.eskimoService.addProblems(this.contestId, this.fileList[0]).subscribe(
-            () => this.router.navigateByUrl("/contest/" + this.contestId + "/problems"),
+            () => this.router.navigateByUrl("/u/contest/" + this.contestId + "/problems"),
             error => {
                 let json = error.json();
                 this.error = json.message;

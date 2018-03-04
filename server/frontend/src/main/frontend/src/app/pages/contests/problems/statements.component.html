@@ -1,0 +1,44 @@
+<contest-toolbar [contestId]="contestId"></contest-toolbar>
+<div class="container" *ngIf="statements && (!statements.error || statements.error == '')">
+    <div class="row"><p></p></div>
+    <div align="center">
+        <h2>{{statements.name}}</h2>
+        <p>Time limit: {{statements.timeLimit}}</p>
+        <p>Memory limit: {{statements.memoryLimit}} {{memoryUnits}}</p>
+        <p>Input type: {{statements.inputFile}}</p>
+        <p>Output type: {{statements.outputFile}}</p>
+    </div>
+
+    <p>{{statements.legend}}</p>
+
+    <h3>Input:</h3>
+    <p>{{statements.input}}</p>
+
+    <h3>Output:</h3>
+    <p>{{statements.output}}</p>
+
+    <h3>Sample tests:</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>input data</th>
+            <th>output data</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let sample of statements.sampleTests">
+            <td>{{sample.input}}</td>
+            <td>{{sample.output}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div *ngIf="statements.notes != ''">
+        <h3>Notes:</h3>
+        <p>{{statements.notes}}</p>
+    </div>
+
+</div>
+<div class="container" *ngIf="statements && statements.error && statements.error != ''">
+    {{statements.error}}
+</div>

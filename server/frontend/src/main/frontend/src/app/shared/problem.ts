@@ -1,5 +1,5 @@
 export class Problem {
-    id: number;
+    index: number;
     name: string;
     timeLimit: number;
     memoryLimit: number;
