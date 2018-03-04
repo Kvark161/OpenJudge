@@ -15,11 +15,13 @@ export class SubmitComponent {
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
-        this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
+        this.eskimoService.getProblems(this.contestId).subscribe(problems => {
+            this.problems = problems
+        });
     }
 
     onSubmit() {
         this.eskimoService.submitProblem(this.contestId, this.selectedProblem, this.sourceCode)
-            .subscribe(o => this.router.navigateByUrl("/contest/" + this.contestId));
+            .subscribe(() => this.router.navigateByUrl("/contest/" + this.contestId));
     }
 }

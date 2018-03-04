@@ -6,7 +6,7 @@
             <label for="problem">Enter your code:</label>
             <select [(ngModel)]="selectedProblem" [ngModelOptions]="{standalone: true}" id="problem">
                 <option disabled selected value> -- choose problem -- </option>
-                <option *ngFor="let problem of problems" [value]="problem.id">
+                <option *ngFor="let problem of problems" [value]="problem.index">
                     {{problem.name}}
                 </option>
             </select>
