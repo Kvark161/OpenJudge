@@ -1,7 +1,6 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.domain.Problem;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-@Slf4j
 public class ProblemDao {
 
     private static final ProblemRowMapper ROW_MAPPER = new ProblemRowMapper();
