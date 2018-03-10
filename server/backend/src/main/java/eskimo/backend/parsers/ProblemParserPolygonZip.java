@@ -28,6 +28,8 @@ public class ProblemParserPolygonZip {
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemParserPolygonZip.class);
     private static final Map<String, String> LANGUAGE_MAPPING;
+    public static final Long DEFAULT_TIME_LIMIT = 1000L;
+    public static final Long DEFAULT_MEMORY_LIMIT = 268435456L;
 
     static {
         LANGUAGE_MAPPING = new HashMap<>();
@@ -70,7 +72,7 @@ public class ProblemParserPolygonZip {
 
     private File getValidator() {
         List<File> validators = getSourceFiles("validator");
-        if (validators.size() > 0) {
+        if (!validators.isEmpty()) {
             return validators.get(0);
         }
         return null;
@@ -78,7 +80,7 @@ public class ProblemParserPolygonZip {
 
     private File getChecker() {
         List<File> checkers = getSourceFiles("checker");
-        if (checkers.size() > 0) {
+        if (!checkers.isEmpty()) {
             return checkers.get(0);
         }
         return null;
@@ -186,8 +188,8 @@ public class ProblemParserPolygonZip {
 
     private Problem getProblem() {
         Problem problem = new Problem();
-        problem.setTimeLimit(getLongValue("time-limit", 1000));
-        problem.setMemoryLimit(getLongValue("memory-limit", 268435456));
+        problem.setTimeLimit(getLongValue("time-limit", DEFAULT_TIME_LIMIT));
+        problem.setMemoryLimit(getLongValue("memory-limit", DEFAULT_MEMORY_LIMIT));
         return problem;
     }
 

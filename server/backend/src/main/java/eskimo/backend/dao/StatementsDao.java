@@ -15,7 +15,6 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,20 +71,6 @@ public class StatementsDao {
     public List<String> getSupportedLanguages(Long problemId) {
         String sql = "SELECT language FROM statements WHERE problem_id = ?";
         return jdbcTemplate.queryForList(sql, new Object[]{problemId}, String.class);
-    }
-
-    public Map<Long, String> getProblemNames(Long contestId) {
-        String sql = "SELECT s.problem_id, s.name FROM contests as c " +
-                "JOIN problems as p on c.id = p.contest_id " +
-                "JOIN statements as s on p.id = s.problem_id " +
-                "WHERE c.id = ?";
-        Map<Long, String> problemNameById = new HashMap<>();
-        jdbcTemplate.query(sql, new Object[]{contestId}, row -> {
-            long problemId = row.getLong("problem_id");
-            String problemName = row.getString("name");
-            problemNameById.put(problemId, problemName);
-        });
-        return problemNameById;
     }
 
     private static class StatementRowMapper implements RowMapper<Statement> {

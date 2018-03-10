@@ -48,6 +48,20 @@ public class ProblemDao {
         return jdbcTemplate.query(sql, new Object[]{contestId}, ROW_MAPPER);
     }
 
+    public Map<Long, String> getProblemNames(Long contestId) {
+        String sql = "SELECT s.problem_id, s.name FROM contests as c " +
+                "JOIN problems as p on c.id = p.contest_id " +
+                "JOIN statements as s on p.id = s.problem_id " +
+                "WHERE c.id = ?";
+        Map<Long, String> problemNameById = new HashMap<>();
+        jdbcTemplate.query(sql, new Object[]{contestId}, row -> {
+            long problemId = row.getLong("problem_id");
+            String problemName = row.getString("name");
+            problemNameById.put(problemId, problemName);
+        });
+        return problemNameById;
+    }
+
     @Transactional
     public Problem getProblem(Long id) {
         String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit FROM problems " +
