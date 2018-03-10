@@ -1,5 +1,6 @@
 package eskimo.backend.domain;
 
+import eskimo.invoker.entity.TestResult;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,23 +12,28 @@ public class Submission {
 
     private Long id;
     private User user;
-    private Contest contest;
-    private Problem problem;
+    private long contestId;
+    private long problemId;
     private String sourceCode;
-    private Verdict verdict;
-    private int testNumber;
+    private Status status;
+    private int passedTests;
+    private int numberTests;
     private LocalDateTime sendingDateTime;
+    private TestResult[] testResults;
+    private long usedTime;
+    private long usedMemory;
 
-    public enum Verdict {
+    public enum Status {
         SUBMITTED,
         PENDING,
+        COMPILING,
         RUNNING,
         COMPILATION_ERROR,
         COMPILATION_SUCCESS,
-        OK,
+        ACCEPTED,
         WRONG_ANSWER,
         PRESENTATION_ERROR,
-        FAIL,
+        RUNTIME_ERROR,
         TIME_LIMIT_EXCEED,
         INTERNAL_ERROR
     }

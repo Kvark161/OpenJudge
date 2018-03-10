@@ -1,7 +1,5 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Contest;
-import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
 import eskimo.backend.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,31 +29,27 @@ public class SubmissionDao {
 
     @Transactional
     public List<Submission> getAllSubmissions() {
-        String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
-                "FROM submissions";
+        String sql = "SELECT * FROM submissions ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, new SubmissionRowMapper());
     }
 
     @Transactional
     public Submission getSubmissionById(Long id) {
-        String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
-                "FROM submissions " +
-                "WHERE id = ?";
+        String sql = "SELECT * FROM submissions WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new SubmissionRowMapper(), id);
     }
 
     @Transactional
     public List<Submission> getUserSubmissions(Long userId) {
-        String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
-                "FROM submissions " +
-                "WHERE user_id = ?";
+        String sql = "SELECT * FROM submissions WHERE user_id = ? ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId);
     }
 
     public List<Submission> getUserSubmissions(Long userId, Long contestId) {
-        String sql = "SELECT id, user_id, contest_id, problem_id, source_code, verdict, sending_date_time, test_number " +
+        String sql = "SELECT * " +
                 "FROM submissions " +
-                "WHERE user_id = ? AND contest_id = ?";
+                "WHERE user_id = ? AND contest_id = ? " +
+                "ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, new SubmissionRowMapper(), userId, contestId);
     }
 
@@ -66,12 +60,13 @@ public class SubmissionDao {
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
         params.put("user_id", submission.getUser().getId());
-        params.put("contest_id", submission.getContest().getId());
-        params.put("problem_id", submission.getProblem().getId());
+        params.put("contest_id", submission.getContestId());
+        params.put("problem_id", submission.getProblemId());
         params.put("source_code", submission.getSourceCode());
-        params.put("verdict", submission.getVerdict().toString());
+        params.put("status", submission.getStatus().toString());
         params.put("sending_date_time", Timestamp.valueOf(submission.getSendingDateTime()));
-        params.put("test_number", submission.getTestNumber());
+        params.put("number_tests", submission.getNumberTests());
+        params.put("passed_tests", submission.getPassedTests());
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
         submission.setId(key.longValue());
     }
@@ -84,18 +79,18 @@ public class SubmissionDao {
                 "contest_id = ?, " +
                 "problem_id = ?, " +
                 "source_code = ?, " +
-                "verdict = ? ," +
+                "status = ? ," +
                 "sending_date_time = ? ," +
-                "test_number = ? " +
+                "number_tests = ? " +
                 "WHERE id = ?";
         jdbcTemplate.update(sql,
                 submission.getUser().getId(),
-                submission.getContest().getId(),
-                submission.getProblem().getId(),
+                submission.getContestId(),
+                submission.getProblemId(),
                 submission.getSourceCode(),
-                submission.getVerdict().name(),
+                submission.getStatus().name(),
                 Timestamp.valueOf(submission.getSendingDateTime()),
-                submission.getTestNumber(),
+                submission.getNumberTests(),
                 submission.getId());
     }
 
@@ -107,16 +102,12 @@ public class SubmissionDao {
             User user = new User();
             user.setId(resultSet.getLong("user_id"));
             submission.setUser(user);
-            Contest contest = new Contest();
-            contest.setId(resultSet.getLong("contest_id"));
-            submission.setContest(contest);
-            Problem problem = new Problem();
-            problem.setId(resultSet.getLong("problem_id"));
-            submission.setProblem(problem);
+            submission.setContestId(resultSet.getLong("contest_id"));
+            submission.setProblemId(resultSet.getLong("problem_id"));
             submission.setSourceCode(resultSet.getString("source_code"));
-            submission.setVerdict(Submission.Verdict.valueOf(resultSet.getString("verdict")));
+            submission.setStatus(Submission.Status.valueOf(resultSet.getString("status")));
             submission.setSendingDateTime(resultSet.getTimestamp("sending_date_time").toLocalDateTime());
-            submission.setTestNumber(resultSet.getInt("test_number"));
+            submission.setNumberTests(resultSet.getInt("number_tests"));
             return submission;
         }
     }

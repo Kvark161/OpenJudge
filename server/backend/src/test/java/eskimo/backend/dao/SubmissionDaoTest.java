@@ -1,7 +1,5 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Contest;
-import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
 import eskimo.backend.domain.User;
 import org.junit.Test;
@@ -22,25 +20,21 @@ public class SubmissionDaoTest {
     private SubmissionDao submissionDao;
 
     @Test
-    public void getAllSubmissions() throws Exception {
+    public void getAllSubmissions() {
         List<Submission> submissions = submissionDao.getAllSubmissions();
         Assert.notNull(submissions);
     }
 
     @Test
-    public void insertSubmission() throws Exception {
+    public void insertSubmission() {
         Submission submission = new Submission();
         User user = new User();
         user.setId(1L);
         submission.setUser(user);
-        Contest contest = new Contest();
-        contest.setId(1L);
-        submission.setContest(contest);
-        Problem problem = new Problem();
-        problem.setId(1L);
-        submission.setProblem(problem);
+        submission.setContestId(1);
+        submission.setProblemId(1);
         submission.setSourceCode("This is a source code");
-        submission.setVerdict(Submission.Verdict.SUBMITTED);
+        submission.setStatus(Submission.Status.SUBMITTED);
         submission.setSendingDateTime(LocalDateTime.now());
         submissionDao.insertSubmission(submission);
         Assert.notNull(submission.getId());

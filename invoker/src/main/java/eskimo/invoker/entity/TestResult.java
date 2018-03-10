@@ -11,7 +11,10 @@ import lombok.ToString;
 public class TestResult {
 
     private TestVerdict verdict;
+    private String inputData;
+    private long inputSize;
     private String outputData;
+    private long outputSize;
     private String message;
     private long usedTime;
     private long usedMemory;
