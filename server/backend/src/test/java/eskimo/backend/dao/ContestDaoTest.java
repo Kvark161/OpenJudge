@@ -1,6 +1,6 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Contest;
+import eskimo.backend.entity.Contest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

@@ -1,10 +1,10 @@
 package eskimo.backend.rest;
 
 import eskimo.backend.authorization.AuthenticationHolder;
-import eskimo.backend.authorization.Role;
-import eskimo.backend.authorization.UserSession;
-import eskimo.backend.domain.Contest;
-import eskimo.backend.domain.User;
+import eskimo.backend.entity.Contest;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.UserSession;
+import eskimo.backend.entity.enums.Role;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-import static eskimo.backend.authorization.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
-import static eskimo.backend.authorization.AuthenticationInterceptor.ESKIMO_UID_COOKIE_NAME;
+import static eskimo.backend.rest.interceptors.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
+import static eskimo.backend.rest.interceptors.AuthenticationInterceptor.ESKIMO_UID_COOKIE_NAME;
 
 @RestController
 @RequestMapping("api")

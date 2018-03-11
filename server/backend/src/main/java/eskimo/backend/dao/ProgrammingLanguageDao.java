@@ -1,6 +1,6 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.ProgrammingLanguage;
+import eskimo.backend.entity.ProgrammingLanguage;
 import org.apache.tools.ant.types.Commandline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;

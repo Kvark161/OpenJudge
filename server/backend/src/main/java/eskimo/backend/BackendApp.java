@@ -1,7 +1,7 @@
 package eskimo.backend;
 
-import eskimo.backend.authorization.AuthenticationInterceptor;
 import eskimo.backend.config.EskimoContextInitializer;
+import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

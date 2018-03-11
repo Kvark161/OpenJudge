@@ -1,4 +1,4 @@
-package eskimo.backend.domain;
+package eskimo.backend.entity;
 
 import lombok.Data;
 

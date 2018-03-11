@@ -1,7 +1,7 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Problem;
-import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

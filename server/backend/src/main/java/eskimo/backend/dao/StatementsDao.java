@@ -2,8 +2,8 @@ package eskimo.backend.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eskimo.backend.domain.SampleTest;
-import eskimo.backend.domain.Statement;
+import eskimo.backend.entity.SampleTest;
+import eskimo.backend.entity.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

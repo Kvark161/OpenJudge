@@ -1,6 +1,6 @@
-package eskimo.backend.domain;
+package eskimo.backend.entity;
 
-import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
 import lombok.Data;
 
 import java.io.Serializable;

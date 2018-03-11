@@ -1,4 +1,4 @@
-package eskimo.backend.authorization;
+package eskimo.backend.entity;
 
 import lombok.Data;
 

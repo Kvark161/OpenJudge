@@ -1,8 +1,8 @@
 package eskimo.backend.rest.response;
 
-import eskimo.backend.domain.Problem;
-import eskimo.backend.domain.SampleTest;
-import eskimo.backend.domain.Statement;
+import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.SampleTest;
+import eskimo.backend.entity.Statement;
 import lombok.Getter;
 import lombok.Setter;
 

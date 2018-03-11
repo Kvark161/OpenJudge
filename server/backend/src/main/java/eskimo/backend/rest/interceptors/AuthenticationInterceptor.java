@@ -1,6 +1,9 @@
-package eskimo.backend.authorization;
+package eskimo.backend.rest.interceptors;
 
-import eskimo.backend.domain.User;
+import eskimo.backend.authorization.AuthenticationHolder;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.UserSession;
+import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.AdminApiController;
 import eskimo.backend.rest.UserApiController;
 import eskimo.backend.services.UserService;
@@ -16,8 +19,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static java.util.Arrays.asList;

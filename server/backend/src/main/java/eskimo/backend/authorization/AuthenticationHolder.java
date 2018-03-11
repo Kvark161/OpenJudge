@@ -1,6 +1,8 @@
 package eskimo.backend.authorization;
 
-import eskimo.backend.domain.User;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.UserSession;
+import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;

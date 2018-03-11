@@ -1,7 +1,7 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.authorization.Role;
-import eskimo.backend.domain.User;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.enums.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

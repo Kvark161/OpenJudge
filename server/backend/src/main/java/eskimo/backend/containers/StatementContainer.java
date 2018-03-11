@@ -1,6 +1,6 @@
 package eskimo.backend.containers;
 
-import eskimo.backend.domain.Statement;
+import eskimo.backend.entity.Statement;
 import lombok.Getter;
 import lombok.Setter;
 

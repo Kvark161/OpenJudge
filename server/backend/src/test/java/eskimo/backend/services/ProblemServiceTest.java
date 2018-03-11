@@ -1,8 +1,8 @@
 package eskimo.backend.services;
 
-import eskimo.backend.domain.Contest;
-import eskimo.backend.domain.Problem;
-import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.Contest;
+import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import org.junit.Test;
 import org.junit.runner.RunWith;

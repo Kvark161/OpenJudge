@@ -1,7 +1,7 @@
 package eskimo.backend.services;
 
 import eskimo.backend.dao.ContestDao;
-import eskimo.backend.domain.Contest;
+import eskimo.backend.entity.Contest;
 import eskimo.backend.storage.StorageOrder;
 import eskimo.backend.storage.StorageOrderCreateFolder;
 import eskimo.backend.storage.StorageService;

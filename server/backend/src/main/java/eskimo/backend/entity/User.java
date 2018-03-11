@@ -1,6 +1,6 @@
-package eskimo.backend.domain;
+package eskimo.backend.entity;
 
-import eskimo.backend.authorization.Role;
+import eskimo.backend.entity.enums.Role;
 import lombok.Data;
 
 import java.util.Locale;

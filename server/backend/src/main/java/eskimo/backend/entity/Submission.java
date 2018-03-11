@@ -1,4 +1,4 @@
-package eskimo.backend.domain;
+package eskimo.backend.entity;
 
 import eskimo.invoker.entity.TestResult;
 import lombok.Getter;

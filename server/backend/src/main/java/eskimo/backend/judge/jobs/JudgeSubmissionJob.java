@@ -1,6 +1,6 @@
 package eskimo.backend.judge.jobs;
 
-import eskimo.backend.domain.Submission;
+import eskimo.backend.entity.Submission;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.SubmissionService;
 import eskimo.invoker.entity.CompilationParams;
@@ -12,7 +12,7 @@ import eskimo.invoker.enums.TestVerdict;
 
 import java.util.Arrays;
 
-import static eskimo.backend.domain.Submission.Status.*;
+import static eskimo.backend.entity.Submission.Status.*;
 
 public class JudgeSubmissionJob extends JudgeJob {
 

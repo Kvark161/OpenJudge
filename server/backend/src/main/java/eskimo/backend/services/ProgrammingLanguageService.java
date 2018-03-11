@@ -1,7 +1,7 @@
 package eskimo.backend.services;
 
 import eskimo.backend.dao.ProgrammingLanguageDao;
-import eskimo.backend.domain.ProgrammingLanguage;
+import eskimo.backend.entity.ProgrammingLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.User;
+import eskimo.backend.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

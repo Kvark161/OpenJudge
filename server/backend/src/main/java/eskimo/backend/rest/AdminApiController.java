@@ -1,6 +1,6 @@
 package eskimo.backend.rest;
 
-import eskimo.backend.domain.Contest;
+import eskimo.backend.entity.Contest;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;

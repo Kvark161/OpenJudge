@@ -1,10 +1,10 @@
 package eskimo.backend.services;
 
-import eskimo.backend.authorization.Role;
-import eskimo.backend.authorization.UserSession;
-import eskimo.backend.authorization.UserSessionsDao;
 import eskimo.backend.dao.UserDao;
-import eskimo.backend.domain.User;
+import eskimo.backend.dao.UserSessionsDao;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.UserSession;
+import eskimo.backend.entity.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

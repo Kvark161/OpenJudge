@@ -2,8 +2,8 @@ package eskimo.backend.services;
 
 import eskimo.backend.authorization.AuthenticationHolder;
 import eskimo.backend.dao.SubmissionDao;
-import eskimo.backend.domain.Submission;
-import eskimo.backend.domain.request.SubmitProblemWebRequest;
+import eskimo.backend.entity.Submission;
+import eskimo.backend.entity.request.SubmitProblemWebRequest;
 import eskimo.backend.judge.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

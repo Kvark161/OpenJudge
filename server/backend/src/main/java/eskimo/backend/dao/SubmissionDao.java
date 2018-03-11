@@ -1,7 +1,7 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Submission;
-import eskimo.backend.domain.User;
+import eskimo.backend.entity.Submission;
+import eskimo.backend.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

@@ -1,4 +1,4 @@
-package eskimo.backend.domain.request;
+package eskimo.backend.entity.request;
 
 import lombok.Getter;
 import lombok.Setter;

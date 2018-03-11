@@ -1,4 +1,4 @@
-package eskimo.backend.domain.enums;
+package eskimo.backend.entity.enums;
 
 public enum ProblemAnswersGenerationStatus {
     NOT_STARTED,

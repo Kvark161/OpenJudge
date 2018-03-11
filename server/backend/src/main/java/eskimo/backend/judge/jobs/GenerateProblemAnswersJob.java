@@ -1,8 +1,8 @@
 package eskimo.backend.judge.jobs;
 
-import eskimo.backend.domain.Problem;
-import eskimo.backend.domain.ProgrammingLanguage;
-import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.ProgrammingLanguage;
+import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.ProgrammingLanguageService;

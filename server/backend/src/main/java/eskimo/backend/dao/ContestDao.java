@@ -1,6 +1,6 @@
 package eskimo.backend.dao;
 
-import eskimo.backend.domain.Contest;
+import eskimo.backend.entity.Contest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
