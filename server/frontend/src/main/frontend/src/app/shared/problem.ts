@@ -3,4 +3,6 @@ export class Problem {
     name: string;
     timeLimit: number;
     memoryLimit: number;
+    answersGenerationStatus: string;
+    answersGenerationMessage: string;
 }

@@ -3,7 +3,8 @@
     <div class="row"><p></p></div>
     <div class="row">
         <div class="col-sm-2">
-            <button *ngIf="role == 'ADMIN'" type="button" class="btn btn-primary" routerLink="/a/contest/{{contestId}}/problem/add">
+            <button *ngIf="role == 'ADMIN'" type="button" class="btn btn-primary"
+                    routerLink="/a/contest/{{contestId}}/problem/add">
                 Add problem
             </button>
         </div>
@@ -16,6 +17,8 @@
             <th>Name</th>
             <th>Time limit</th>
             <th>Memory limit</th>
+            <th *ngIf="role == 'ADMIN'">Answers generation status</th>
+            <th *ngIf="role == 'ADMIN'"></th>
         </tr>
         </thead>
         <tbody>
@@ -24,6 +27,17 @@
             <td><a routerLink="/u/contest/{{contestId}}/problem/{{problem.index}}">{{problem.name}}</a></td>
             <td>{{problem.timeLimit}}</td>
             <td>{{problem.memoryLimit}}</td>
+            <td *ngIf="role == 'ADMIN'">
+                <span class="answerStatus" (click)="showAnswersGenerationMessage(problem)">
+                    {{problem.answersGenerationStatus}}
+                </span>
+            </td>
+            <td *ngIf="role == 'ADMIN'">
+                <button *ngIf="role == 'ADMIN'" type="button" class="btn btn-primary"
+                        (click)="generateAnswers(problem)">
+                    Generate answers
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>

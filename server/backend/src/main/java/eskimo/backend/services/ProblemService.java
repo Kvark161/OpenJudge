@@ -11,6 +11,7 @@ import eskimo.backend.entity.Statement;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
+import eskimo.backend.rest.response.AnswersGenerationResponse;
 import eskimo.backend.rest.response.ProblemInfoResponse;
 import eskimo.backend.rest.response.StatementsResponse;
 import eskimo.backend.storage.StorageOrder;
@@ -56,6 +57,19 @@ public class ProblemService {
                     ProblemInfoResponse response = new ProblemInfoResponse();
                     response.fillProblemFields(problem);
                     response.setName(problemNames.get(problem.getId()));
+                    return response;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<AnswersGenerationResponse> getAnswerGenerationInfo(Long contestId) {
+        List<Problem> contestProblems = problemDao.getContestProblems(contestId);
+        return contestProblems.stream()
+                .map(problem -> {
+                    AnswersGenerationResponse response = new AnswersGenerationResponse();
+                    response.setIndex(problem.getIndex());
+                    response.setAnswersGenerationMessage(problem.getAnswersGenerationMessage());
+                    response.setAnswersGenerationStatus(problem.getAnswersGenerationStatus());
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -121,8 +135,10 @@ public class ProblemService {
     }
 
     @Transactional
-    public void generateAnswers(Problem problem) {
-        judgeService.generateAnswers(problem);
+    public void generateAnswers(Long contestId, Integer problemIndex) {
+        //todo problem doesn't exist
+        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
+        judgeService.generateAnswers(contestProblem);
     }
 
     private Problem addProblem(long contestId, ProblemContainer problemContainer) {

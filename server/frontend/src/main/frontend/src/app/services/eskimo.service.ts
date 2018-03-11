@@ -36,8 +36,16 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/add";
     }
 
-    private getStatementsUrl(contestId: number, problemIndex: number) {
+    private getUrlStatements(contestId: number, problemIndex: number) {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex;
+    }
+    
+    private getUrlAnswersGenerationInfo(contestId: number) {
+        return this.getUrlContest(contestId) + "/problems/answers/generation";
+    }
+
+    private getUrlGenerateAnswers(contestId: number, problemIndex: number) {
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/answers/generate";
     }
 
     constructor(private http: Http) {
@@ -73,13 +81,24 @@ export class EskimoService {
             .map(res => res.json())
             .catch(this.handleError);
     }
+    
+    getAnswersGenerationInfo(contestId: number) : Observable<Problem[]> {
+        return this.http.get(this.getUrlAnswersGenerationInfo(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    generateAnswers(contestId: number, problemIndex: number) {
+        return this.http.post(this.getUrlGenerateAnswers(contestId, problemIndex), {}, this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
 
     getStatements(contestId: number, problemIndex: number, language: string): Observable<StatementsResponse> {
         let params = new URLSearchParams();
         params.set('language', language);
         let options = this.optionsWithCredentials;
         options.params = params;
-        return this.http.get(this.getStatementsUrl(contestId, problemIndex), options)
+        return this.http.get(this.getUrlStatements(contestId, problemIndex), options)
             .map(res => res.json())
             .catch(this.handleError);
     }

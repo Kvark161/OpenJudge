@@ -2,6 +2,7 @@ package eskimo.backend.rest;
 
 import eskimo.backend.entity.Contest;
 import eskimo.backend.exceptions.AddEskimoEntityException;
+import eskimo.backend.rest.response.AnswersGenerationResponse;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.storage.TemporaryFile;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("api")
@@ -43,5 +45,15 @@ public class AdminApiController {
             logger.error("Can't add problem", e);
             throw new AddEskimoEntityException("Can't add problem", e);
         }
+    }
+
+    @GetMapping("contest/{id}/problems/answers/generation")
+    public List<AnswersGenerationResponse> getAnswersGenerationInfo(@PathVariable("id") Long contestId) {
+        return problemService.getAnswerGenerationInfo(contestId);
+    }
+
+    @PostMapping("contest/{id}/problem/{index}/answers/generate")
+    public void generateAnswers(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
+        problemService.generateAnswers(contestId, problemIndex);
     }
 }

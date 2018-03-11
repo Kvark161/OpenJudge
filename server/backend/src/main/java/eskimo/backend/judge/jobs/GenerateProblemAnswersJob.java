@@ -16,12 +16,18 @@ import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GenerateProblemAnswersJob extends JudgeJob {
+
+    private static final Logger logger = LoggerFactory.getLogger(GenerateProblemAnswersJob.class);
 
     private final Problem problem;
 
@@ -32,6 +38,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
 
     private ProgrammingLanguage solutionLanguage;
     private File solutionFile;
+    private String sourceCode;
     private CompilationResult compilationResult;
     private CompilationParams compilationParams;
     private TestResult[] genResults;
@@ -52,6 +59,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
     public void execute() {
         try {
             if (!init()) {
+                //todo bad error message (see setting sourceCode in init())
                 updateStatus(ProblemAnswersGenerationStatus.ERROR, "Can't match reference solutions and available compilers");
                 return;
             }
@@ -66,6 +74,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
             save();
         } catch (Throwable e) {
             updateStatus(ProblemAnswersGenerationStatus.ERROR, e.getMessage());
+            logger.error("Error while generating problem answers", e);
         }
     }
 
@@ -77,6 +86,12 @@ public class GenerateProblemAnswersJob extends JudgeJob {
                 if (language.getExtension().equals(extension)) {
                     solutionLanguage = language;
                     solutionFile = solution;
+                    try {
+                        sourceCode = String.join("\n", Files.readAllLines(solution.toPath()));
+                    } catch (IOException e) {
+                        logger.error("Can't get source code from solution file", e);
+                        return false;
+                    }
                     return true;
                 }
             }
@@ -94,6 +109,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
         compilationParams = new CompilationParams();
         compilationParams.setMemoryLimit(solutionLanguage.getCompilationMemoryLimit());
         compilationParams.setTimeLimit(solutionLanguage.getCompilationTimeLimit());
+        compilationParams.setSourceCode(sourceCode);
         compilationParams.setSourceFileName(solutionFile.getName());
         compilationParams.setExecutableFileName(FilenameUtils.getBaseName(solutionFile.getName()) + '.' + solutionLanguage.getBinaryExtension());
         compilationParams.setCompilationCommand(solutionLanguage.getCompileCommand());

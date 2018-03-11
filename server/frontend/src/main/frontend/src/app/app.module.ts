@@ -1,6 +1,6 @@
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {RouterModule} from "@angular/router";
 
@@ -20,12 +20,18 @@ import {AddProblemComponent} from "./pages/contests/problems/add-problem.compone
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
 import {UserService} from "./services/user.service";
 import {StatementsComponent} from "./pages/contests/problems/statements.component";
+import {InformationModalComponent} from "./pages/modal_dialogs/information-modal.component";
+import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         FormsModule,
+        ReactiveFormsModule,
         HttpModule,
+        MatDialogModule,
         RouterModule.forRoot(router)
     ],
     declarations: [
@@ -41,9 +47,14 @@ import {StatementsComponent} from "./pages/contests/problems/statements.componen
         SubmissionsComponent,
         ProblemsComponent,
         AddProblemComponent,
-        StatementsComponent
+        StatementsComponent,
+        InformationModalComponent
     ],
-    providers: [EskimoService, UserService],
+    entryComponents: [
+        InformationModalComponent
+    ],
+    providers: [EskimoService, UserService,
+        {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: false}}],
     bootstrap: [AppComponent]
 })
 export class AppModule {

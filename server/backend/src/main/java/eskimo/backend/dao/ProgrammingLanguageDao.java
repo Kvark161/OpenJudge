@@ -54,7 +54,7 @@ public class ProgrammingLanguageDao {
             programmingLanguage.setId(resultSet.getLong("id"));
             programmingLanguage.setName(resultSet.getString("name"));
             programmingLanguage.setDescription(resultSet.getString("description"));
-            programmingLanguage.setCompilerPath(resultSet.getString("compilerPath"));
+            programmingLanguage.setCompilerPath(resultSet.getString("compiler_path"));
             programmingLanguage.setCompiled(resultSet.getBoolean("is_compiled"));
             programmingLanguage.setInterpreterPath(resultSet.getString("interpreter_path"));
             programmingLanguage.setExtension(resultSet.getString("extension"));
