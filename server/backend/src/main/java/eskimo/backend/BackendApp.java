@@ -1,5 +1,6 @@
 package eskimo.backend;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.config.EskimoContextInitializer;
 import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
 import eskimo.backend.services.UserService;
@@ -32,6 +33,11 @@ public class BackendApp extends WebMvcConfigurerAdapter {
     @Bean
     public AuthenticationInterceptor interceptor(UserService userService) {
         return new AuthenticationInterceptor(userService);
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
     @Override

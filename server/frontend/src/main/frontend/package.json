@@ -28,7 +28,9 @@
     "popper.js": "1.12.9",
     "rxjs": "5.5.6",
     "ts-helpers": "1.1.2",
-    "zone.js": "0.8.20"
+    "zone.js": "0.8.20",
+    "ng2-ace-editor": "0.3.4",
+    "brace": "0.11.1"
   },
   "devDependencies": {
     "@angular/compiler-cli": "5.2.5",

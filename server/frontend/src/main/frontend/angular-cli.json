@@ -21,7 +21,8 @@
         "styles.css",
         "assets/pulse_theme/bootstrap.min.css"
       ],
-      "scripts": ["../node_modules/jquery/dist/jquery.min.js",
+      "scripts": [
+        "../node_modules/jquery/dist/jquery.min.js",
         "../node_modules/bootstrap/dist/js/bootstrap.min.js"
       ],
       "environmentSource": "environments/environment.ts",

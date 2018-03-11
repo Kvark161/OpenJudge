@@ -28,8 +28,12 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problems";
     }
 
-    private getUrlSubmissions(contestId: number) {
+    private getUrlContestSubmissions(contestId: number) {
         return this.getUrlContest(contestId) + "/submissions";
+    }
+
+    private getUrlSubmission(submissionId: number) {
+        return this.urlHost + "submission/" + submissionId;
     }
 
     private getUrlAddProblem(contestId: number) {
@@ -89,8 +93,14 @@ export class EskimoService {
             this.optionsWithCredentials);
     }
 
-    getSubmissions(contestId: number) {
-        return this.http.get(this.getUrlSubmissions(contestId), this.optionsWithCredentials)
+    getContestSubmissions(contestId: number) {
+        return this.http.get(this.getUrlContestSubmissions(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getSubmission(submissionId: number) {
+        return this.http.get(this.getUrlSubmission(submissionId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }

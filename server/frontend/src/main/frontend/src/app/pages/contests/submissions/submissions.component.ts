@@ -13,7 +13,7 @@ export class SubmissionsComponent {
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
-        this.eskimoService.getSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+        this.eskimoService.getContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
     }
 
 }
