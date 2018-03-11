@@ -58,6 +58,7 @@ public class ProgrammingLanguageDao {
             programmingLanguage.setCompiled(resultSet.getBoolean("is_compiled"));
             programmingLanguage.setInterpreterPath(resultSet.getString("interpreter_path"));
             programmingLanguage.setExtension(resultSet.getString("extension"));
+            programmingLanguage.setBinaryExtension(resultSet.getString("binary_extension"));
             String[] compileCommand = Commandline.translateCommandline(resultSet.getString("compile_command"));
             programmingLanguage.setCompileCommand(Arrays.asList(compileCommand));
             String[] runCommand = Commandline.translateCommandline(resultSet.getString("run_command"));

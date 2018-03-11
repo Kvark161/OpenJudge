@@ -50,10 +50,6 @@ export class ProblemsComponent {
     }
 
     generateAnswers(problem: Problem) {
-        if (problem.answersGenerationStatus != "NOT_STARTED") {
-            problem.answersGenerationStatus = "RESTARTED";
-            problem.answersGenerationMessage = "";
-        }
         this.eskimoService.generateAnswers(this.contestId, problem.index)
             .subscribe(
                 () => console.log("successful post generate answers"),

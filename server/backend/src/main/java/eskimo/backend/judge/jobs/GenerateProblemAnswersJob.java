@@ -71,7 +71,11 @@ public class GenerateProblemAnswersJob extends JudgeJob {
                 return;
             }
             generate();
+            if (!validate()) {
+                return;
+            }
             save();
+            updateStatus(ProblemAnswersGenerationStatus.DONE, "Done");
         } catch (Throwable e) {
             updateStatus(ProblemAnswersGenerationStatus.ERROR, e.getMessage());
             logger.error("Error while generating problem answers", e);

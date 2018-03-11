@@ -48,8 +48,10 @@ public class TesterMac implements Tester {
                 folder = invokerUtils.createTempFolder();
                 prepareFolder(testData, folder);
                 runSolution();
-                if (solutionExecutionResult.getExitCode() == 0 && !solutionExecutionResult.getTimeOutExceeded()) {
-                    runChecker();
+                if (!testParams.isCheckerDisabled()) {
+                    if (solutionExecutionResult.getExitCode() == 0 && !solutionExecutionResult.getTimeOutExceeded()) {
+                        runChecker();
+                    }
                 }
                 testResults[i] = getTestResult();
                 if (stopOnFirstFail && TestVerdict.ACCEPTED != testResults[i].getVerdict()) {
@@ -81,6 +83,8 @@ public class TesterMac implements Tester {
             testResult.setVerdict(TestVerdict.RUNTIME_ERROR);
         } else if (solutionExecutionResult.getTimeOutExceeded()) {
             testResult.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
+        } else if (testParams.isCheckerDisabled()) {
+            testResult.setVerdict(TestVerdict.CHECKER_DISABLED);
         } else if (checkerExecutionResult.getExitCode() != 0 || checkerExecutionResult.getTimeOutExceeded()) {
             testResult.setVerdict(TestVerdict.CHECKER_ERROR);
         } else if (checkerExecutionResult.getStderr().startsWith("ok")) {

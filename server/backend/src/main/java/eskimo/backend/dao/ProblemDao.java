@@ -115,6 +115,7 @@ public class ProblemDao {
             problem.setContestId(rs.getLong("contest_id"));
             problem.setAnswersGenerationStatus(ProblemAnswersGenerationStatus.valueOf(rs.getString("answers_generation_status")));
             problem.setAnswersGenerationMessage(rs.getString("answers_generation_message"));
+            problem.setTestsCount(rs.getInt("tests_count"));
             return problem;
         }
     }
