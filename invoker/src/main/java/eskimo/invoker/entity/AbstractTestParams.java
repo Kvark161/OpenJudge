@@ -33,6 +33,7 @@ public abstract class AbstractTestParams {
     private List<TestData> testsData;
     private boolean stopOnFirstFail;
     private boolean isFileInputOutput;
+    private boolean isCheckerDisabled;
 
     public List<String> prepareRunCommand(String solutionPath, String inputPath, String outputPath) {
         return runCommand.stream().map(el -> {

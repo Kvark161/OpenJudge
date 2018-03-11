@@ -11,5 +11,6 @@ public enum TestVerdict implements Serializable {
     TIME_LIMIT_EXCEED,
     MEMORY_LIMIT_EXCEED,
     CHECKER_ERROR,
-    INTERNAL_INVOKER_ERROR
+    INTERNAL_INVOKER_ERROR,
+    CHECKER_DISABLED
 }

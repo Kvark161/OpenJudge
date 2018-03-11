@@ -2,8 +2,15 @@ package eskimo.backend.judge.jobs;
 
 import eskimo.backend.judge.Invoker;
 
-public interface JudgeJob {
+public abstract class JudgeJob {
 
-    void execute(Invoker invoker);
+    Invoker invoker;
+
+    public void execute(Invoker invoker) {
+        this.invoker = invoker;
+        execute();
+    }
+
+    abstract void execute();
 
 }

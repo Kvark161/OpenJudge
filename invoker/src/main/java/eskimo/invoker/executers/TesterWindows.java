@@ -70,10 +70,14 @@ public class TesterWindows implements Tester {
                     TestData testData = testParams.getTestData(i);
                     prepareToTest(testData);
                     runTest();
-                    prepareToCheck(testData);
-                    runCheck();
+                    if (!testParams.isCheckerDisabled()) {
+                        prepareToCheck(testData);
+                        runCheck();
+                    }
                     testResults[i] = prepareTestResult();
-                    if (TestVerdict.ACCEPTED != testResults[i].getVerdict() && testParams.isStopOnFirstFail()) {
+                    if (TestVerdict.ACCEPTED != testResults[i].getVerdict() &&
+                            TestVerdict.CHECKER_DISABLED != testResults[i].getVerdict() &&
+                            testParams.isStopOnFirstFail()) {
                         return testResults;
                     }
                     releaseAfterTest();
@@ -184,6 +188,9 @@ public class TesterWindows implements Tester {
         } else if (result.getUsedTime() > testParams.getTimeLimit()) {
             result.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
             result.setMessage("Used more then " + testParams.getTimeLimit() + "ms");
+        } else if (testParams.isCheckerDisabled()) {
+            result.setVerdict(TestVerdict.CHECKER_DISABLED);
+            result.setMessage("Checker is disabled");
         } else if (executionCheckResult.getExitCode() != 0) {
             result.setVerdict(TestVerdict.CHECKER_ERROR);
             result.setMessage("Checker exit code: " + executionCheckResult.getExitCode());

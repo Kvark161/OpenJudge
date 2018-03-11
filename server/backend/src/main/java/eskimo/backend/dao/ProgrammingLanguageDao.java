@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +57,11 @@ public class ProgrammingLanguageDao {
             programmingLanguage.setCompilerPath(resultSet.getString("compilerPath"));
             programmingLanguage.setCompiled(resultSet.getBoolean("is_compiled"));
             programmingLanguage.setInterpreterPath(resultSet.getString("interpreter_path"));
-            programmingLanguage.setExtention(resultSet.getString("extension"));
-            programmingLanguage.setCompilerCommand(Commandline.translateCommandline(resultSet.getString("compile_command")));
-            programmingLanguage.setRunCommand(Commandline.translateCommandline(resultSet.getString("run_command")));
+            programmingLanguage.setExtension(resultSet.getString("extension"));
+            String[] compileCommand = Commandline.translateCommandline(resultSet.getString("compile_command"));
+            programmingLanguage.setCompileCommand(Arrays.asList(compileCommand));
+            String[] runCommand = Commandline.translateCommandline(resultSet.getString("run_command"));
+            programmingLanguage.setRunCommand(Arrays.asList(runCommand));
             return programmingLanguage;
         }
 

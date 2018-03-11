@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -89,7 +91,7 @@ public class StorageService {
         return FileUtils.readFileToString(getTestInputFile(contestId, problemIndex, testIndex));
     }
 
-    private File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
+    public File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".ans");
     }
 
@@ -102,11 +104,24 @@ public class StorageService {
     }
 
     public File getSolutionFile(long contestId, long problemIndex, String name, String tag) {
+        return new File(getSolutionsFolder(contestId, problemIndex, tag) + File.separator + name);
+    }
+
+    public List<File> getSolutionFiles(long contestId, long problemIndex, String tag) {
+        File folder = getSolutionsFolder(contestId, problemIndex, tag);
+        File[] solutions = folder.listFiles();
+        if (solutions == null) {
+            return new ArrayList<>();
+        }
+        return Arrays.asList(solutions);
+    }
+
+    private File getSolutionsFolder(long contestId, long problemIndex, String tag) {
         String path = getProblemFolder(contestId, problemIndex) + File.separator + SOLUTIONS_FOLDER_NAME;
         if (tag != null && !"".equals(tag)) {
             path += File.separator + tag;
         }
-        return new File(path + File.separator + name);
+        return new File(path);
     }
 
     public void executeOrders(List<StorageOrder> orders) {

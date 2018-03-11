@@ -7,6 +7,7 @@ import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
 import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Statement;
+import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -39,9 +40,11 @@ public class ProblemParserPolygonZip {
 
     private File root;
     private Document problemDoc;
+    private ProblemContainer problemContainer;
 
     public ProblemParserPolygonZip(File folder) {
         this.root = folder;
+        problemContainer = new ProblemContainer();
     }
 
     public ProblemContainer parse() {
@@ -51,14 +54,12 @@ public class ProblemParserPolygonZip {
             logger.error("Can not parse problem.xml", e);
             throw new AddEskimoEntityException("Can not parse problem.xml", e);
         }
-        ProblemContainer problemContainer = new ProblemContainer();
-        problemContainer.setProblem(getProblem());
-        problemContainer.setStatements(getStatements());
-        problemContainer.setSolutions(getSolutions());
-        problemContainer.setChecker(getChecker());
-        problemContainer.setValidator(getValidator());
-        problemContainer.setTests(getTests());
-        problemContainer.getProblem().setTestsCount(problemContainer.getTests().size());
+        parseProblem();
+        parseStatements();
+        parseSolutions();
+        parseChecker();
+        parseValidator();
+        parseTests();
         return problemContainer;
     }
 
@@ -70,24 +71,23 @@ public class ProblemParserPolygonZip {
         problemDoc.getDocumentElement().normalize();
     }
 
-    private File getValidator() {
+    private void parseValidator() {
         List<File> validators = getSourceFiles("validator");
         if (!validators.isEmpty()) {
-            return validators.get(0);
+            problemContainer.setValidator(validators.get(0));
         }
-        return null;
     }
 
-    private File getChecker() {
+    private void parseChecker() {
         List<File> checkers = getSourceFiles("checker");
         if (!checkers.isEmpty()) {
-            return checkers.get(0);
+            problemContainer.setChecker(checkers.get(0));
         }
-        return null;
     }
 
-    private List<SolutionContainer> getSolutions() {
+    private void parseSolutions() {
         List<SolutionContainer> solutions = new ArrayList<>();
+        problemContainer.setSolutions(solutions);
         NodeList nodeList = problemDoc.getElementsByTagName("solution");
         for (int nodeId = 0; nodeId < nodeList.getLength(); ++nodeId) {
             if (nodeList.item(nodeId).getNodeType() != Node.ELEMENT_NODE) {
@@ -102,34 +102,45 @@ public class ProblemParserPolygonZip {
                 solutions.add(solutionContainer);
             }
         }
-        return solutions;
     }
 
-    private List<TestContainer> getTests() {
+    private void parseTests() {
         File testsFolder = new File(root + File.separator + "tests");
         List<TestContainer> testContainers = new ArrayList<>();
+        problemContainer.setTests(testContainers);
+        problemContainer.getProblem().setAnswersGenerationStatus(ProblemAnswersGenerationStatus.NOT_STARTED);
+        problemContainer.getProblem().setTestsCount(0);
         if (!testsFolder.exists()) {
-            return testContainers;
+            return;
         }
         File[] testFiles = testsFolder.listFiles(pathname -> FilenameUtils.getExtension(pathname.getName()).length() == 0);
         if (testFiles == null) {
-            return testContainers;
+            return;
         }
         Arrays.sort(testFiles);
+        boolean answersExists = Arrays.stream(testFiles).allMatch(f -> new File(f.getAbsolutePath() + ".a").exists());
+        if (answersExists) {
+            problemContainer.getProblem().setAnswersGenerationStatus(ProblemAnswersGenerationStatus.DONE);
+            problemContainer.getProblem().setAnswersGenerationMessage("Answers already exist");
+        }
         for (int i = 0; i < testFiles.length; ++i) {
             TestContainer testContainer = new TestContainer();
             testContainer.setInput(testFiles[i]);
+            if (answersExists) {
+                testContainer.setAnswer(new File(testFiles[i].getAbsolutePath() + ".a"));
+            }
             testContainer.setIndex(i + 1);
             testContainers.add(testContainer);
         }
-        return testContainers;
+        problemContainer.getProblem().setTestsCount(testContainers.size());
     }
 
-    private List<StatementContainer> getStatements() {
+    private void parseStatements() {
         List<StatementContainer> result = new ArrayList<>();
+        problemContainer.setStatements(result);
         File statementsFolder = new File(root + File.separator + "statements");
         if (!statementsFolder.exists()) {
-            return result;
+            return;
         }
         //noinspection ConstantConditions
         for (File file : statementsFolder.listFiles(File::isDirectory)) {
@@ -149,7 +160,6 @@ public class ProblemParserPolygonZip {
             }
             result.add(statementContainer);
         }
-        return result;
     }
 
     private String convertLanguage(String inputLanguage) {
@@ -186,11 +196,11 @@ public class ProblemParserPolygonZip {
         return null;
     }
 
-    private Problem getProblem() {
+    private void parseProblem() {
         Problem problem = new Problem();
         problem.setTimeLimit(getLongValue("time-limit", DEFAULT_TIME_LIMIT));
         problem.setMemoryLimit(getLongValue("memory-limit", DEFAULT_MEMORY_LIMIT));
-        return problem;
+        problemContainer.setProblem(problem);
     }
 
     private long getLongValue(String tagname, long defaultValue) {

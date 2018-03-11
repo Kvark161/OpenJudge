@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Submission;
+import eskimo.backend.judge.jobs.GenerateProblemAnswersJob;
 import eskimo.backend.judge.jobs.JudgeJob;
 import eskimo.backend.judge.jobs.JudgeSubmissionJob;
+import eskimo.backend.services.InvokerService;
+import eskimo.backend.services.ProblemService;
+import eskimo.backend.services.ProgrammingLanguageService;
 import eskimo.backend.services.SubmissionService;
 import eskimo.backend.storage.StorageService;
 import org.slf4j.Logger;
@@ -14,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -39,7 +42,15 @@ public class JudgeService {
     @Autowired
     private StorageService storageService;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private ProblemService problemService;
+
+    @Autowired
+    private ProgrammingLanguageService programmingLanguageService;
+
+    @Autowired
+    private InvokerService invokerService;
+
     private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -61,15 +72,27 @@ public class JudgeService {
     }
 
     public void judge(Submission submission) {
-        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, restTemplate);
-        try {
-            judgeQueue.put(job);
-        } catch (InterruptedException e) {
-            throw new IllegalStateException("can't put new submission", e);
-        }
+        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService);
+        putJob(job);
     }
 
     public void generateAnswers(Problem problem) {
+        GenerateProblemAnswersJob job =
+                new GenerateProblemAnswersJob(
+                        problem,
+                        programmingLanguageService,
+                        storageService,
+                        problemService,
+                        invokerService);
+        putJob(job);
+    }
+
+    private void putJob(JudgeJob job) {
+        try {
+            judgeQueue.put(job);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("can't put new job " + job.toString(), e);
+        }
     }
 
     private class JudgeThread extends Thread {

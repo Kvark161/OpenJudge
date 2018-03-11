@@ -34,26 +34,31 @@ CREATE TABLE CONTESTS
 
 CREATE TABLE PROBLEMS
 (
-  ID            BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  CONTEST_ID    BIGINT                            NOT NULL,
-  CONTEST_INDEX INTEGER                           NOT NULL,
-  TIME_LIMIT    BIGINT                            NOT NULL,
-  MEMORY_LIMIT  BIGINT                            NOT NULL,
-  TESTS_COUNT   BIGINT                            NOT NULL,
+  ID                         BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  CONTEST_ID                 BIGINT                            NOT NULL,
+  CONTEST_INDEX              INTEGER                           NOT NULL,
+  TIME_LIMIT                 BIGINT                            NOT NULL,
+  MEMORY_LIMIT               BIGINT                            NOT NULL,
+  TESTS_COUNT                BIGINT                            NOT NULL,
+  ANSWERS_GENERATION_STATUS  VARCHAR(64)                       NOT NULL,
+  ANSWERS_GENERATION_MESSAGE VARCHAR(64)                       NOT NULL,
   CONSTRAINT FK_PROBLEMS_CONTESTS FOREIGN KEY (CONTEST_ID) REFERENCES CONTESTS (ID)
 );
 
 CREATE TABLE PROGRAMMING_LANGUAGES
 (
-  ID               BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  NAME             VARCHAR(128) UNIQUE               NOT NULL,
-  DESCRIPTION      VARCHAR(256)                      NOT NULL,
-  COMPILER_PATH    VARCHAR(4096),
-  IS_COMPILED      BOOLEAN                           NOT NULL,
-  INTERPRETER_PATH VARCHAR(4096),
-  EXTENSION        VARCHAR(10)                       NOT NULL,
-  COMPILE_COMMAND  VARCHAR(4096),
-  RUN_COMMAND      VARCHAR(4096)                     NOT NULL
+  ID                       BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME                     VARCHAR(128) UNIQUE               NOT NULL,
+  DESCRIPTION              VARCHAR(256)                      NOT NULL,
+  COMPILER_PATH            VARCHAR(4096),
+  IS_COMPILED              BOOLEAN                           NOT NULL,
+  INTERPRETER_PATH         VARCHAR(4096),
+  EXTENSION                VARCHAR(10)                       NOT NULL,
+  BINARY_EXTENSION         VARCHAR(10)                       NOT NULL,
+  COMPILE_COMMAND          VARCHAR(4096),
+  RUN_COMMAND              VARCHAR(4096)                     NOT NULL,
+  COMPILATION_MEMORY_LIMIT BIGINT                            NOT NULL,
+  COMPILATION_TIME_LIMIT   BIGINT                            NOT NULL
 );
 
 CREATE TABLE STATEMENTS

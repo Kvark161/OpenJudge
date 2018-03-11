@@ -1,6 +1,7 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.domain.Problem;
+import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,17 +38,20 @@ public class ProblemDao {
         params.put("memory_limit", problem.getMemoryLimit());
         params.put("tests_count", problem.getTestsCount());
         params.put("contest_index", problem.getIndex());
+        params.put("answers_generation_status", problem.getAnswersGenerationStatus().name());
+        params.put("answers_generation_message", problem.getAnswersGenerationMessage());
         return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
     }
 
     @Transactional
     public List<Problem> getContestProblems(Long contestId) {
-        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit, contest_id FROM problems " +
+        String sql = "SELECT * FROM problems " +
                 " WHERE contest_id = ?" +
                 " ORDER BY contest_index";
         return jdbcTemplate.query(sql, new Object[]{contestId}, ROW_MAPPER);
     }
 
+    @Transactional
     public Map<Long, String> getProblemNames(Long contestId) {
         String sql = "SELECT s.problem_id, s.name FROM contests as c " +
                 "JOIN problems as p on c.id = p.contest_id " +
@@ -64,13 +68,14 @@ public class ProblemDao {
 
     @Transactional
     public Problem getProblem(Long id) {
-        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit FROM problems " +
+        String sql = "SELECT * FROM problems " +
                 " WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, ROW_MAPPER);
     }
 
+    @Transactional
     public Problem getContestProblem(Long contestId, Integer problemIndex) {
-        String sql = "SELECT id, contest_id, contest_index, time_limit, memory_limit FROM problems " +
+        String sql = "SELECT * FROM problems " +
                 " WHERE contest_id = ? AND contest_index = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{contestId, problemIndex}, ROW_MAPPER);
     }
@@ -86,15 +91,30 @@ public class ProblemDao {
         return value + 1;
     }
 
+    @Transactional
+    public void updateProblemStatuses(Problem problem) {
+        String sql = "UPDATE problems " +
+                "SET " +
+                "answers_generation_status = ?," +
+                "answers_generation_message = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(sql,
+                problem.getAnswersGenerationStatus().name(),
+                problem.getAnswersGenerationMessage(),
+                problem.getId());
+    }
+
     private static class ProblemRowMapper implements RowMapper<Problem> {
         @Override
-        public Problem mapRow(ResultSet resultSet, int i) throws SQLException {
+        public Problem mapRow(ResultSet rs, int i) throws SQLException {
             Problem problem = new Problem();
-            problem.setId(resultSet.getLong("id"));
-            problem.setIndex(resultSet.getLong("contest_index"));
-            problem.setTimeLimit(resultSet.getLong("time_limit"));
-            problem.setMemoryLimit(resultSet.getLong("memory_limit"));
-            problem.setContestId(resultSet.getLong("contest_id"));
+            problem.setId(rs.getLong("id"));
+            problem.setIndex(rs.getLong("contest_index"));
+            problem.setTimeLimit(rs.getLong("time_limit"));
+            problem.setMemoryLimit(rs.getLong("memory_limit"));
+            problem.setContestId(rs.getLong("contest_id"));
+            problem.setAnswersGenerationStatus(ProblemAnswersGenerationStatus.valueOf(rs.getString("answers_generation_status")));
+            problem.setAnswersGenerationMessage(rs.getString("answers_generation_message"));
             return problem;
         }
     }

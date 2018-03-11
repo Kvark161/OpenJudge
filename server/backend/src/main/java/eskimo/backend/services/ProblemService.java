@@ -9,6 +9,7 @@ import eskimo.backend.dao.StatementsDao;
 import eskimo.backend.domain.Problem;
 import eskimo.backend.domain.Statement;
 import eskimo.backend.exceptions.AddEskimoEntityException;
+import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import eskimo.backend.rest.response.ProblemInfoResponse;
 import eskimo.backend.rest.response.StatementsResponse;
@@ -35,14 +36,16 @@ public class ProblemService {
 
     private final ProblemDao problemDao;
     private final StatementsDao statementsDao;
-    private StorageService storageService;
-    private FileUtils fileUtils;
+    private final StorageService storageService;
+    private final FileUtils fileUtils;
+    private final JudgeService judgeService;
 
-    public ProblemService(ProblemDao problemDao, StatementsDao statementsDao, StorageService storageService, FileUtils fileUtils) {
+    public ProblemService(ProblemDao problemDao, StatementsDao statementsDao, StorageService storageService, FileUtils fileUtils, JudgeService judgeService) {
         this.problemDao = problemDao;
         this.statementsDao = statementsDao;
         this.storageService = storageService;
         this.fileUtils = fileUtils;
+        this.judgeService = judgeService;
     }
 
     public List<ProblemInfoResponse> getContestProblems(Long contestId) {
@@ -100,7 +103,7 @@ public class ProblemService {
     }
 
     @Transactional
-    public Long addProblemFromZip(long contestId, File problemZip) {
+    public Problem addProblemFromZip(long contestId, File problemZip) {
         try (TemporaryFile unzippedFolder = new TemporaryFile(fileUtils.unzip(problemZip, "problem-zip-"))) {
             File[] files = unzippedFolder.getFile().listFiles();
             if (files == null || files.length != 1 || !files[0].isDirectory()) {
@@ -113,21 +116,31 @@ public class ProblemService {
         }
     }
 
-    private Long addProblem(long contestId, ProblemContainer problemContainer) {
+    public void updateProblemStatuses(Problem problem) {
+        problemDao.updateProblemStatuses(problem);
+    }
+
+    @Transactional
+    public void generateAnswers(Problem problem) {
+        judgeService.generateAnswers(problem);
+    }
+
+    private Problem addProblem(long contestId, ProblemContainer problemContainer) {
         problemContainer.getProblem().setIndex(problemDao.getNextProblemIndex(contestId));
         problemContainer.getProblem().setContestId(contestId);
         Long id = problemDao.insertProblem(problemContainer.getProblem());
+        problemContainer.getProblem().setId(id);
         for (StatementContainer statementContainer: problemContainer.getStatements()) {
-            addStatements(id, statementContainer);
+            addStatements(problemContainer.getProblem(), statementContainer);
         }
         List<StorageOrder> orders = prepareStorageOrdersToSave(problemContainer);
         storageService.executeOrders(orders);
-        return id;
+        return problemContainer.getProblem();
     }
 
-    private void addStatements(long problemId, StatementContainer statementContainer) {
+    private void addStatements(Problem problem, StatementContainer statementContainer) {
         Statement statement = statementContainer.getStatement();
-        statement.setProblemId(problemId);
+        statement.setProblemId(problem.getId());
         statement.setLanguage(statementContainer.getLanguage());
         statementsDao.addStatements(statement);
     }
@@ -148,7 +161,12 @@ public class ProblemService {
         for (TestContainer test : container.getTests()) {
             orders.add(new StorageOrderCopyFile(test.getInput(),
                     storageService.getTestInputFile(contestId, problemIndex, test.getIndex())));
+            if (test.getAnswer() != null) {
+                orders.add(new StorageOrderCopyFile(test.getAnswer(),
+                        storageService.getTestAnswerFile(contestId, problemIndex, test.getIndex())));
+            }
         }
         return orders;
     }
+
 }

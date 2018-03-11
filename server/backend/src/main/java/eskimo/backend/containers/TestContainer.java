@@ -10,6 +10,7 @@ import java.io.File;
 public class TestContainer {
 
     private File input;
+    private File answer;
     private boolean isSample;
     private int index;
 

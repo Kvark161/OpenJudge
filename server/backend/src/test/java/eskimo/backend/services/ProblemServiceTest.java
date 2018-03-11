@@ -2,6 +2,7 @@ package eskimo.backend.services;
 
 import eskimo.backend.domain.Contest;
 import eskimo.backend.domain.Problem;
+import eskimo.backend.domain.enums.ProblemAnswersGenerationStatus;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,16 +35,15 @@ public class ProblemServiceTest {
         String zipPath = testZip.getFile();
 
         Contest contest = createTestContest();
-        Long problemId = problemService.addProblemFromZip(contest.getId(), new File(zipPath));
+        Problem actual = problemService.addProblemFromZip(contest.getId(), new File(zipPath));
         Problem expected = new Problem();
-        expected.setId(problemId);
+        expected.setId(actual.getId());
         expected.setIndex(1L);
         expected.setContestId(contest.getId());
         expected.setTimeLimit(ProblemParserPolygonZip.DEFAULT_TIME_LIMIT);
         expected.setMemoryLimit(ProblemParserPolygonZip.DEFAULT_MEMORY_LIMIT);
-        expected.setTestsCount(0);
-
-        Problem actual = problemService.getProblemById(problemId);
+        expected.setTestsCount(5);
+        expected.setAnswersGenerationStatus(ProblemAnswersGenerationStatus.NOT_STARTED);
         assertThat("Problem should be added correctly", actual, is(expected));
     }
 

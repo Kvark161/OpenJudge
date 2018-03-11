@@ -18,5 +18,6 @@ public class TestResult {
     private String message;
     private long usedTime;
     private long usedMemory;
+    private int index;
 
 }

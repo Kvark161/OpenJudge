@@ -1,7 +1,7 @@
 package eskimo.backend.judge.jobs;
 
 import eskimo.backend.domain.Submission;
-import eskimo.backend.judge.Invoker;
+import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.SubmissionService;
 import eskimo.invoker.entity.CompilationParams;
 import eskimo.invoker.entity.CompilationResult;
@@ -9,31 +9,28 @@ import eskimo.invoker.entity.TestLazyParams;
 import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
 import static eskimo.backend.domain.Submission.Status.*;
 
-public class JudgeSubmissionJob implements JudgeJob {
+public class JudgeSubmissionJob extends JudgeJob {
 
     private final Submission submission;
     private final SubmissionService submissionService;
-    private final RestTemplate restTemplate;
-    private Invoker invoker;
+    private final InvokerService invokerService;
     private CompilationResult compilationResult;
 
-    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, RestTemplate restTemplate) {
+    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService) {
         this.submission = submission;
         this.submissionService = submissionService;
-        this.restTemplate = restTemplate;
+        this.invokerService = invokerService;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
     }
 
     @Override
-    public void execute(Invoker invoker) {
-        this.invoker = invoker;
+    public void execute() {
         try {
             updateVerdict(COMPILING);
             compilationResult = compile();
@@ -60,12 +57,12 @@ public class JudgeSubmissionJob implements JudgeJob {
     }
 
     private CompilationResult compile() {
-        CompilationParams parameter = new CompilationParams();
-        parameter.setCompilationCommand(Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE));
-        parameter.setSourceCode(submission.getSourceCode());
-        parameter.setExecutableFileName("main.exe");
-        parameter.setSourceFileName("main.cpp");
-        return restTemplate.postForObject(invoker.getCompileUrl(), parameter, CompilationResult.class);
+        CompilationParams params = new CompilationParams();
+        params.setCompilationCommand(Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE));
+        params.setSourceCode(submission.getSourceCode());
+        params.setExecutableFileName("main.exe");
+        params.setSourceFileName("main.cpp");
+        return invokerService.compile(invoker, params);
     }
 
     private void test() {
@@ -78,7 +75,7 @@ public class JudgeSubmissionJob implements JudgeJob {
         testParams.setProblemId(submission.getProblemId());
         testParams.setNumberTests(submission.getNumberTests());
 
-        TestResult[] testResults = restTemplate.postForObject(invoker.getTestUrl(), testParams, TestResult[].class);
+        TestResult[] testResults = invokerService.test(invoker, testParams);
         submission.setTestResults(testResults);
     }
 

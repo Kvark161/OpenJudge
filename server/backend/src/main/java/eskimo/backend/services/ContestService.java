@@ -15,7 +15,6 @@ import java.util.List;
 public class ContestService {
 
     private ContestDao contestDao;
-
     private StorageService storageService;
 
     public ContestService(ContestDao contestDao, StorageService storageService) {
@@ -47,4 +46,5 @@ public class ContestService {
     public List<Contest> getAllContests() {
         return contestDao.getAllContests();
     }
+
 }
