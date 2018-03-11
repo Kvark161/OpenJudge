@@ -18,26 +18,15 @@ export class ProblemsComponent {
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService,
                 private userService: UserService, private dialog: MatDialog) {
+        this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.userService.getCurrentRole().subscribe(role => {
             this.role = role;
             if (this.role == 'ADMIN') {
-                this.getAnswersGenerationInfo();
+                this.eskimoService.getAdminProblems(this.contestId).subscribe(problems => this.problems = problems);
+            } else {
+                this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
             }
         });
-        this.contestId = +this.route.snapshot.paramMap.get('contestId');
-        this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
-    }
-
-    private getAnswersGenerationInfo() {
-        this.eskimoService.getAnswersGenerationInfo(this.contestId).subscribe(problems => {
-            let answersMap: Map<number, Problem> = new Map<number, Problem>();
-            problems.forEach(p => answersMap.set(p.index, p));
-            this.problems.forEach(p => {
-                let answersGenerationInfo = answersMap.get(p.index);
-                p.answersGenerationMessage = answersGenerationInfo.answersGenerationMessage;
-                p.answersGenerationStatus = answersGenerationInfo.answersGenerationStatus;
-            })
-        })
     }
 
     showAnswersGenerationMessage(problem: Problem) {

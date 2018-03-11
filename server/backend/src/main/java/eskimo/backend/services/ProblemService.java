@@ -11,7 +11,7 @@ import eskimo.backend.entity.Statement;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
-import eskimo.backend.rest.response.AnswersGenerationResponse;
+import eskimo.backend.rest.response.AdminProblemsResponse;
 import eskimo.backend.rest.response.ProblemInfoResponse;
 import eskimo.backend.rest.response.StatementsResponse;
 import eskimo.backend.storage.StorageOrder;
@@ -62,14 +62,14 @@ public class ProblemService {
                 .collect(Collectors.toList());
     }
 
-    public List<AnswersGenerationResponse> getAnswerGenerationInfo(Long contestId) {
+    public List<AdminProblemsResponse> getAnswerGenerationInfo(Long contestId) {
         List<Problem> contestProblems = problemDao.getContestProblems(contestId);
+        Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
         return contestProblems.stream()
                 .map(problem -> {
-                    AnswersGenerationResponse response = new AnswersGenerationResponse();
-                    response.setIndex(problem.getIndex());
-                    response.setAnswersGenerationMessage(problem.getAnswersGenerationMessage());
-                    response.setAnswersGenerationStatus(problem.getAnswersGenerationStatus());
+                    AdminProblemsResponse response = new AdminProblemsResponse();
+                    response.fillProblemFields(problem);
+                    response.setName(problemNames.get(problem.getId()));
                     return response;
                 })
                 .collect(Collectors.toList());

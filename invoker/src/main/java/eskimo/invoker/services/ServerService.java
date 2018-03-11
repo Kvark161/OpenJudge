@@ -25,9 +25,10 @@ public class ServerService {
         this.invokerConfig = invokerConfig;
     }
 
-    public TestData getTestData(long contestId, long problemId, long testId) {
+    public TestData getTestData(long contestId, long problemId, long testId, boolean needAnswer) {
         return restTemplate.getForObject(invokerConfig.getServerUrlGetTestData() + "?" +
-                "contest=" + contestId + "&problem=" + problemId + "&test=" + testId, TestData.class);
+                "contestId=" + contestId + "&problemId=" + problemId + "&testId=" + testId +
+                "&needAnswer=" + needAnswer, TestData.class);
     }
 
 }

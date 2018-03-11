@@ -67,7 +67,7 @@ public class TesterWindows implements Tester {
             init();
             for (int i = 0; i < testParams.getNumberTests(); ++i) {
                 try {
-                    TestData testData = testParams.getTestData(i);
+                    TestData testData = testParams.getTestData(i, !testParams.isCheckerDisabled());
                     prepareToTest(testData);
                     runTest();
                     if (!testParams.isCheckerDisabled()) {

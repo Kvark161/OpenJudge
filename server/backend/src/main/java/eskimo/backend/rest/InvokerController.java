@@ -23,11 +23,14 @@ public class InvokerController {
     private StorageService storageService;
 
     @GetMapping("test-data")
-    public ResponseEntity<TestData> getTestData(long contestId, long problemId, long testId) {
+    public ResponseEntity<TestData> getTestData(long contestId, long problemId, int testId, boolean needAnswer) {
         try {
             TestData testData = new TestData();
+            testData.setIndex(testId);
             testData.setInputData(storageService.getTestInputData(contestId, problemId, testId));
-            testData.setAnswerData(storageService.getTestAnswerData(contestId, problemId, testId));
+            if (needAnswer) {
+                testData.setAnswerData(storageService.getTestAnswerData(contestId, problemId, testId));
+            }
             return new ResponseEntity<>(testData, HttpStatus.OK);
         } catch (IOException e) {
             logger.error("error occurred while fetching test data contestId=" + contestId + " problemId=" + problemId + " testId=" + testId, e);

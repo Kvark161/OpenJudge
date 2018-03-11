@@ -28,6 +28,7 @@ public class InvokeController {
 
     @PostMapping(value = "/invoke/test-lazy")
     public TestResult[] test(@RequestBody TestLazyParams testParams) {
+        testParams.setServerService(serverService);
         return executeService.test(testParams);
     }
 

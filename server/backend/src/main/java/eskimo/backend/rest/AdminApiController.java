@@ -2,7 +2,7 @@ package eskimo.backend.rest;
 
 import eskimo.backend.entity.Contest;
 import eskimo.backend.exceptions.AddEskimoEntityException;
-import eskimo.backend.rest.response.AnswersGenerationResponse;
+import eskimo.backend.rest.response.AdminProblemsResponse;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.storage.TemporaryFile;
@@ -47,8 +47,8 @@ public class AdminApiController {
         }
     }
 
-    @GetMapping("contest/{id}/problems/answers/generation")
-    public List<AnswersGenerationResponse> getAnswersGenerationInfo(@PathVariable("id") Long contestId) {
+    @GetMapping("contest/{id}/problems/admin")
+    public List<AdminProblemsResponse> getAnswersGenerationInfo(@PathVariable("id") Long contestId) {
         return problemService.getAnswerGenerationInfo(contestId);
     }
 

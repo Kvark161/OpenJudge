@@ -132,6 +132,11 @@ public class GenerateProblemAnswersJob extends JudgeJob {
         testParams.setProblemId(problem.getId());
         testParams.setNumberTests(problem.getTestsCount());
         testParams.setStopOnFirstFail(false);
+        testParams.setRunCommand(solutionLanguage.getRunCommand());
+        testParams.setInputName("input.txt");
+        testParams.setOutputName("output.txt");
+        testParams.setTimeLimit(problem.getTimeLimit() * 2);
+        testParams.setMemoryLimit(problem.getMemoryLimit() * 2);
         genResults = invokerService.test(invoker, testParams);
     }
 

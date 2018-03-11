@@ -12,7 +12,7 @@ public class TestParams extends AbstractTestParams {
     private List<TestData> testsData;
 
     @Override
-    public TestData getTestData(int testIndex) {
+    public TestData getTestData(int testIndex, boolean needAnswer) {
         return testsData.get(testIndex);
     }
 

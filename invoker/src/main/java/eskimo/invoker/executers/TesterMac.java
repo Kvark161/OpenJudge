@@ -40,11 +40,12 @@ public class TesterMac implements Tester {
         for (int i = 0; i < testResults.length; ++i) {
             testResults[i] = new TestResult();
             testResults[i].setVerdict(TestVerdict.SKIPPED);
+            testResults[i].setIndex(i + 1);
         }
         for (int i = 0; i < testParams.getNumberTests(); ++i) {
             File folder = null;
             try {
-                TestData testData = testParams.getTestData(i);
+                TestData testData = testParams.getTestData(i, !testParams.isCheckerDisabled());
                 folder = invokerUtils.createTempFolder();
                 prepareFolder(testData, folder);
                 runSolution();
@@ -54,12 +55,13 @@ public class TesterMac implements Tester {
                     }
                 }
                 testResults[i] = getTestResult();
+                testResults[i].setIndex(testData.getIndex());
                 if (stopOnFirstFail && TestVerdict.ACCEPTED != testResults[i].getVerdict()) {
                     return testResults;
                 }
             } catch (Throwable e) {
                 testResults[i].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-                logger.error("Error during testing " + e.getMessage());
+                logger.error("Error during testing " + e.getMessage(), e);
                 return testResults;
             } finally {
                 if (folder != null) {
@@ -108,7 +110,7 @@ public class TesterMac implements Tester {
 
     private void runSolution() throws IOException, InterruptedException {
         List<String> command = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        solutionExecutionResult = invokerUtils.executeCommand(command, 30000);
+        solutionExecutionResult = invokerUtils.executeCommand(command, testParams.getTimeLimit(), inputFile, outputFile, null);
     }
 
     private void prepareFolder(TestData testData, File folder) throws IOException, InterruptedException {
@@ -118,10 +120,12 @@ public class TesterMac implements Tester {
         answerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getInputName());
         outputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getOutputName());
         FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
-        FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
+        if (!testParams.isCheckerDisabled()) {
+            FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
+            FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
+            invokerUtils.executeCommand(new String[]{"chmod", "+x", checkerFile.getAbsolutePath()}, 0, null, null, null);
+        }
         FileUtils.writeStringToFile(inputFile, testData.getInputData());
-        FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
-        invokerUtils.executeCommand(new String[]{"chmod", "+x", executableFile.getAbsolutePath()}, 0);
-        invokerUtils.executeCommand(new String[]{"chmod", "+x", checkerFile.getAbsolutePath()}, 0);
+        invokerUtils.executeCommand(new String[]{"chmod", "+x", executableFile.getAbsolutePath()}, 0,  null, null, null);
     }
 }

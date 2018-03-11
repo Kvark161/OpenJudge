@@ -44,8 +44,8 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex;
     }
     
-    private getUrlAnswersGenerationInfo(contestId: number) {
-        return this.getUrlContest(contestId) + "/problems/answers/generation";
+    private getUrlAdminProblems(contestId: number) {
+        return this.getUrlContest(contestId) + "/problems/admin";
     }
 
     private getUrlGenerateAnswers(contestId: number, problemIndex: number) {
@@ -86,8 +86,8 @@ export class EskimoService {
             .catch(this.handleError);
     }
     
-    getAnswersGenerationInfo(contestId: number) : Observable<Problem[]> {
-        return this.http.get(this.getUrlAnswersGenerationInfo(contestId), this.optionsWithCredentials)
+    getAdminProblems(contestId: number) : Observable<Problem[]> {
+        return this.http.get(this.getUrlAdminProblems(contestId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }

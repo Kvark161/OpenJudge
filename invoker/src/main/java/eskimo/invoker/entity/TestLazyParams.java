@@ -5,8 +5,7 @@ import eskimo.invoker.services.ServerService;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Getter @Setter
 public class TestLazyParams extends AbstractTestParams {
 
     @JsonIgnore
@@ -17,8 +16,8 @@ public class TestLazyParams extends AbstractTestParams {
     private int numberTests;
 
     @Override
-    public TestData getTestData(int testIndex) {
-        return serverService.getTestData(contestId, problemId, testIndex);
+    public TestData getTestData(int testIndex, boolean needAnswer) {
+        return serverService.getTestData(contestId, problemId, testIndex + 1L, needAnswer);
     }
 
     @Override

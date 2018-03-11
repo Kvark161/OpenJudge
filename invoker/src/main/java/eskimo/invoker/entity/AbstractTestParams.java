@@ -71,7 +71,7 @@ public abstract class AbstractTestParams {
         }).collect(Collectors.toList());
     }
 
-    public abstract TestData getTestData(int testIndex);
+    public abstract TestData getTestData(int testIndex, boolean needAnswer);
 
     public abstract int getNumberTests();
 
