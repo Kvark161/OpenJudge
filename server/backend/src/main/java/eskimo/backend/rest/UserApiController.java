@@ -50,4 +50,9 @@ public class UserApiController {
     public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) {
         submissionService.submit(submitProblemWebRequest);
     }
+
+    @GetMapping("submission/{submissionId}")
+    public Submission getSubmission(@PathVariable Long submissionId) {
+        return submissionService.getFullSubmission(submissionId);
+    }
 }

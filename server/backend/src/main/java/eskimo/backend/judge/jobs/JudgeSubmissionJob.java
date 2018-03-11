@@ -43,6 +43,7 @@ public class JudgeSubmissionJob extends JudgeJob {
             test();
             resume();
             submissionService.updateSubmission(submission);
+            submissionService.updateSubmissionResultData(submission);
         } catch (Throwable e) {
             submission.setStatus(Submission.Status.INTERNAL_ERROR);
             submissionService.updateSubmission(submission);

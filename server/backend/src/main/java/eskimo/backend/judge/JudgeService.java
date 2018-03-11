@@ -51,6 +51,9 @@ public class JudgeService {
     @Autowired
     private InvokerService invokerService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -59,8 +62,7 @@ public class JudgeService {
     private void init() {
         judgeThread.start();
         try (InputStream is = new ClassPathResource("invokers.json").getInputStream()) {
-            ObjectMapper mapper = new ObjectMapper();
-            Invoker[] invokers = mapper.readValue(is, Invoker[].class);
+            Invoker[] invokers = objectMapper.readValue(is, Invoker[].class);
             invokerPool.add(invokers);
         } catch (JsonParseException e) {
             logger.error("Can not parse invokers.json", e);

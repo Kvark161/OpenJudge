@@ -1,3 +1,4 @@
+import {AceEditorModule} from 'ng2-ace-editor';
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
@@ -16,6 +17,7 @@ import {ContestToolbarComponent} from "./toolbars/contest-toolbar.component";
 import {ContestComponent} from "./pages/contests/info/contest.component";
 import {SubmitComponent} from "./pages/contests/submit/submit.component";
 import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";
+import {SubmissionComponent} from "./pages/contests/submission/submission.component";
 import {AddProblemComponent} from "./pages/contests/problems/add-problem.component";
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
 import {UserService} from "./services/user.service";
@@ -26,6 +28,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
     imports: [
+        AceEditorModule,
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,
@@ -45,6 +48,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         ContestComponent,
         SubmitComponent,
         SubmissionsComponent,
+        SubmissionComponent,
         ProblemsComponent,
         AddProblemComponent,
         StatementsComponent,

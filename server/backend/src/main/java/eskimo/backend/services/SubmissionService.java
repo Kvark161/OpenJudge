@@ -55,4 +55,11 @@ public class SubmissionService {
         return submission;
     }
 
+    public Submission getFullSubmission(Long submissionId) {
+        return submissionDao.getFullSubmission(submissionId);
+    }
+
+    public void updateSubmissionResultData(Submission submission) {
+        submissionDao.updateSubmissionResultData(submission);
+    }
 }
