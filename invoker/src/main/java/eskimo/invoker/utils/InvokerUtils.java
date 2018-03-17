@@ -160,7 +160,7 @@ public class InvokerUtils {
                 }
             }
             if (!dll.exists()) {
-                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/invoke2.exe")) {
+                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/invoke2.dll")) {
                     FileUtils.copyInputStreamToFile(is, dll);
                 }
             }
