@@ -4,6 +4,7 @@ import eskimo.backend.config.AppSettings;
 import org.apache.commons.io.FileUtils;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +16,7 @@ import java.io.IOException;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(locations = "classpath:test.properties")
+@Ignore
 public class BaseTest {
 
     @Autowired
