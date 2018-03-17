@@ -1,7 +1,9 @@
 package eskimo.backend.judge.jobs;
 
+import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
 import eskimo.backend.services.InvokerService;
+import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.SubmissionService;
 import eskimo.invoker.entity.CompilationParams;
 import eskimo.invoker.entity.CompilationResult;
@@ -19,14 +21,18 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final Submission submission;
     private final SubmissionService submissionService;
     private final InvokerService invokerService;
+    private final ProblemService problemService;
+    private final Problem problem;
     private CompilationResult compilationResult;
 
-    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService) {
+    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService) {
         this.submission = submission;
         this.submissionService = submissionService;
         this.invokerService = invokerService;
+        this.problemService = problemService;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
+        problem = problemService.getProblemById(submission.getProblemId());
     }
 
     @Override
@@ -72,6 +78,8 @@ public class JudgeSubmissionJob extends JudgeJob {
         testParams.setExecutableName("main.exe");
         testParams.setCheckerName("checker.exe");
 
+        testParams.setTimeLimit(problem.getTimeLimit());
+        testParams.setMemoryLimit(problem.getMemoryLimit());
         testParams.setContestId(submission.getContestId());
         testParams.setProblemId(submission.getProblemId());
         testParams.setNumberTests(submission.getNumberTests());
