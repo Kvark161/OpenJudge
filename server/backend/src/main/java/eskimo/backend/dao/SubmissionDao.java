@@ -3,7 +3,6 @@ package eskimo.backend.dao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.entity.Submission;
-import eskimo.backend.entity.User;
 import eskimo.invoker.entity.TestResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,19 +41,22 @@ public class SubmissionDao {
 
     @Transactional
     public List<Submission> getAllSubmissions() {
-        String sql = "SELECT * FROM submissions ORDER BY sending_date_time DESC";
+        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id" +
+                " ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper);
     }
 
     @Transactional
     public Submission getSubmissionById(Long id) {
-        String sql = "SELECT * FROM submissions WHERE id = ?";
+        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id WHERE s.id = ?";
         return jdbcTemplate.queryForObject(sql, simpleMapper, id);
     }
 
     @Transactional
     public List<Submission> getUserSubmissions(Long userId) {
-        String sql = "SELECT * FROM submissions WHERE user_id = ? ORDER BY sending_date_time DESC";
+        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id" +
+                " WHERE user_id = ?" +
+                " ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper, userId);
     }
 
@@ -72,7 +74,7 @@ public class SubmissionDao {
                 .withTableName("submissions")
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
-        params.put("user_id", submission.getUser().getId());
+        params.put("user_id", submission.getUserId());
         params.put("contest_id", submission.getContestId());
         params.put("problem_id", submission.getProblemId());
         params.put("source_code", submission.getSourceCode());
@@ -139,10 +141,8 @@ public class SubmissionDao {
         public Submission mapRow(ResultSet resultSet, int i) throws SQLException {
             Submission submission = new Submission();
             submission.setId(resultSet.getLong("id"));
-            User user = new User();
-            user.setId(resultSet.getLong("user_id"));
-            user.setUsername(resultSet.getString("username"));
-            submission.setUser(user);
+            submission.setUserId(resultSet.getLong("user_id"));
+            submission.setUsername(resultSet.getString("name"));
             submission.setContestId(resultSet.getLong("contest_id"));
             submission.setProblemId(resultSet.getLong("problem_id"));
             submission.setSourceCode(resultSet.getString("source_code"));

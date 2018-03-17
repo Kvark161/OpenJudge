@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 public class Submission {
 
     private Long id;
-    private User user;
+    private Long userId;
+    private String username;
     private long contestId;
     private long problemId;
     private String sourceCode;

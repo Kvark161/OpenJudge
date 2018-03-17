@@ -3,6 +3,7 @@ package eskimo.backend.services;
 import eskimo.backend.authorization.AuthenticationHolder;
 import eskimo.backend.dao.SubmissionDao;
 import eskimo.backend.entity.Submission;
+import eskimo.backend.entity.User;
 import eskimo.backend.entity.request.SubmitProblemWebRequest;
 import eskimo.backend.judge.JudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +28,7 @@ public class SubmissionService {
     private AuthenticationHolder authenticationHolder;
 
     public List<Submission> getAllSubmissions() {
-        List<Submission> submissions = submissionDao.getAllSubmissions();
-        for (Submission submission : submissions) {
-            submission.setUser(userService.getUserById(submission.getUser().getId()));
-        }
-        return submissions;
+        return submissionDao.getAllSubmissions();
     }
 
     public void submit(SubmitProblemWebRequest submitProblemWebRequest) {
@@ -49,7 +46,9 @@ public class SubmissionService {
         submission.setContestId(submitProblemWebRequest.getContestId());
         submission.setProblemId(submitProblemWebRequest.getProblemId());
         submission.setSourceCode(submitProblemWebRequest.getSourceCode());
-        submission.setUser(authenticationHolder.getUser());
+        User user = authenticationHolder.getUser();
+        submission.setUserId(user.getId());
+        submission.setUsername(user.getUsername());
         submission.setSendingDateTime(LocalDateTime.now());
         submission.setStatus(Submission.Status.SUBMITTED);
         return submission;

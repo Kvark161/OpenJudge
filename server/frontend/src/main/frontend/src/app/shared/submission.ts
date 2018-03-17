@@ -1,8 +1,6 @@
-import {User} from "./user";
-
 export class Submission {
     id: number;
-    user: User = new User();
+    userId: number;
     username: string;
     contestId: number;
     problemId: number;

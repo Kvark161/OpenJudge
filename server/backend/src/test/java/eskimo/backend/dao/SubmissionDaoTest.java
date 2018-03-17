@@ -1,7 +1,6 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.entity.Submission;
-import eskimo.backend.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 @RunWith(SpringRunner.class)
@@ -24,24 +24,38 @@ public class SubmissionDaoTest {
     private SubmissionDao submissionDao;
 
     @Test
-    public void getAllSubmissions() {
+    public void test_GetAllSubmissions() {
         List<Submission> submissions = submissionDao.getAllSubmissions();
         assertThat(submissions, notNullValue());
     }
 
     @Test
     public void insertSubmission() {
+        Submission submission = getFullSubmission();
+        submissionDao.insertSubmission(submission);
+        assertThat(submission.getId(), notNullValue());
+    }
+
+    @Test
+    public void test_GetSubmissionById() {
+        Submission submission = getFullSubmission();
+        submissionDao.insertSubmission(submission);
+        Submission submissionById = submissionDao.getSubmissionById(submission.getId());
+        assertThat(submissionById.getId(), is(submission.getId()));
+    }
+
+
+
+    private Submission getFullSubmission() {
         Submission submission = new Submission();
-        User user = new User();
-        user.setId(1L);
-        submission.setUser(user);
+        submission.setUserId(1L);
+        submission.setUsername("username1");
         submission.setContestId(1);
         submission.setProblemId(1);
         submission.setSourceCode("This is a source code");
         submission.setStatus(Submission.Status.SUBMITTED);
         submission.setSendingDateTime(LocalDateTime.now());
-        submissionDao.insertSubmission(submission);
-        assertThat(submission.getId(), notNullValue());
+        return submission;
     }
 
 }
