@@ -155,12 +155,14 @@ public class InvokerUtils {
             File runner = new File(folder.getAbsoluteFile() + "/run.exe");
             File dll = new File(folder.getAbsolutePath() + "/invoke2.dll");
             if (!runner.exists()) {
-                File runnerResource = new File(getClass().getClassLoader().getResource("runner/" + mode + "/run.exe").getFile());
-                FileUtils.copyFile(runnerResource, runner);
+                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/run.exe")) {
+                    FileUtils.copyInputStreamToFile(is, runner);
+                }
             }
             if (!dll.exists()) {
-                File dllResource = new File(getClass().getClassLoader().getResource("runner/" + mode + "/invoke2.dll").getFile());
-                FileUtils.copyFile(dllResource, dll);
+                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/invoke2.exe")) {
+                    FileUtils.copyInputStreamToFile(is, dll);
+                }
             }
             return runner;
         } catch (IOException e) {
