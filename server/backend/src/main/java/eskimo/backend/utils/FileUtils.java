@@ -25,6 +25,7 @@ public class FileUtils {
 
     public File unzip(File zipFile, String prefix) throws IOException {
         byte[] buffer = new byte[1024];
+        appSettings.getTempPath().mkdirs();
         Path outputFolder = Files.createTempDirectory(Paths.get(appSettings.getTempPath().getAbsolutePath()), prefix);
         try (FileInputStream fis = new FileInputStream(zipFile);
              ZipInputStream zis = new ZipInputStream(fis)) {
