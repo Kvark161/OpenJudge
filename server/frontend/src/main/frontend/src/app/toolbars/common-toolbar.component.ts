@@ -5,6 +5,7 @@ import {Router} from "@angular/router";
 @Component({
     selector: 'common-toolbar',
     templateUrl: './common-toolbar.component.html',
+    styleUrls: ['./common-toolbar.component.css']
 })
 export class CommonToolbarComponent {
     role: string = "ANONYMOUS";

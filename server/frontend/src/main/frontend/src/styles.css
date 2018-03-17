@@ -1,3 +1,11 @@
 body {
     margin: 0;
 }
+
+.container, .navbar {
+    min-width: 800px;
+}
+
+nav.navbar {
+    padding: 0;
+}

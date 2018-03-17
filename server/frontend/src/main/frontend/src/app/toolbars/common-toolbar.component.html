@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="collapse navbar-collapse" id="navbarColor01">
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <div class="container" id="navbarColor01">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a routerLink="" class="nav-link">Home</a>
@@ -12,10 +12,15 @@
             </li>
         </ul>
         <form *ngIf="!username || username == ''" class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Login" [(ngModel)]="usernameInput" name="username" required>
-            <input class="form-control mr-sm-2" type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
-            <button class="btn btn-success my-2 my-sm-0" type="submit" (click)="logIn()">Log-in</button>
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit" (click)="signIn()">Sign-in</button>
+            <div class="form-group">
+            <input class="form-control-sm mr-sm-2 navbarInput" type="text" placeholder="Login" [(ngModel)]="usernameInput" name="username" required>
+            </div>
+            <div class="form-group">
+            <input class="form-control-sm mr-sm-2 navbarInput" type="password" placeholder="Password" [(ngModel)]="password" name="password" required>
+            </div>
+            <div class="form-group">
+            <button class="btn-sm btn-success my-2 my-sm-0" type="submit" (click)="logIn()">Log-in</button>
+            </div>
         </form>
         <ul *ngIf="username && username != ''" class="nav navbar-nav navbar-right">
             <li>
