@@ -4,6 +4,7 @@ package eskimo.invoker.сontrollers;
 import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
+import eskimo.invoker.executers.TesterWindows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.hamcrest.Matchers;
@@ -27,7 +28,6 @@ public class InvokeControllerTest {
 
     private final List<String> GCC_COMMAND = Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE);
     private final List<String> RUN_COMMAND = Arrays.asList(AbstractTestParams.SOLUTION_EXE, "<", AbstractTestParams.INPUT_FILE, ">", AbstractTestParams.OUTPUT_FILE);
-    private final List<String> CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE, AbstractTestParams.INPUT_FILE, AbstractTestParams.OUTPUT_FILE, AbstractTestParams.ANSWER_FILE, AbstractTestParams.CHECKER_REPORT_FILE, "-appes");
 
     private final List<String> RUN_COMMAND_WIN = Arrays.asList(AbstractTestParams.SOLUTION_EXE);
 
@@ -70,7 +70,7 @@ public class InvokeControllerTest {
         testParams.setChecker(compileFile("cpp/checkers/checker_ok.cpp", false));
         testParams.setCheckerName("checker");
         testParams.setRunCommand(RUN_COMMAND);
-        testParams.setCheckCommand(CHECK_COMMAND);
+        testParams.setCheckCommand(TesterWindows.DEFAULT_CHECK_COMMAND);
         TestResult[] testResult = invokeController.test(testParams);
         Assert.assertEquals(1, testResult.length);
         System.out.println("OUTPUT_FILE:");
@@ -119,7 +119,7 @@ public class InvokeControllerTest {
         testParams.setTimeLimit(1000);
         testParams.setMemoryLimit(512000);
         testParams.setRunCommand(RUN_COMMAND_WIN);
-        testParams.setCheckCommand(CHECK_COMMAND);
+        testParams.setCheckCommand(TesterWindows.DEFAULT_CHECK_COMMAND);
         TestResult[] testResult = invokeController.test(testParams);
         Assert.assertEquals(1, testResult.length);
         System.out.println(testResult[0]);

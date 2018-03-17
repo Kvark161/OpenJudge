@@ -139,20 +139,24 @@ public class InvokerUtils {
             folder.mkdirs();
             File runner = new File(folder.getAbsoluteFile() + "/run.exe");
             File dll = new File(folder.getAbsolutePath() + "/invoke2.dll");
-            if (!runner.exists()) {
-                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/run.exe")) {
-                    FileUtils.copyInputStreamToFile(is, runner);
-                }
-            }
-            if (!dll.exists()) {
-                try (InputStream is = getClass().getClassLoader().getResourceAsStream("runner/" + mode + "/invoke2.dll")) {
-                    FileUtils.copyInputStreamToFile(is, dll);
-                }
-            }
+            checkRunnerFile(runner, "runner/" + mode + "/run.exe");
+            checkRunnerFile(dll, "runner/" + mode + "/invoke2.dll");
             return runner;
         } catch (IOException e) {
             logger.error("Can't prepare runner " + mode, e);
             throw e;
+        }
+    }
+
+    private void checkRunnerFile(File file, String resourcePath) throws IOException {
+        if (!file.exists() || file.length() == 0) {
+            synchronized (this) {
+                if (!file.exists() || file.length() == 0) {
+                    try (InputStream is = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
+                        FileUtils.copyInputStreamToFile(is, file);
+                    }
+                }
+            }
         }
     }
 

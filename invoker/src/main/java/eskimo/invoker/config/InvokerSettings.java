@@ -22,6 +22,8 @@ public class InvokerSettings {
     private static final String SERVER_PORT = "server.port";
     private static final String SERVER_PATH_GET_TEST_DATA = "server.url.get.test.data";
 
+    private static final String INVOKER_DELETE_TEMP = "invoker.delete-temp";
+
     private static final String INVOKER_TEMP_PATH = "invoker.temp.path";
     private static final String INVOKER_STORAGE_PATH = "invoker.storage.path";
     private static final String INVOKER_RUNNER_PATH = "invoker.runner.path";

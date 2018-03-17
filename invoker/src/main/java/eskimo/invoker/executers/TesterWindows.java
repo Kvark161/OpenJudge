@@ -21,12 +21,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 public class TesterWindows implements Tester {
 
     private static final Logger logger = LoggerFactory.getLogger(TesterWindows.class);
+
+    public static final List<String> DEFAULT_CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE, AbstractTestParams.INPUT_FILE, AbstractTestParams.OUTPUT_FILE, AbstractTestParams.ANSWER_FILE, AbstractTestParams.CHECKER_REPORT_FILE, "-appes");
 
     private final String STAT_FILE = "stat.stat";
     private final String STDERR_FILE = "stderr.err";
@@ -114,6 +117,9 @@ public class TesterWindows implements Tester {
         statFile = getFile(STAT_FILE);
         checkerReportFile = getFile(CHECKER_REPORT_FILE);
         commandTest = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        if (testParams.getCheckCommand() == null) {
+            testParams.setCheckCommand(DEFAULT_CHECK_COMMAND);
+        }
         commandCheck = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), checkerReportFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
     }
