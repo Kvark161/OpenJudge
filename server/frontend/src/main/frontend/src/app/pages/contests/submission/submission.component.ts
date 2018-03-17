@@ -9,10 +9,12 @@ import {Submission} from "../../../shared/submission";
 })
 export class SubmissionComponent {
     submissionId: number;
+    contestId: number;
     submission: Submission = new Submission();
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService) {
         this.submissionId = +this.route.snapshot.paramMap.get('submissionId');
+        this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.eskimoService.getSubmission(this.submissionId).subscribe(submission => this.submission = submission);
     }
 
