@@ -46,6 +46,11 @@ public class ProgrammingLanguageDao {
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ProgrammingLanguageRowMapper());
     }
 
+    public ProgrammingLanguage getProgrammingLanguage(String name) {
+        String sql = "SELECT * FROM programming_languages WHERE name = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{name}, new ProgrammingLanguageRowMapper());
+    }
+
     private static class ProgrammingLanguageRowMapper implements RowMapper<ProgrammingLanguage> {
 
         @Override

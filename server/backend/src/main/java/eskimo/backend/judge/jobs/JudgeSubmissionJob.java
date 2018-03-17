@@ -1,6 +1,7 @@
 package eskimo.backend.judge.jobs;
 
 import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.ProgrammingLanguage;
 import eskimo.backend.entity.Submission;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.ProblemService;
@@ -21,15 +22,15 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final Submission submission;
     private final SubmissionService submissionService;
     private final InvokerService invokerService;
-    private final ProblemService problemService;
     private final Problem problem;
+    private final ProgrammingLanguage programmingLanguage;
     private CompilationResult compilationResult;
 
-    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService) {
+    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService, ProgrammingLanguage programmingLanguage) {
         this.submission = submission;
         this.submissionService = submissionService;
         this.invokerService = invokerService;
-        this.problemService = problemService;
+        this.programmingLanguage = programmingLanguage;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
         problem = problemService.getProblemById(submission.getProblemId());

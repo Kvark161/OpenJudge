@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Created by Sokirkina Ekaterina on 29-Apr-2017.
- */
 @Service
 public class ProgrammingLanguageService {
 
@@ -30,5 +27,9 @@ public class ProgrammingLanguageService {
 
     public ProgrammingLanguage getProgrammingLanguage(Long id) {
         return programmingLanguageDao.getProgrammingLanguage(id);
+    }
+
+    public ProgrammingLanguage getProgrammingLanguage(String name) {
+        return programmingLanguageDao.getProgrammingLanguage(name);
     }
 }
