@@ -63,6 +63,8 @@ public class ProgrammingLanguageDao {
             programmingLanguage.setCompileCommand(Arrays.asList(compileCommand));
             String[] runCommand = Commandline.translateCommandline(resultSet.getString("run_command"));
             programmingLanguage.setRunCommand(Arrays.asList(runCommand));
+            programmingLanguage.setCompilationTimeLimit(resultSet.getLong("time_limit"));
+            programmingLanguage.setCompilationMemoryLimit(resultSet.getLong("memory_limit"));
             return programmingLanguage;
         }
 
