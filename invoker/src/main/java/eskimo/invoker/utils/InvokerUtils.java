@@ -112,7 +112,7 @@ public class InvokerUtils {
     }
 
     public ExecutionResult executeRunner(List<String> programCommand, File input, File output, File stderr, File stat, long timeLimit, long memoryLimit, File workingFolder, boolean allowCreateProcesses) throws IOException, InterruptedException {
-        File runner = new File(getClass().getClassLoader().getResource("runner/x64/run.exe").getFile());
+        File runner = prepareRunner();
         List<String> command = new ArrayList<>();
         command.add(runner.getAbsolutePath());
         command.add("-t");
@@ -145,6 +145,28 @@ public class InvokerUtils {
         }
         command.addAll(programCommand);
         return executeCommand(command, 60000);
+    }
+
+    private File prepareRunner() throws IOException {
+        String mode = "x64";
+        try {
+            File folder = new File(settings.getStoragePath().getAbsolutePath() + File.separator + "runner" + File.separator + mode);
+            folder.mkdirs();
+            File runner = new File(folder.getAbsoluteFile() + "/run.exe");
+            File dll = new File(folder.getAbsolutePath() + "/invoke2.dll");
+            if (!runner.exists()) {
+                File runnerResource = new File(getClass().getClassLoader().getResource("runner/" + mode + "/run.exe").getFile());
+                FileUtils.copyFile(runnerResource, runner);
+            }
+            if (!dll.exists()) {
+                File dllResource = new File(getClass().getClassLoader().getResource("runner/" + mode + "/invoke2.dll").getFile());
+                FileUtils.copyFile(dllResource, dll);
+            }
+            return runner;
+        } catch (IOException e) {
+            logger.error("Can't prepare runner " + mode, e);
+            throw e;
+        }
     }
 
 }

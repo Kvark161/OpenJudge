@@ -35,8 +35,8 @@ public class InvokerSettings {
         try (InputStream is = InvokerSettings.class.getClassLoader().getResourceAsStream(FILE_PROPERTIES_PATH)) {
             properties.load(is);
         }
-        getInvokerTempPath().mkdirs();
-        getInvokerStoragePath().mkdirs();
+        getTempPath().mkdirs();
+        getStoragePath().mkdirs();
         getRunnerTempPath().mkdirs();
     }
 
@@ -64,11 +64,11 @@ public class InvokerSettings {
         return getServerRootUrl() + getPropery(SERVER_PATH_GET_TEST_DATA);
     }
 
-    public File getInvokerStoragePath() {
+    public File getStoragePath() {
         return getFileProperty(INVOKER_STORAGE_PATH);
     }
 
-    public File getInvokerTempPath() {
+    public File getTempPath() {
         return getFileProperty(INVOKER_TEMP_PATH);
     }
 
