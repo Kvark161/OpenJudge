@@ -7,7 +7,7 @@ import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Statement;
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -60,6 +60,7 @@ public class ProblemParserPolygonZip {
         parseChecker();
         parseValidator();
         parseTests();
+        parseAdditionalFiles();
         return problemContainer;
     }
 
@@ -108,7 +109,7 @@ public class ProblemParserPolygonZip {
         File testsFolder = new File(root + File.separator + "tests");
         List<TestContainer> testContainers = new ArrayList<>();
         problemContainer.setTests(testContainers);
-        problemContainer.getProblem().setAnswersGenerationStatus(ProblemAnswersGenerationStatus.NOT_STARTED);
+        problemContainer.getProblem().setAnswersGenerationStatus(GenerationStatus.NOT_STARTED);
         problemContainer.getProblem().setTestsCount(0);
         if (!testsFolder.exists()) {
             return;
@@ -120,7 +121,7 @@ public class ProblemParserPolygonZip {
         Arrays.sort(testFiles);
         boolean answersExists = Arrays.stream(testFiles).allMatch(f -> new File(f.getAbsolutePath() + ".a").exists());
         if (answersExists) {
-            problemContainer.getProblem().setAnswersGenerationStatus(ProblemAnswersGenerationStatus.DONE);
+            problemContainer.getProblem().setAnswersGenerationStatus(GenerationStatus.DONE);
             problemContainer.getProblem().setAnswersGenerationMessage("Answers already exist");
         }
         for (int i = 0; i < testFiles.length; ++i) {
@@ -160,6 +161,15 @@ public class ProblemParserPolygonZip {
             }
             result.add(statementContainer);
         }
+    }
+
+    private void parseAdditionalFiles() {
+        File testlib = new File(root + File.separator + "files" + File.separator + "testlib.h");
+        if (!testlib.exists()) {
+            logger.warn("testlib.h not found");
+            return;
+        }
+        problemContainer.setTestlib(testlib);
     }
 
     private String convertLanguage(String inputLanguage) {

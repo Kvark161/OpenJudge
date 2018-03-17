@@ -1,7 +1,7 @@
 package eskimo.backend.rest.response;
 
 import eskimo.backend.entity.Problem;
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +11,7 @@ public class AdminProblemsResponse {
     private String name;
     private long timeLimit;
     private long memoryLimit;
-    private ProblemAnswersGenerationStatus answersGenerationStatus;
+    private GenerationStatus answersGenerationStatus;
     private String answersGenerationMessage;
 
     public void fillProblemFields(Problem problem) {

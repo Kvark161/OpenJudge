@@ -33,12 +33,14 @@ public class ExecuteServiceWindows implements ExecuteService {
             File stdout = new File(folder.getAbsolutePath() + File.separator + "stdout.txt");
             File stderr = new File(folder.getAbsolutePath() + File.separator + "stderr.txt");
             File stat = new File(folder.getAbsolutePath() + File.separator + "stat.txt");
+            String testLibPath = "";
             if (compilationParams.getTestLib() != null) {
                 File testLib = new File(folder.getAbsolutePath() + File.separator + compilationParams.getTestLibName());
                 FileUtils.writeStringToFile(testLib, compilationParams.getTestLib());
+                testLibPath = testLib.getAbsolutePath();
             }
             FileUtils.writeStringToFile(sourceFile, compilationParams.getSourceCode());
-            List<String> commands = compilationParams.prepareCompilationCommand(sourceFile.getAbsolutePath(), executableFile.getAbsolutePath());
+            List<String> commands = compilationParams.prepareCompilationCommand(sourceFile.getAbsolutePath(), executableFile.getAbsolutePath(), testLibPath);
             ExecutionResult executionResult = invokerUtils.executeRunner(commands, null, stdout, stderr, stat, compilationParams.getTimeLimit(), compilationParams.getMemoryLimit(), folder, true);
             CompilationResult compilationResult = new CompilationResult();
             if (stdout.exists()) {

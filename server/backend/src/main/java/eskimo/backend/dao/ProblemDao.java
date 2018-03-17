@@ -1,7 +1,7 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.entity.Problem;
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -92,7 +92,7 @@ public class ProblemDao {
     }
 
     @Transactional
-    public void updateProblemStatuses(Problem problem) {
+    public void updateAnswerGenerationProblemStatuses(Problem problem) {
         String sql = "UPDATE problems " +
                 "SET " +
                 "answers_generation_status = ?," +
@@ -104,6 +104,16 @@ public class ProblemDao {
                 problem.getId());
     }
 
+    @Transactional
+    public void updateCheckerCompilationProblemStatuses(long id, GenerationStatus status, String message) {
+        String sql = "UPDATE problems " +
+                "SET " +
+                "checker_compilation_status = ?," +
+                "checker_compilation_message = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(sql, status.name(), message, id);
+    }
+
     private static class ProblemRowMapper implements RowMapper<Problem> {
         @Override
         public Problem mapRow(ResultSet rs, int i) throws SQLException {
@@ -113,7 +123,7 @@ public class ProblemDao {
             problem.setTimeLimit(rs.getLong("time_limit"));
             problem.setMemoryLimit(rs.getLong("memory_limit"));
             problem.setContestId(rs.getLong("contest_id"));
-            problem.setAnswersGenerationStatus(ProblemAnswersGenerationStatus.valueOf(rs.getString("answers_generation_status")));
+            problem.setAnswersGenerationStatus(GenerationStatus.valueOf(rs.getString("answers_generation_status")));
             problem.setAnswersGenerationMessage(rs.getString("answers_generation_message"));
             problem.setTestsCount(rs.getInt("tests_count"));
             return problem;

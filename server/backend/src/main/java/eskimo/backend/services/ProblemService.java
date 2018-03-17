@@ -8,6 +8,7 @@ import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.StatementsDao;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Statement;
+import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
@@ -130,8 +131,12 @@ public class ProblemService {
         }
     }
 
-    public void updateProblemStatuses(Problem problem) {
-        problemDao.updateProblemStatuses(problem);
+    public void updateAnswerGenerationProblemStatuses(Problem problem) {
+        problemDao.updateAnswerGenerationProblemStatuses(problem);
+    }
+
+    public void updateCheckerCompilationStatuses(long problemId, GenerationStatus status, String message) {
+        problemDao.updateCheckerCompilationProblemStatuses(problemId, status, message);
     }
 
     @Transactional
@@ -139,6 +144,7 @@ public class ProblemService {
         //todo problem doesn't exist
         Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
         judgeService.generateAnswers(contestProblem);
+        judgeService.compileChecker(contestProblem);
     }
 
     private Problem addProblem(long contestId, ProblemContainer problemContainer) {
@@ -166,7 +172,7 @@ public class ProblemService {
         long problemIndex = container.getProblem().getIndex();
         long contestId = container.getProblem().getContestId();
         orders.add(new StorageOrderCopyFile(container.getChecker(),
-                storageService.getCheckerFile(contestId, problemIndex)));
+                storageService.getCheckerSourceFile(contestId, problemIndex)));
         orders.add(new StorageOrderCopyFile(container.getValidator(),
                 storageService.getValidatorFile(contestId, problemIndex)));
         for (SolutionContainer solution : container.getSolutions()) {
@@ -181,6 +187,9 @@ public class ProblemService {
                 orders.add(new StorageOrderCopyFile(test.getAnswer(),
                         storageService.getTestAnswerFile(contestId, problemIndex, test.getIndex())));
             }
+        }
+        if (container.getTestlib() != null) {
+            orders.add(new StorageOrderCopyFile(container.getTestlib(), storageService.getTestlib(contestId, problemIndex)));
         }
         return orders;
     }

@@ -24,6 +24,7 @@ public class StorageService {
     private static final String STATEMENTS_FOLDER_NAME = "statements";
     private static final String PROBLEMS_FOLDER_NAME = "problems";
     private static final String CHECKERS_FILE_NAME = "checker.cpp";
+    private static final String CHECKERS_EXE_NAME = "checker.exe";
     private static final String VALIDATORS_FILE_NAME = "validator.cpp";
     private static final String SOLUTIONS_FOLDER_NAME = "solutions";
     private static final String TESTS_FOLDER_NAME = "tests";
@@ -75,8 +76,12 @@ public class StorageService {
                 + File.separator + problemIndex);
     }
 
-    public File getCheckerFile(long contestId, long problemIndex) {
+    public File getCheckerSourceFile(long contestId, long problemIndex) {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + CHECKERS_FILE_NAME);
+    }
+
+    public File getCheckerExe(long contestId, long problemIndex) {
+        return new File(getProblemFolder(contestId, problemIndex) + File.separator + CHECKERS_EXE_NAME);
     }
 
     private File getTestsFolder(long contestId, long problemIndex) {
@@ -122,6 +127,10 @@ public class StorageService {
             path += File.separator + tag;
         }
         return new File(path);
+    }
+
+    public File getTestlib(long contestId, long problemIndex) {
+        return new File(getProblemFolder(contestId, problemIndex) + File.separator + "testlib.h");
     }
 
     public void executeOrders(List<StorageOrder> orders) {

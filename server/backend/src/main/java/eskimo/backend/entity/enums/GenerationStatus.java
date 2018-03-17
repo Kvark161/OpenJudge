@@ -1,6 +1,6 @@
 package eskimo.backend.entity.enums;
 
-public enum ProblemAnswersGenerationStatus {
+public enum GenerationStatus {
     NOT_STARTED,
     RUNNING,
     ERROR,

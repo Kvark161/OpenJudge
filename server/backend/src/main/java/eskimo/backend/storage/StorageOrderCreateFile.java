@@ -8,6 +8,7 @@ import java.io.IOException;
 public class StorageOrderCreateFile extends StorageOrder {
 
     private String data;
+    private byte[] binData;
     private File file;
 
     public StorageOrderCreateFile(File file, String data) {
@@ -15,11 +16,20 @@ public class StorageOrderCreateFile extends StorageOrder {
         this.data = data;
     }
 
+    public StorageOrderCreateFile(File file, byte[] data) {
+        this.file = file;
+        this.binData = data;
+    }
+
     @Override
     void execute() throws StorageOrderException {
         try {
             file.getParentFile().mkdirs();
-            FileUtils.write(file, data);
+            if (binData != null) {
+                FileUtils.writeByteArrayToFile(file, binData);
+            } else {
+                FileUtils.writeStringToFile(file, data);
+            }
         } catch (IOException e) {
             throw new StorageOrderException("Can't create file " + file.getAbsolutePath(), e);
         }

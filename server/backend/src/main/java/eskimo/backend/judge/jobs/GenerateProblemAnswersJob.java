@@ -2,14 +2,13 @@ package eskimo.backend.judge.jobs;
 
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.ProgrammingLanguage;
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.ProgrammingLanguageService;
 import eskimo.backend.storage.StorageOrder;
 import eskimo.backend.storage.StorageOrderCreateFile;
 import eskimo.backend.storage.StorageService;
-import eskimo.invoker.entity.CompilationParams;
 import eskimo.invoker.entity.CompilationResult;
 import eskimo.invoker.entity.TestLazyParams;
 import eskimo.invoker.entity.TestResult;
@@ -20,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +35,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
 
     private ProgrammingLanguage solutionLanguage;
     private File solutionFile;
-    private String sourceCode;
     private CompilationResult compilationResult;
-    private CompilationParams compilationParams;
     private TestResult[] genResults;
 
     public GenerateProblemAnswersJob(Problem problem,
@@ -59,15 +54,17 @@ public class GenerateProblemAnswersJob extends JudgeJob {
     public void execute() {
         try {
             if (!init()) {
-                //todo bad error message (see setting sourceCode in init())
-                updateStatus(ProblemAnswersGenerationStatus.ERROR, "Can't match reference solutions and available compilers");
+                updateStatus(GenerationStatus.ERROR, "Can't match reference solutions and available compilers");
                 return;
             }
-            if (!compile()) {
-                String message = compilationResult.getVerdict().name() + "\n" +
-                        compilationResult.getCompilerStdout() + "\n" +
-                        compilationResult.getCompilerStderr();
-                updateStatus(ProblemAnswersGenerationStatus.ERROR, message);
+            CompileJob compileJob = new CompileJob(invokerService, solutionLanguage, solutionFile);
+            compileJob.execute(invoker);
+            compilationResult = compileJob.getCompilationResult();
+            if (compilationResult.getVerdict() != CompilationVerdict.SUCCESS) {
+                String message = this.compilationResult.getVerdict().name() + "\n" +
+                        this.compilationResult.getCompilerStdout() + "\n" +
+                        this.compilationResult.getCompilerStderr();
+                updateStatus(GenerationStatus.ERROR, message);
                 return;
             }
             generate();
@@ -75,58 +72,35 @@ public class GenerateProblemAnswersJob extends JudgeJob {
                 return;
             }
             save();
-            updateStatus(ProblemAnswersGenerationStatus.DONE, "Done");
+            updateStatus(GenerationStatus.DONE, "Done");
         } catch (Throwable e) {
-            updateStatus(ProblemAnswersGenerationStatus.ERROR, e.getMessage());
+            updateStatus(GenerationStatus.ERROR, e.getMessage());
             logger.error("Error while generating problem answers", e);
         }
     }
 
     private boolean init() {
-        List<ProgrammingLanguage> languages = programmingLanguageService.getAllProgrammingLanguages();
         for (File solution : storageService.getSolutionFiles(problem.getContestId(), problem.getIndex(), "main")) {
-            for (ProgrammingLanguage language : languages) {
-                String extension = FilenameUtils.getExtension(solution.getName());
-                if (language.getExtension().equals(extension)) {
-                    solutionLanguage = language;
-                    solutionFile = solution;
-                    try {
-                        sourceCode = String.join("\n", Files.readAllLines(solution.toPath()));
-                    } catch (IOException e) {
-                        logger.error("Can't get source code from solution file", e);
-                        return false;
-                    }
-                    return true;
-                }
+            String extension = FilenameUtils.getExtension(solution.getName());
+            solutionLanguage = programmingLanguageService.getProgrammingLanguageByExtension(extension);
+            if (solutionLanguage != null) {
+                solutionFile = solution;
+                return true;
             }
         }
         return false;
     }
 
-    private void updateStatus(ProblemAnswersGenerationStatus status, String message) {
+    private void updateStatus(GenerationStatus status, String message) {
         problem.setAnswersGenerationStatus(status);
         problem.setAnswersGenerationMessage(message);
-        problemService.updateProblemStatuses(problem);
-    }
-
-    private boolean compile() {
-        compilationParams = new CompilationParams();
-        compilationParams.setMemoryLimit(solutionLanguage.getCompilationMemoryLimit());
-        compilationParams.setTimeLimit(solutionLanguage.getCompilationTimeLimit());
-        compilationParams.setSourceCode(sourceCode);
-        compilationParams.setSourceFileName(solutionFile.getName());
-        compilationParams.setExecutableFileName(FilenameUtils.getBaseName(solutionFile.getName()) + '.' + solutionLanguage.getBinaryExtension());
-        compilationParams.setCompilationCommand(solutionLanguage.getCompileCommand());
-        compilationParams.setCompilerPath(solutionLanguage.getCompilerPath());
-        compilationParams.setCompilerName(solutionLanguage.getName());
-        compilationResult = invokerService.compile(invoker, compilationParams);
-        return CompilationVerdict.SUCCESS == compilationResult.getVerdict();
+        problemService.updateAnswerGenerationProblemStatuses(problem);
     }
 
     private void generate() {
         TestLazyParams testParams = new TestLazyParams();
         testParams.setExecutable(compilationResult.getExecutable());
-        testParams.setExecutableName(compilationParams.getExecutableFileName());
+        testParams.setExecutableName(FilenameUtils.getBaseName(solutionFile.getName()) + "." + solutionLanguage.getBinaryExtension());
         testParams.setCheckerDisabled(true);
         testParams.setContestId(problem.getContestId());
         testParams.setProblemId(problem.getId());
@@ -142,7 +116,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
 
     private boolean validate() {
         if (genResults == null || genResults.length != problem.getTestsCount()) {
-            updateStatus(ProblemAnswersGenerationStatus.ERROR, "Answer from invoker is incorrect");
+            updateStatus(GenerationStatus.ERROR, "Answer from invoker is incorrect");
             return false;
         }
         StringBuilder badResult = new StringBuilder();
@@ -158,7 +132,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
             }
         }
         if (badResult.length() > 0) {
-            updateStatus(ProblemAnswersGenerationStatus.ERROR, badResult.toString());
+            updateStatus(GenerationStatus.ERROR, badResult.toString());
             return false;
         }
         return true;

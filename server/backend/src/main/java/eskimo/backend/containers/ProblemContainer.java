@@ -17,5 +17,5 @@ public class ProblemContainer {
     private List<SolutionContainer> solutions;
     private List<TestContainer> tests;
     private List<StatementContainer> statements;
-
+    private File testlib;
 }

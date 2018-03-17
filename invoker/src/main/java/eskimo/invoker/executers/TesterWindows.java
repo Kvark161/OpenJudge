@@ -65,6 +65,7 @@ public class TesterWindows implements Tester {
         for (int i = 0; i < testResults.length; ++i) {
             testResults[i] = new TestResult();
             testResults[i].setVerdict(TestVerdict.SKIPPED);
+            testResults[i].setIndex(i + 1);
         }
         try {
             init();
@@ -78,6 +79,7 @@ public class TesterWindows implements Tester {
                         runCheck();
                     }
                     testResults[i] = prepareTestResult();
+                    testResults[i].setIndex(i + 1);
                     if (TestVerdict.ACCEPTED != testResults[i].getVerdict() &&
                             TestVerdict.CHECKER_DISABLED != testResults[i].getVerdict() &&
                             testParams.isStopOnFirstFail()) {

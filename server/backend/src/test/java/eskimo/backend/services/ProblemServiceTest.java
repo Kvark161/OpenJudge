@@ -3,7 +3,7 @@ package eskimo.backend.services;
 import eskimo.backend.BaseTest;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ProblemServiceTest extends BaseTest {
         expected.setTimeLimit(ProblemParserPolygonZip.DEFAULT_TIME_LIMIT);
         expected.setMemoryLimit(ProblemParserPolygonZip.DEFAULT_MEMORY_LIMIT);
         expected.setTestsCount(5);
-        expected.setAnswersGenerationStatus(ProblemAnswersGenerationStatus.NOT_STARTED);
+        expected.setAnswersGenerationStatus(GenerationStatus.NOT_STARTED);
         assertThat("Problem should be added correctly", actual, is(expected));
     }
 

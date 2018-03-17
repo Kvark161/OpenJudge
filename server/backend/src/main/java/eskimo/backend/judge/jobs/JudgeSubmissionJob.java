@@ -6,14 +6,14 @@ import eskimo.backend.entity.Submission;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.SubmissionService;
-import eskimo.invoker.entity.CompilationParams;
+import eskimo.backend.storage.StorageService;
 import eskimo.invoker.entity.CompilationResult;
 import eskimo.invoker.entity.TestLazyParams;
 import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
 
-import java.util.Arrays;
+import java.io.IOException;
 
 import static eskimo.backend.entity.Submission.Status.*;
 
@@ -24,13 +24,15 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final InvokerService invokerService;
     private final Problem problem;
     private final ProgrammingLanguage programmingLanguage;
+    private final StorageService storageService;
     private CompilationResult compilationResult;
 
-    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService, ProgrammingLanguage programmingLanguage) {
+    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService, ProgrammingLanguage programmingLanguage, StorageService storageService) {
         this.submission = submission;
         this.submissionService = submissionService;
         this.invokerService = invokerService;
         this.programmingLanguage = programmingLanguage;
+        this.storageService = storageService;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
         problem = problemService.getProblemById(submission.getProblemId());
@@ -40,7 +42,10 @@ public class JudgeSubmissionJob extends JudgeJob {
     public void execute() {
         try {
             updateVerdict(COMPILING);
-            compilationResult = compile();
+            CompileJob compileJob = new CompileJob(invokerService, programmingLanguage, submission.getSourceCode(),
+                    getSourceFileBaseName(submission.getSourceCode()));
+            compileJob.execute(invoker);
+            compilationResult = compileJob.getCompilationResult();
             if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
                 updateVerdict(RUNNING);
             } else {
@@ -59,31 +64,37 @@ public class JudgeSubmissionJob extends JudgeJob {
 
     }
 
+    private String getSourceFileBaseName(String sourceCode) {
+        return "source";
+    }
+
     private void updateVerdict(Submission.Status verdict) {
         submission.setStatus(verdict);
         submissionService.updateSubmission(submission);
-    }
-
-    private CompilationResult compile() {
-        CompilationParams params = new CompilationParams();
-        params.setCompilationCommand(Arrays.asList("g++", CompilationParams.SOURCE_CODE, "-o", CompilationParams.OUTPUT_EXE));
-        params.setSourceCode(submission.getSourceCode());
-        params.setExecutableFileName("main.exe");
-        params.setSourceFileName("main.cpp");
-        return invokerService.compile(invoker, params);
     }
 
     private void test() {
         TestLazyParams testParams = new TestLazyParams();
         testParams.setExecutable(compilationResult.getExecutable());
         testParams.setExecutableName("main.exe");
+        try {
+            testParams.setChecker(org.apache.commons.io.FileUtils.readFileToByteArray(storageService.getCheckerExe(submission.getContestId(), submission.getProblemId())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         testParams.setCheckerName("checker.exe");
 
         testParams.setTimeLimit(problem.getTimeLimit());
         testParams.setMemoryLimit(problem.getMemoryLimit());
         testParams.setContestId(submission.getContestId());
         testParams.setProblemId(submission.getProblemId());
-        testParams.setNumberTests(submission.getNumberTests());
+        testParams.setNumberTests(problem.getTestsCount());
+        testParams.setRunCommand(programmingLanguage.getRunCommand());
+        testParams.setInputName("input.txt");
+        testParams.setOutputName("output.txt");
+        testParams.setAnswerName("answer.txt");
+        testParams.setCheckerTimeLimit(30000);
+        testParams.setCheckerMemoryLimit(512000);
 
         TestResult[] testResults = invokerService.test(invoker, testParams);
         submission.setTestResults(testResults);

@@ -1,6 +1,6 @@
 package eskimo.backend.entity;
 
-import eskimo.backend.entity.enums.ProblemAnswersGenerationStatus;
+import eskimo.backend.entity.enums.GenerationStatus;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +14,9 @@ public class Problem implements Serializable {
     private long timeLimit;
     private long memoryLimit;
     private int testsCount;
-    private ProblemAnswersGenerationStatus answersGenerationStatus;
+    private GenerationStatus answersGenerationStatus;
     private String answersGenerationMessage;
+    private GenerationStatus checkerCompilationStatus;
+    private String checkerCompilationMessage;
 
 }

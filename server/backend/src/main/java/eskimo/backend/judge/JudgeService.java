@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
+import eskimo.backend.judge.jobs.CompileCheckerJob;
 import eskimo.backend.judge.jobs.GenerateProblemAnswersJob;
 import eskimo.backend.judge.jobs.JudgeJob;
 import eskimo.backend.judge.jobs.JudgeSubmissionJob;
@@ -74,7 +75,7 @@ public class JudgeService {
     }
 
     public void judge(Submission submission) {
-        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService, problemService, programmingLanguageService.getProgrammingLanguage("g++17"));
+        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService, problemService, programmingLanguageService.getProgrammingLanguage("g++17"), storageService);
         putJob(job);
     }
 
@@ -87,6 +88,12 @@ public class JudgeService {
                         problemService,
                         invokerService);
         putJob(job);
+    }
+
+    public void compileChecker(Problem problem) {
+        JudgeJob compileJob = new CompileCheckerJob(invokerService, storageService, programmingLanguageService,
+                problemService, problem);
+        putJob(compileJob);
     }
 
     private void putJob(JudgeJob job) {

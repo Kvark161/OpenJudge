@@ -32,4 +32,14 @@ public class ProgrammingLanguageService {
     public ProgrammingLanguage getProgrammingLanguage(String name) {
         return programmingLanguageDao.getProgrammingLanguage(name);
     }
+
+    public ProgrammingLanguage getProgrammingLanguageByExtension(String extension) {
+        List<ProgrammingLanguage> languages = getAllProgrammingLanguages();
+        for (ProgrammingLanguage language : languages) {
+            if (language.getExtension().equals(extension)) {
+                return language;
+            }
+        }
+        return null;
+    }
 }
