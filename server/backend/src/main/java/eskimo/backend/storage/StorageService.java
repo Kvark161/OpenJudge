@@ -1,6 +1,6 @@
 package eskimo.backend.storage;
 
-import eskimo.backend.config.AppSettings;
+import eskimo.backend.config.AppSettingsProvider;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,15 +31,15 @@ public class StorageService {
     private static final String STATEMENTS_ENGLISH = "english";
     private static final String STATEMENTS_RUSSIAN = "russian";
 
-    private AppSettings appSettings;
+    private AppSettingsProvider appSettingsProvider;
 
     @Autowired
-    public StorageService(AppSettings appSettings) {
-        this.appSettings = appSettings;
+    public StorageService(AppSettingsProvider appSettingsProvider) {
+        this.appSettingsProvider = appSettingsProvider;
     }
 
     public File getContestFolder(long contestId) {
-        return new File(appSettings.getStoragePath() + File.separator + CONTEST_FOLDER_NAME + File.separator +
+        return new File(appSettingsProvider.getStoragePath() + File.separator + CONTEST_FOLDER_NAME + File.separator +
                 new DecimalFormat(CONTEST_ID_FORMAT).format(contestId));
     }
 

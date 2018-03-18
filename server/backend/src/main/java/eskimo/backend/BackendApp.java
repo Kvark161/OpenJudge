@@ -1,20 +1,22 @@
 package eskimo.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eskimo.backend.config.EskimoContextInitializer;
+import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.sql.DataSource;
 import java.util.Collections;
 
 @SpringBootApplication
@@ -22,9 +24,7 @@ import java.util.Collections;
 public class BackendApp extends WebMvcConfigurerAdapter {
 
     public static void main(String... args) {
-        new SpringApplicationBuilder(BackendApp.class)
-                .initializers(new EskimoContextInitializer(args))
-                .run(args);
+        SpringApplication.run(BackendApp.class, args);
     }
 
     @Autowired
@@ -50,5 +50,18 @@ public class BackendApp extends WebMvcConfigurerAdapter {
         return (request, status, model) -> status == HttpStatus.NOT_FOUND
                 ? new ModelAndView("index.html", Collections.emptyMap(), HttpStatus.OK)
                 : null;
+    }
+
+    @Bean
+    public DataSource dataSource(AppSettingsProvider appSettingsProvider) {
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl("jdbc:h2:" + appSettingsProvider.getDatabasePath() +
+                ";MULTI_THREADED=TRUE;mode=MySQL;DATABASE_TO_UPPER=FALSE;");
+        dataSource.setUsername("eskimo");
+        dataSource.setPassword("eskimo");
+
+        return dataSource;
     }
 }

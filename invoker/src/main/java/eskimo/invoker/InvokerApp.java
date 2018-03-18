@@ -1,6 +1,7 @@
 package eskimo.invoker;
 
-import eskimo.invoker.config.InvokerSettings;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import eskimo.invoker.config.InvokerSettingsProvider;
 import eskimo.invoker.services.ExecuteService;
 import eskimo.invoker.services.ExecuteServiceMac;
 import eskimo.invoker.services.ExecuteServiceWindows;
@@ -22,7 +23,7 @@ public class InvokerApp {
     }
 
     @Bean
-    public ExecuteService getExecuteService(InvokerUtils invokerUtils, InvokerSettings invokerSettings) {
+    public ExecuteService getExecuteService(InvokerUtils invokerUtils, InvokerSettingsProvider invokerSettings) {
         if (SystemUtils.IS_OS_WINDOWS) {
             return new ExecuteServiceWindows(invokerUtils, invokerSettings);
         }
@@ -30,4 +31,8 @@ public class InvokerApp {
         return new ExecuteServiceMac(invokerUtils);
     }
 
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
 }

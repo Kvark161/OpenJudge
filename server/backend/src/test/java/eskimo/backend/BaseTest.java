@@ -1,6 +1,6 @@
 package eskimo.backend;
 
-import eskimo.backend.config.AppSettings;
+import eskimo.backend.config.AppSettingsProvider;
 import org.apache.commons.io.FileUtils;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
@@ -23,12 +23,12 @@ public class BaseTest {
     private Flyway flyway;
 
     @Autowired
-    private AppSettings appSettings;
+    private AppSettingsProvider appSettingsProvider;
 
     @Before
     public void clean() throws IOException {
-        FileUtils.deleteDirectory(appSettings.getStoragePath());
-        FileUtils.deleteDirectory(appSettings.getTempPath());
+        FileUtils.deleteDirectory(appSettingsProvider.getStoragePath());
+        FileUtils.deleteDirectory(appSettingsProvider.getTempPath());
         flyway.clean();
         flyway.migrate();
     }

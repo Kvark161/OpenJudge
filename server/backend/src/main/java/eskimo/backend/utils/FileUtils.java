@@ -1,6 +1,6 @@
 package eskimo.backend.utils;
 
-import eskimo.backend.config.AppSettings;
+import eskimo.backend.config.AppSettingsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +21,12 @@ public class FileUtils {
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     @Autowired
-    private AppSettings appSettings;
+    private AppSettingsProvider appSettingsProvider;
 
     public File unzip(File zipFile, String prefix) throws IOException {
         byte[] buffer = new byte[1024];
-        appSettings.getTempPath().mkdirs();
-        Path outputFolder = Files.createTempDirectory(Paths.get(appSettings.getTempPath().getAbsolutePath()), prefix);
+        appSettingsProvider.getTempPath().mkdirs();
+        Path outputFolder = Files.createTempDirectory(Paths.get(appSettingsProvider.getTempPath().getAbsolutePath()), prefix);
         try (FileInputStream fis = new FileInputStream(zipFile);
              ZipInputStream zis = new ZipInputStream(fis)) {
             ZipEntry ze = zis.getNextEntry();
@@ -50,7 +50,7 @@ public class FileUtils {
     }
 
     public File saveFile(MultipartFile file, String prefix, String suffix) throws IOException {
-        File filePath = File.createTempFile(prefix, suffix, appSettings.getTempPath());
+        File filePath = File.createTempFile(prefix, suffix, appSettingsProvider.getTempPath());
         byte[] bytes = file.getBytes();
         try (FileOutputStream fos = new FileOutputStream(filePath);
              BufferedOutputStream stream = new BufferedOutputStream(fos)) {

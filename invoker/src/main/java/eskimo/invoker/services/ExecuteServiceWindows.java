@@ -1,6 +1,6 @@
 package eskimo.invoker.services;
 
-import eskimo.invoker.config.InvokerSettings;
+import eskimo.invoker.config.InvokerSettingsProvider;
 import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.executers.TesterWindows;
@@ -19,9 +19,9 @@ public class ExecuteServiceWindows implements ExecuteService {
     private static final Logger logger = LoggerFactory.getLogger(ExecuteServiceWindows.class);
 
     private final InvokerUtils invokerUtils;
-    private final InvokerSettings invokerSettings;
+    private final InvokerSettingsProvider invokerSettings;
 
-    public ExecuteServiceWindows(InvokerUtils invokerUtils, InvokerSettings invokerSettings) {
+    public ExecuteServiceWindows(InvokerUtils invokerUtils, InvokerSettingsProvider invokerSettings) {
         this.invokerUtils = invokerUtils;
         this.invokerSettings = invokerSettings;
     }

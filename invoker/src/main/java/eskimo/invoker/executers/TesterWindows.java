@@ -1,6 +1,6 @@
 package eskimo.invoker.executers;
 
-import eskimo.invoker.config.InvokerSettings;
+import eskimo.invoker.config.InvokerSettingsProvider;
 import eskimo.invoker.entity.AbstractTestParams;
 import eskimo.invoker.entity.ExecutionResult;
 import eskimo.invoker.entity.TestData;
@@ -37,7 +37,7 @@ public class TesterWindows implements Tester {
     private final String CHECKER_REPORT_FILE = "checker.report";
 
     private final InvokerUtils invokerUtils;
-    private final InvokerSettings invokerSettings;
+    private final InvokerSettingsProvider invokerSettings;
     private AbstractTestParams testParams;
     private File workingFolder;
     private File executableFile;
@@ -53,7 +53,7 @@ public class TesterWindows implements Tester {
     private ExecutionResult executionTestResult;
     private ExecutionResult executionCheckResult;
 
-    public TesterWindows(InvokerUtils invokerUtils, InvokerSettings invokerSettings, AbstractTestParams testParams) {
+    public TesterWindows(InvokerUtils invokerUtils, InvokerSettingsProvider invokerSettings, AbstractTestParams testParams) {
         this.invokerUtils = invokerUtils;
         this.invokerSettings = invokerSettings;
         this.testParams = testParams;

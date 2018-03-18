@@ -1,6 +1,6 @@
 package eskimo.invoker.utils;
 
-import eskimo.invoker.config.InvokerSettings;
+import eskimo.invoker.config.InvokerSettingsProvider;
 import eskimo.invoker.entity.ExecutionResult;
 import eskimo.invoker.services.ExecuteServiceWindows;
 import org.apache.commons.io.FileUtils;
@@ -24,7 +24,7 @@ public class InvokerUtils {
     private static final Logger logger = LoggerFactory.getLogger(ExecuteServiceWindows.class);
 
     @Autowired
-    private InvokerSettings settings;
+    private InvokerSettingsProvider settings;
 
     @Autowired
     private InvokerUtils invokerUtils;

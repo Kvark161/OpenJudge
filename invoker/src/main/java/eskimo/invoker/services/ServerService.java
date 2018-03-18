@@ -1,6 +1,6 @@
 package eskimo.invoker.services;
 
-import eskimo.invoker.config.InvokerSettings;
+import eskimo.invoker.config.InvokerSettingsProvider;
 import eskimo.invoker.entity.TestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +15,13 @@ public class ServerService {
     private static final Logger logger = LoggerFactory.getLogger(ServerService.class);
 
     private RestTemplate restTemplate = new RestTemplate();
-    private final InvokerSettings invokerConfig;
+    private final InvokerSettingsProvider invokerConfig;
 
     @Value("${server.port}")
     private int port;
 
     @Autowired
-    public ServerService(InvokerSettings invokerConfig) {
+    public ServerService(InvokerSettingsProvider invokerConfig) {
         this.invokerConfig = invokerConfig;
     }
 
