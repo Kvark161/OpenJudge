@@ -1,5 +1,6 @@
 package eskimo.invoker.executers;
 
+import eskimo.invoker.config.InvokerSettings;
 import eskimo.invoker.entity.AbstractTestParams;
 import eskimo.invoker.entity.ExecutionResult;
 import eskimo.invoker.entity.TestData;
@@ -35,7 +36,8 @@ public class TesterWindows implements Tester {
     private final String STDERR_FILE = "stderr.err";
     private final String CHECKER_REPORT_FILE = "checker.report";
 
-    private InvokerUtils invokerUtils;
+    private final InvokerUtils invokerUtils;
+    private final InvokerSettings invokerSettings;
     private AbstractTestParams testParams;
     private File workingFolder;
     private File executableFile;
@@ -51,8 +53,9 @@ public class TesterWindows implements Tester {
     private ExecutionResult executionTestResult;
     private ExecutionResult executionCheckResult;
 
-    public TesterWindows(InvokerUtils invokerUtils, AbstractTestParams testParams) {
+    public TesterWindows(InvokerUtils invokerUtils, InvokerSettings invokerSettings, AbstractTestParams testParams) {
         this.invokerUtils = invokerUtils;
+        this.invokerSettings = invokerSettings;
         this.testParams = testParams;
     }
 
@@ -97,7 +100,7 @@ public class TesterWindows implements Tester {
             logger.error("Can't initialize environment to test", e);
             return testResults;
         } finally {
-            if (workingFolder != null) {
+            if (workingFolder != null && invokerSettings.deleteTempFiles()) {
                 try {
                     FileUtils.deleteDirectory(workingFolder);
                 } catch (IOException e) {
@@ -187,24 +190,21 @@ public class TesterWindows implements Tester {
             logger.error("Can't load stats", e);
             return result;
         }
-        if (executionTestResult.getExitCode() != 0) {
-            result.setVerdict(TestVerdict.RUNTIME_ERROR);
-            result.setMessage("Exit code: " + executionTestResult.getExitCode());
-        } else if (result.getUsedMemory() > testParams.getMemoryLimit()) {
+        if (result.getUsedMemory() > testParams.getMemoryLimit()) {
             result.setVerdict(TestVerdict.MEMORY_LIMIT_EXCEED);
             result.setMessage("Used " + result.getUsedMemory() + "Kb");
         } else if (result.getUsedTime() > testParams.getTimeLimit()) {
             result.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
             result.setMessage("Used more then " + testParams.getTimeLimit() + "ms");
+        } else if (executionTestResult.getExitCode() != 0) {
+            result.setVerdict(TestVerdict.RUNTIME_ERROR);
+            result.setMessage("Exit code: " + executionTestResult.getExitCode());
         } else if (testParams.isCheckerDisabled()) {
             result.setVerdict(TestVerdict.CHECKER_DISABLED);
             result.setMessage("Checker is disabled");
-        } else if (executionCheckResult.getExitCode() != 0) {
-            result.setVerdict(TestVerdict.CHECKER_ERROR);
-            result.setMessage("Checker exit code: " + executionCheckResult.getExitCode());
         } else if (!checkerReportFile.exists()) {
             result.setVerdict(TestVerdict.CHECKER_ERROR);
-            result.setMessage("Checker report is not exist");
+            result.setMessage("Checker report is not exist, exit code: " + executionCheckResult.getExitCode());
         } else {
             String checkerMessage = null;
             String checkerResult = null;

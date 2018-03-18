@@ -1,5 +1,6 @@
 package eskimo.invoker.services;
 
+import eskimo.invoker.config.InvokerSettings;
 import eskimo.invoker.entity.*;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.executers.TesterWindows;
@@ -17,10 +18,12 @@ public class ExecuteServiceWindows implements ExecuteService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecuteServiceWindows.class);
 
-    private InvokerUtils invokerUtils;
+    private final InvokerUtils invokerUtils;
+    private final InvokerSettings invokerSettings;
 
-    public ExecuteServiceWindows(InvokerUtils invokerUtils) {
+    public ExecuteServiceWindows(InvokerUtils invokerUtils, InvokerSettings invokerSettings) {
         this.invokerUtils = invokerUtils;
+        this.invokerSettings = invokerSettings;
     }
 
     @Override
@@ -62,7 +65,7 @@ public class ExecuteServiceWindows implements ExecuteService {
             compilationResult.setVerdict(CompilationVerdict.INTERNAL_INVOKER_ERROR);
             return compilationResult;
         } finally {
-            if (folder != null) {
+            if (folder != null && invokerSettings.deleteTempFiles()) {
                 try {
                     FileUtils.deleteDirectory(folder);
                 } catch (IOException e) {
@@ -74,7 +77,7 @@ public class ExecuteServiceWindows implements ExecuteService {
 
     @Override
     public TestResult[] test(AbstractTestParams testParams) {
-        return new TesterWindows(invokerUtils, testParams).test();
+        return new TesterWindows(invokerUtils, invokerSettings, testParams).test();
     }
 
 }

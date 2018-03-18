@@ -118,6 +118,7 @@ public class JudgeSubmissionJob extends JudgeJob {
                 submission.setPassedTests(submission.getPassedTests() + 1);
             } else if (ACCEPTED == submission.getStatus()) {
                 submission.setStatus(verdictToStatus(result.getVerdict()));
+                submission.setMessage(result.getMessage());
             }
         }
     }

@@ -23,6 +23,7 @@ public class Submission {
     private TestResult[] testResults;
     private long usedTime;
     private long usedMemory;
+    private String message;
 
     public enum Status {
         SUBMITTED,

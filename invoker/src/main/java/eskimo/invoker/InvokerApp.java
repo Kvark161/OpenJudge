@@ -1,5 +1,6 @@
 package eskimo.invoker;
 
+import eskimo.invoker.config.InvokerSettings;
 import eskimo.invoker.services.ExecuteService;
 import eskimo.invoker.services.ExecuteServiceMac;
 import eskimo.invoker.services.ExecuteServiceWindows;
@@ -21,9 +22,9 @@ public class InvokerApp {
     }
 
     @Bean
-    public ExecuteService getExecuteService(InvokerUtils invokerUtils) {
+    public ExecuteService getExecuteService(InvokerUtils invokerUtils, InvokerSettings invokerSettings) {
         if (SystemUtils.IS_OS_WINDOWS) {
-            return new ExecuteServiceWindows(invokerUtils);
+            return new ExecuteServiceWindows(invokerUtils, invokerSettings);
         }
         logger.warn("Invoker can be ran only in testing mode on this operation system. Use Windows OS for production.");
         return new ExecuteServiceMac(invokerUtils);

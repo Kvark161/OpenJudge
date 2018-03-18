@@ -94,7 +94,8 @@ public class SubmissionDao {
                 "used_time = ? ," +
                 "used_memory = ? ," +
                 "number_tests = ?, " +
-                "passed_tests = ? " +
+                "passed_tests = ?, " +
+                "message = ? " +
                 "WHERE id = ?";
 
         jdbcTemplate.update(sql,
@@ -103,6 +104,7 @@ public class SubmissionDao {
                 submission.getUsedMemory(),
                 submission.getNumberTests(),
                 submission.getPassedTests(),
+                submission.getMessage(),
                 submission.getId());
     }
 
@@ -150,6 +152,9 @@ public class SubmissionDao {
             submission.setSendingDateTime(resultSet.getTimestamp("sending_date_time").toLocalDateTime());
             submission.setNumberTests(resultSet.getInt("number_tests"));
             submission.setPassedTests(resultSet.getInt("passed_tests"));
+            submission.setMessage(resultSet.getString("message"));
+            submission.setUsedTime(resultSet.getLong("used_time"));
+            submission.setUsedMemory(resultSet.getLong("used_memory"));
             if (isFull) {
                 String resultData = resultSet.getString("result_data");
                 try {
