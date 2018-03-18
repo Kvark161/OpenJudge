@@ -116,7 +116,7 @@ public class JudgeSubmissionJob extends JudgeJob {
             submission.setUsedMemory(Math.max(submission.getUsedMemory(), result.getUsedMemory()));
             if (TestVerdict.ACCEPTED == result.getVerdict()) {
                 submission.setPassedTests(submission.getPassedTests() + 1);
-            } else {
+            } else if (ACCEPTED == submission.getStatus()) {
                 submission.setStatus(verdictToStatus(result.getVerdict()));
             }
         }
