@@ -3,7 +3,7 @@
     <div class="row"><p></p></div>
     <form>
         <div class="form-group row">
-            <label for="problem">Enter your code:</label>
+            <label for="problem">Problem:</label>
             <select [(ngModel)]="selectedProblem" [ngModelOptions]="{standalone: true}" id="problem">
                 <option disabled selected value> -- choose problem -- </option>
                 <option *ngFor="let problem of problems" [value]="problem.index">
@@ -12,8 +12,15 @@
             </select>
         </div>
         <div class="form-group row">
-            <label for="inputCode">Enter your code:</label>
-            <textarea id="inputCode" rows="20" cols="50" [(ngModel)]="sourceCode" [ngModelOptions]="{standalone: true}"></textarea>
+            <label for="inputCode">Code:</label>
+            <div  id="inputCode" ace-editor
+                 [(text)]="sourceCode"
+                 [mode]="'c_cpp'"
+                 [theme]="'eclipse'"
+                 [readOnly]="false"
+                 [autoUpdateContent]="true"
+                 [durationBeforeCallback]="1000"
+                 style="min-height: 200px; width:600px; overflow: auto;"></div>
         </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit problem</button>
     </form>
