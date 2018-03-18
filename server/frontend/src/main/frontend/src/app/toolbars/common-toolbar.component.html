@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary" style="height: 55px">
     <div class="container" id="navbarColor01">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
@@ -11,7 +11,7 @@
                 <a routerLink="/about" class="nav-link">About</a>
             </li>
         </ul>
-        <form *ngIf="!username || username == ''" class="form-inline my-2 my-lg-0">
+        <form *ngIf="!currentUserInfo.username || currentUserInfo.username == ''" class="form-inline my-2 my-lg-0">
             <div class="form-group">
             <input class="form-control-sm mr-sm-2 navbarInput" type="text" placeholder="Login" [(ngModel)]="usernameInput" name="username" required>
             </div>
@@ -22,12 +22,12 @@
             <button class="btn-sm btn-success my-2 my-sm-0" type="submit" (click)="logIn()">Log-in</button>
             </div>
         </form>
-        <ul *ngIf="username && username != ''" class="nav navbar-nav navbar-right">
-            <li>
-                <p class="navbar-text">Logged in as {{username}}</p>
+        <ul *ngIf="currentUserInfo.username && currentUserInfo.username != ''" class="navbar-nav navbar-right">
+            <li class="nav-item">
+                <p class="navbar-text">Logged in as {{currentUserInfo.username}} | </p>
             </li>
-            <li>
-                <a class="nav-link " (click)="logOut()">| Log-out</a>
+            <li class="nav-item">
+                <a class="nav-link" (click)="logOut()">Log-out</a>
             </li>
         </ul>
     </div>

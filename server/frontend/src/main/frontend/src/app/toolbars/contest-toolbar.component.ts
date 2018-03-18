@@ -8,9 +8,9 @@ import {UserService} from "../services/user.service";
 export class ContestToolbarComponent {
     @Input() contestId: number;
 
-    role: string = "ANONYMOUS";
+    role: string;
 
     constructor(private userService: UserService) {
-        userService.getCurrentRole().subscribe(role => this.role = role);
+        this.role = userService.currentUserInfo.role;
     }
 }

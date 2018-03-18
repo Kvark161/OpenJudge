@@ -19,14 +19,12 @@ export class ProblemsComponent {
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService,
                 private userService: UserService, private dialog: MatDialog) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
-        this.userService.getCurrentRole().subscribe(role => {
-            this.role = role;
-            if (this.role == 'ADMIN') {
-                this.eskimoService.getAdminProblems(this.contestId).subscribe(problems => this.problems = problems);
-            } else {
-                this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
-            }
-        });
+        this.role = this.userService.currentUserInfo.role;
+        if (this.role == 'ADMIN') {
+            this.eskimoService.getAdminProblems(this.contestId).subscribe(problems => this.problems = problems);
+        } else {
+            this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
+        }
     }
 
     showAnswersGenerationMessage(problem: Problem) {

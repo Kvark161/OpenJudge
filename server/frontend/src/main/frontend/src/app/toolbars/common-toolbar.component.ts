@@ -1,6 +1,7 @@
 import {Component} from "@angular/core";
 import {UserService} from "../services/user.service";
 import {Router} from "@angular/router";
+import {CurrentUserInfo} from "../shared/current-user-info";
 
 @Component({
     selector: 'common-toolbar',
@@ -8,23 +9,20 @@ import {Router} from "@angular/router";
     styleUrls: ['./common-toolbar.component.css']
 })
 export class CommonToolbarComponent {
-    role: string = "ANONYMOUS";
-    username: string;
+    currentUserInfo: CurrentUserInfo;
 
     usernameInput: string = "";
     password: string = "";
 
     constructor(private userService: UserService, private router: Router) {
-        this.getUsernameAndRole();
+        this.currentUserInfo = this.userService.currentUserInfo;
     }
 
     logIn() {
         this.userService.logIn(this.usernameInput, this.password)
             .subscribe(isLoggedIn => {
                     if (isLoggedIn) {
-                        this.usernameInput = "";
-                        this.password = "";
-                        this.getUsernameAndRole();
+                        window.location.reload();
                     }
                 },
                 () => {
@@ -33,30 +31,9 @@ export class CommonToolbarComponent {
             );
     }
 
-    private getUsernameAndRole() {
-        this.userService.getCurrentRole().subscribe(role => {
-            this.role = role;
-            if (role != "ANONYMOUS") {
-                this.userService.getUsername().subscribe(username => this.username = username);
-            }
-        });
-    }
-
-    signIn() {
-        this.userService.signIn(this.usernameInput, this.password)
-            .subscribe(() => {
-                    alert("You were successfully signed in. Now you may log in");
-                },
-                () => {
-                    alert("Error occurred while signing in");
-                });
-    }
-
     logOut() {
         this.userService.logOut().subscribe(
             () => {
-                this.role = "ANONYMOUS";
-                this.username = "";
                 this.router.navigateByUrl('');
             },
             () => alert("Error occurred while logging out")

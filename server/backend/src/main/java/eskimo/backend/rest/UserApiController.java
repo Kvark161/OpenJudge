@@ -1,8 +1,8 @@
 package eskimo.backend.rest;
 
-import eskimo.backend.authorization.AuthenticationHolder;
 import eskimo.backend.entity.Submission;
-import eskimo.backend.entity.request.SubmitProblemWebRequest;
+import eskimo.backend.rest.holder.AuthenticationHolder;
+import eskimo.backend.rest.request.SubmitProblemWebRequest;
 import eskimo.backend.rest.response.ProblemInfoResponse;
 import eskimo.backend.rest.response.StatementsResponse;
 import eskimo.backend.services.ProblemService;

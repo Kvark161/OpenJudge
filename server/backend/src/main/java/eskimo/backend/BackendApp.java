@@ -2,7 +2,7 @@ package eskimo.backend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.config.AppSettingsProvider;
-import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
+import eskimo.backend.rest.interceptor.AuthenticationInterceptor;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;

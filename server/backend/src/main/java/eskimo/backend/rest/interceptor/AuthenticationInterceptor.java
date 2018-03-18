@@ -1,11 +1,11 @@
-package eskimo.backend.rest.interceptors;
+package eskimo.backend.rest.interceptor;
 
-import eskimo.backend.authorization.AuthenticationHolder;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.AdminApiController;
 import eskimo.backend.rest.UserApiController;
+import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,14 +73,20 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             UserSession userSession = getUserSession(request, cookies, user);
             authenticationHolder.setUserSession(userSession);
 
-            Role userRole = userSession == null ? Role.ANONYMOUS : user.getRole();
+            if (userSession == null) {
+                if (user == null) {
+                    user = new User();
+                }
+                user.setId(null);
+                user.setUsername("");
+                user.setRole(Role.ANONYMOUS);
+            }
             Class<?> controllerType = handlerMethod.getBeanType();
-            boolean badUserRequest = userRole == Role.USER && controllerType.equals(AdminApiController.class);
-            boolean badAnonymousRequest = userRole == Role.ANONYMOUS
+            boolean badUserRequest = user.getRole() == Role.USER && controllerType.equals(AdminApiController.class);
+            boolean badAnonymousRequest = user.getRole() == Role.ANONYMOUS
                     && (controllerType.equals(AdminApiController.class) || controllerType.equals(UserApiController.class));
             if (badUserRequest || badAnonymousRequest) {
-                logger.error("bad credentials");
-                response.sendError(HttpStatus.UNAUTHORIZED.value());
+                response.sendError(HttpStatus.FORBIDDEN.value());
                 return false;
             }
         }

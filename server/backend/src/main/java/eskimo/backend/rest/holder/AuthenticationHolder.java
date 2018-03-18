@@ -1,8 +1,8 @@
-package eskimo.backend.authorization;
+package eskimo.backend.rest.holder;
 
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
-import eskimo.backend.rest.interceptors.AuthenticationInterceptor;
+import eskimo.backend.rest.interceptor.AuthenticationInterceptor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Scope;

@@ -13,8 +13,8 @@ export class ContestsComponent {
     contests: Contest[];
 
     constructor(private eskimoService: EskimoService, private userService: UserService) {
+        this.role = userService.currentUserInfo.role;
         eskimoService.getContests().subscribe(contests => this.contests = contests);
-        userService.getCurrentRole().subscribe(role => this.role = role);
     }
 
 }

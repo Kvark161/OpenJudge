@@ -1,10 +1,11 @@
 package eskimo.backend.rest;
 
-import eskimo.backend.authorization.AuthenticationHolder;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
+import eskimo.backend.rest.holder.AuthenticationHolder;
+import eskimo.backend.rest.response.UserInfoResponse;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
-import static eskimo.backend.rest.interceptors.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
-import static eskimo.backend.rest.interceptors.AuthenticationInterceptor.ESKIMO_UID_COOKIE_NAME;
+import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
+import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_UID_COOKIE_NAME;
 
 @RestController
 @RequestMapping("api")
@@ -70,7 +71,6 @@ public class PublicApiController {
         return true;
     }
 
-    //в user должны присутствовать username, password
     @PostMapping("sign-in")
     public void signIn(@RequestBody User user) {
         userService.addUser(user);
@@ -87,10 +87,13 @@ public class PublicApiController {
         userService.deleteUserSession(userSession.getId());
     }
 
-    @GetMapping("username")
-    public String getCurrentUsername() {
+    @GetMapping("current-user")
+    public UserInfoResponse getCurrentUserInfo() {
         User user = authenticationHolder.getUser();
-        UserSession userSession = authenticationHolder.getUserSession();
-        return userSession == null ? null : user.getUsername();
+        return UserInfoResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .role(user.getRole().name())
+                .build();
     }
 }

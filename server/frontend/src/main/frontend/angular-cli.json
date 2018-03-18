@@ -19,7 +19,7 @@
       "mobile": false,
       "styles": [
         "styles.css",
-        "assets/pulse_theme/bootstrap.min.css",
+        "assets/spacelab/bootstrap.min.css",
         "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
       ],
       "scripts": [
