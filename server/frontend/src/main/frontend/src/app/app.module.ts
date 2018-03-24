@@ -11,7 +11,7 @@ import {ContestsComponent} from "./pages/contests/contests.component";
 import {AppComponent} from "./app.component";
 import {AboutComponent} from "./pages/about/about.component";
 import {HomeComponent} from "./pages/home/home.component";
-import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
+import {NewContestComponent} from "./pages/contests/new/new-contest.component";
 import {CommonToolbarComponent} from "./toolbars/common-toolbar.component";
 import {ContestToolbarComponent} from "./toolbars/contest-toolbar.component";
 import {ContestComponent} from "./pages/contests/info/contest.component";

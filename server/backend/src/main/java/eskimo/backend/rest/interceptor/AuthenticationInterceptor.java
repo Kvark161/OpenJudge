@@ -67,12 +67,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                     Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{}));
 
             Long userId = createLong(cookies.get(ESKIMO_UID_COOKIE_NAME));
-            User user = userId == null ? null : userService.getUserById(userId);
-            authenticationHolder.setUser(user);
-
+            User user = userId == null ? new User() : userService.getUserById(userId);
             UserSession userSession = getUserSession(request, cookies, user);
             authenticationHolder.setUserSession(userSession);
-
             if (userSession == null) {
                 if (user == null) {
                     user = new User();
@@ -81,6 +78,7 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 user.setUsername("");
                 user.setRole(Role.ANONYMOUS);
             }
+            authenticationHolder.setUser(user);
             Class<?> controllerType = handlerMethod.getBeanType();
             boolean badUserRequest = user.getRole() == Role.USER && controllerType.equals(AdminApiController.class);
             boolean badAnonymousRequest = user.getRole() == Role.ANONYMOUS

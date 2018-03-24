@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class UserInfoResponse {
 
-    private long id;
+    private Long id;
     private String username;
     private String role;
 

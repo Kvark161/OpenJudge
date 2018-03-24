@@ -2,25 +2,32 @@
 <div class="container">
     <div class="row"><p></p></div>
     <form>
-        <div class="form-group row">
-            <label for="problem">Problem:</label>
-            <select [(ngModel)]="selectedProblem" [ngModelOptions]="{standalone: true}" id="problem">
-                <option disabled selected value> -- choose problem -- </option>
+        <div class="form-group"
+             [class.has-danger]="errorSelectedProblem != null"
+             style="width: 300px">
+            <label for="problem">Problem </label>
+            <select [(ngModel)]="selectedProblem"
+                    [ngModelOptions]="{standalone: true}"
+                    id="problem"
+                    class="form-control"
+                    [class.is-invalid]="errorSelectedProblem != null">
+                <option value="null" [selected]="true">Select problem...</option>
                 <option *ngFor="let problem of problems" [value]="problem.index">
                     {{problem.name}}
                 </option>
             </select>
+            <div type="text" class="invalid-feedback">{{errorSelectedProblem}}</div>
         </div>
-        <div class="form-group row">
-            <label for="inputCode">Code:</label>
-            <div  id="inputCode" ace-editor
+        <div class="form-group">
+            <label for="inputCode">Source code</label>
+            <div id="inputCode" ace-editor
                  [(text)]="sourceCode"
                  [mode]="'c_cpp'"
                  [theme]="'eclipse'"
                  [readOnly]="false"
                  [autoUpdateContent]="true"
                  [durationBeforeCallback]="1000"
-                 style="min-height: 200px; width:600px; overflow: auto;"></div>
+                 style="min-height: 400px; width: 100%; overflow: auto;"></div>
         </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit problem</button>
     </form>

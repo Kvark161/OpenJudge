@@ -2,7 +2,7 @@ import {Routes} from "@angular/router";
 import {HomeComponent} from "./pages/home/home.component";
 import {AboutComponent} from "./pages/about/about.component";
 import {ContestsComponent} from "./pages/contests/contests.component";
-import {NewContestComponent} from "./pages/contests/new/new-contestcomponent";
+import {NewContestComponent} from "./pages/contests/new/new-contest.component";
 import {ContestComponent} from "./pages/contests/info/contest.component";
 import {SubmitComponent} from "./pages/contests/submit/submit.component";
 import {SubmissionsComponent} from "./pages/contests/submissions/submissions.component";

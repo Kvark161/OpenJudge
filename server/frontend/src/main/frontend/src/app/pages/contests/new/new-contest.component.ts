@@ -10,17 +10,20 @@ import {Contest} from "../../../shared/contest";
 export class NewContestComponent {
 
     contest: Contest = new Contest(null, null, null, null);
-    error: string;
+    errorName: string;
 
     constructor(private eskimoService: EskimoService, private router: Router) {
     }
 
     onSubmit() {
+        this.errorName = '';
+        if (this.contest.name == null || this.contest.name == "") {
+            this.errorName = 'Cant be empty';
+            return;
+        }
         this.eskimoService.createContest(this.contest).subscribe(
             contest => this.router.navigateByUrl("/contests"),
             error => {
-                let json = error.json();
-                this.error = json.message;
             }
         );
     }

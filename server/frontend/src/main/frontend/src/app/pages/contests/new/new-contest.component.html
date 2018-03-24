@@ -3,11 +3,13 @@
     <div class="row"><p></p></div>
     <br>
     <form>
-        <div class="form-group row">
-            <label for="name"></label>
-            <input type="text" id="name" class="form-control-file" [(ngModel)]="contest.name" name="contestName" required>
-            <span class="help-block">{{error}}</span>
+        <div class="form-group" [class.has-danger]="errorName != null">
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control" [class.is-invalid]="errorName != null"
+                   [(ngModel)]="contest.name" name="contestName" required>
+            <div type="text" class="invalid-feedback">{{errorName}}</div>
         </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Create contest</button>
     </form>
+
 </div>
