@@ -197,6 +197,7 @@ public class TesterWindows implements Tester {
             result.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
             result.setMessage("Used more then " + testParams.getTimeLimit() + "ms");
         } else if (executionTestResult.getExitCode() != 0) {
+            logger.info("Runtime error! Stdout: {}. Stderr: {}", executionTestResult.getStdout(), executionTestResult.getStderr());
             result.setVerdict(TestVerdict.RUNTIME_ERROR);
             result.setMessage("Exit code: " + executionTestResult.getExitCode());
         } else if (testParams.isCheckerDisabled()) {
@@ -204,6 +205,7 @@ public class TesterWindows implements Tester {
             result.setMessage("Checker is disabled");
         } else if (!checkerReportFile.exists()) {
             result.setVerdict(TestVerdict.CHECKER_ERROR);
+            logger.info("Checker error: {}", executionTestResult.getStderr());
             result.setMessage("Checker report is not exist, exit code: " + executionCheckResult.getExitCode());
         } else {
             String checkerMessage = null;

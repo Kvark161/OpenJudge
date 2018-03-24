@@ -8,4 +8,5 @@ public class SubmitProblemWebRequest {
     private Long contestId;
     private Long problemId;
     private String sourceCode;
+    private Long languageId;
 }

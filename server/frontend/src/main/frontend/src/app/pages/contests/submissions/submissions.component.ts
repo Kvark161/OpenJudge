@@ -5,7 +5,8 @@ import {Submission} from "../../../shared/submission";
 
 @Component({
     selector: 'app-submissions',
-    templateUrl: './submissions.component.html'
+    templateUrl: './submissions.component.html',
+    styleUrls: ['submissions.component.css']
 })
 export class SubmissionsComponent {
     contestId: number;

@@ -75,7 +75,8 @@ public class JudgeService {
     }
 
     public void judge(Submission submission) {
-        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService, problemService, programmingLanguageService.getProgrammingLanguage("g++17"), storageService);
+        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService, problemService,
+                programmingLanguageService.getProgrammingLanguage(submission.getProgrammingLanguageId()), storageService);
         putJob(job);
     }
 

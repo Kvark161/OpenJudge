@@ -13,7 +13,11 @@
         </thead>
         <tbody>
         <tr *ngFor="let submission of submissions">
-            <td>{{submission.id}}</td>
+            <td>
+                <span class="submissionLink" routerLink="/u/contest/{{contestId}}/submission/{{submission.id}}">
+                    {{submission.id}}
+                </span>
+            </td>
             <td>{{submission.username}}</td>
             <td>{{submission.contestId}}</td>
             <td>{{submission.problemId}}</td>

@@ -52,6 +52,10 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/answers/generate";
     }
 
+    private getUrlSubmitParameters(contestId: number) {
+        return this.getUrlContest(contestId) + "/submitParameters";
+    }
+
     constructor(private http: Http) {
     }
 
@@ -107,8 +111,9 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    submitProblem(contestId: number, problemId: number, sourceCode: string) : Observable<any> {
-        return this.http.post(this.urlSubmit, {contestId: contestId, problemId: problemId, sourceCode: sourceCode},
+    submitProblem(contestId: number, problemId: number, sourceCode: string, selectedLanguage: number) : Observable<any> {
+        return this.http.post(this.urlSubmit, {contestId: contestId, problemId: problemId, sourceCode: sourceCode,
+            languageId: selectedLanguage},
             this.optionsWithCredentials);
     }
 
@@ -120,6 +125,12 @@ export class EskimoService {
 
     getSubmission(submissionId: number) {
         return this.http.get(this.getUrlSubmission(submissionId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getSubmitParameters(contestId: number) {
+        return this.http.get(this.getUrlSubmitParameters(contestId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }

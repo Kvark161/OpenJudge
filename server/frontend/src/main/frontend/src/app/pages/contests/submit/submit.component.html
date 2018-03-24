@@ -10,7 +10,7 @@
                     [ngModelOptions]="{standalone: true}"
                     id="problem"
                     class="form-control"
-                    [class.is-invalid]="errorSelectedProblem != null">
+                    [class.is-invalid]="errorSelectedProblem != null" (change)="problemChanged()">
                 <option value="null" [selected]="true">Select problem...</option>
                 <option *ngFor="let problem of problems" [value]="problem.index">
                     {{problem.name}}
@@ -28,6 +28,22 @@
                  [autoUpdateContent]="true"
                  [durationBeforeCallback]="1000"
                  style="min-height: 400px; width: 100%; overflow: auto;"></div>
+        </div>
+        <div class="form-group"
+             [class.has-danger]="errorSelectedLanguage != null"
+             style="width: 300px">
+            <label for="language">Language </label>
+            <select [(ngModel)]="selectedLanguage"
+                    [ngModelOptions]="{standalone: true}"
+                    id="language"
+                    class="form-control"
+                    [class.is-invalid]="errorSelectedLanguage != null" (change)="languageChanged()">
+                <option value="null" [selected]="true">Select language...</option>
+                <option *ngFor="let language of languages" [value]="language.id">
+                    {{language.name}}
+                </option>
+            </select>
+            <div type="text" class="invalid-feedback">{{errorSelectedLanguage}}</div>
         </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit problem</button>
     </form>

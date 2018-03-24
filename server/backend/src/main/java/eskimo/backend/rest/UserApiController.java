@@ -5,7 +5,9 @@ import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.SubmitProblemWebRequest;
 import eskimo.backend.rest.response.ProblemInfoResponse;
 import eskimo.backend.rest.response.StatementsResponse;
+import eskimo.backend.rest.response.SubmitParametersResponse;
 import eskimo.backend.services.ProblemService;
+import eskimo.backend.services.ProgrammingLanguageService;
 import eskimo.backend.services.SubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +20,19 @@ public class UserApiController {
 
     private final ProblemService problemService;
     private final SubmissionService submissionService;
+    private final ProgrammingLanguageService programmingLanguageService;
 
     @Autowired
     private AuthenticationHolder authenticationHolder;
 
     @Autowired
-    public UserApiController(ProblemService problemService, SubmissionService submissionService) {
+    public UserApiController(ProblemService problemService,
+                             SubmissionService submissionService,
+                             ProgrammingLanguageService programmingLanguageService)
+    {
         this.problemService = problemService;
         this.submissionService = submissionService;
+        this.programmingLanguageService = programmingLanguageService;
     }
 
     @GetMapping("contest/{id}/problems")
@@ -54,5 +61,13 @@ public class UserApiController {
     @GetMapping("submission/{submissionId}")
     public Submission getSubmission(@PathVariable Long submissionId) {
         return submissionService.getFullSubmission(submissionId);
+    }
+
+    @GetMapping("contest/{contestId}/submitParameters")
+    public SubmitParametersResponse getSubmitParameters(@PathVariable Long contestId) {
+        SubmitParametersResponse result = new SubmitParametersResponse();
+        result.setProblems(problemService.getContestProblems(contestId));
+        result.setLanguages(programmingLanguageService.getAllProgrammingLanguages());
+        return result;
     }
 }

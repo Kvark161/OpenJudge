@@ -12,12 +12,15 @@ import eskimo.invoker.entity.TestLazyParams;
 import eskimo.invoker.entity.TestResult;
 import eskimo.invoker.enums.CompilationVerdict;
 import eskimo.invoker.enums.TestVerdict;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 import static eskimo.backend.entity.Submission.Status.*;
 
 public class JudgeSubmissionJob extends JudgeJob {
+    private static final Logger logger = LoggerFactory.getLogger(JudgeSubmissionJob.class);
 
     private final Submission submission;
     private final SubmissionService submissionService;
@@ -27,7 +30,13 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final StorageService storageService;
     private CompilationResult compilationResult;
 
-    public JudgeSubmissionJob(Submission submission, SubmissionService submissionService, InvokerService invokerService, ProblemService problemService, ProgrammingLanguage programmingLanguage, StorageService storageService) {
+    public JudgeSubmissionJob(Submission submission,
+                              SubmissionService submissionService,
+                              InvokerService invokerService,
+                              ProblemService problemService,
+                              ProgrammingLanguage programmingLanguage,
+                              StorageService storageService)
+    {
         this.submission = submission;
         this.submissionService = submissionService;
         this.invokerService = invokerService;
@@ -43,12 +52,14 @@ public class JudgeSubmissionJob extends JudgeJob {
         try {
             updateVerdict(COMPILING);
             CompileJob compileJob = new CompileJob(invokerService, programmingLanguage, submission.getSourceCode(),
-                    getSourceFileBaseName(submission.getSourceCode()));
+                    getSourceFileBaseName(programmingLanguage, submission.getSourceCode()));
             compileJob.execute(invoker);
             compilationResult = compileJob.getCompilationResult();
             if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
                 updateVerdict(RUNNING);
             } else {
+                logger.info("Compilation error: {}", compilationResult.getCompilerStderr() );
+                submission.setMessage(compilationResult.getCompilerStderr());
                 updateVerdict(COMPILATION_ERROR);
                 return;
             }
@@ -64,8 +75,15 @@ public class JudgeSubmissionJob extends JudgeJob {
 
     }
 
-    private String getSourceFileBaseName(String sourceCode) {
+    private String getSourceFileBaseName(ProgrammingLanguage programmingLanguage, String sourceCode) {
+        if (isJavaLanguage(programmingLanguage)) {
+            return "Main";
+        }
         return "source";
+    }
+
+    private boolean isJavaLanguage(ProgrammingLanguage programmingLanguage) {
+        return programmingLanguage.getName().equals("java8");
     }
 
     private void updateVerdict(Submission.Status verdict) {
@@ -76,7 +94,11 @@ public class JudgeSubmissionJob extends JudgeJob {
     private void test() {
         TestLazyParams testParams = new TestLazyParams();
         testParams.setExecutable(compilationResult.getExecutable());
-        testParams.setExecutableName("main.exe");
+        if (isJavaLanguage(programmingLanguage)) {
+            testParams.setExecutableName("Main");
+        } else {
+            testParams.setExecutableName("main.exe");
+        }
         try {
             testParams.setChecker(org.apache.commons.io.FileUtils.readFileToByteArray(storageService.getCheckerExe(submission.getContestId(), submission.getProblemId())));
         } catch (IOException e) {

@@ -10,4 +10,6 @@ export class Submission {
     passedTests: number;
     numberTests: number;
     sourceCode: string;
+    programmingLanguageId: number;
+    message: string;
 }

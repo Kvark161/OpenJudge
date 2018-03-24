@@ -19,9 +19,6 @@ public class SubmissionService {
     private SubmissionDao submissionDao;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private JudgeService judgeService;
 
     @Autowired
@@ -46,6 +43,7 @@ public class SubmissionService {
         submission.setContestId(submitProblemWebRequest.getContestId());
         submission.setProblemId(submitProblemWebRequest.getProblemId());
         submission.setSourceCode(submitProblemWebRequest.getSourceCode());
+        submission.setProgrammingLanguageId(submitProblemWebRequest.getLanguageId());
         User user = authenticationHolder.getUser();
         submission.setUserId(user.getId());
         submission.setUsername(user.getUsername());

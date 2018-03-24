@@ -84,6 +84,9 @@ public class InvokerUtils {
             }
             if (redirectError.exists()) {
                 result.setStderr(FileUtils.readFileToString(redirectError));
+                if (!result.getStderr().equals("")) {
+                    logger.info("Stderr: {}", result.getStderr());
+                }
             }
             result.setTimeOutExceeded(timeOutExceeded);
             return result;
@@ -125,9 +128,7 @@ public class InvokerUtils {
             command.add("-s");
             command.add(stat.getAbsolutePath());
         }
-        if (allowCreateProcesses) {
-            command.add("--allow-create-processes");
-        }
+        command.add("--allow-create-processes");
         command.addAll(programCommand);
         return executeCommand(command, 60000);
     }

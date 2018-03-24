@@ -16,6 +16,7 @@ public class Submission {
     private long contestId;
     private long problemId;
     private String sourceCode;
+    private long programmingLanguageId;
     private Status status;
     private int passedTests;
     private int numberTests;

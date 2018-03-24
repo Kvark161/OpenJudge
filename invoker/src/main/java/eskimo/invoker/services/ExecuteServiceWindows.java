@@ -56,6 +56,8 @@ public class ExecuteServiceWindows implements ExecuteService {
                 compilationResult.setVerdict(CompilationVerdict.SUCCESS);
                 compilationResult.setExecutable(FileUtils.readFileToByteArray(executableFile));
             } else {
+                logger.info("COMPILATION ERROR! Stdout = {}. Stderr = {}", executionResult.getStdout(), executionResult.getStderr());
+                logger.info("");
                 compilationResult.setVerdict(CompilationVerdict.COMPILATION_ERROR);
             }
             return compilationResult;

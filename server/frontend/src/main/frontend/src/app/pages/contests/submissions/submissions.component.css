@@ -1,0 +1,11 @@
+.submissionLink {
+    color: #008cba;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.submissionLink:hover {
+    color: #00526e;
+    text-decoration: underline;
+}
