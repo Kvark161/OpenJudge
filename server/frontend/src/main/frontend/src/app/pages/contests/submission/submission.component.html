@@ -22,22 +22,20 @@
         </tbody>
     </table>
 
-    <div *ngIf="submission.message">
-        Message:
-        <div ace-editor
-             [(text)]="submission.message"
-             [mode]="'text'"
-             [theme]="'eclipse'"
-             [readOnly]="true"
-             [autoUpdateContent]="true"
-             [durationBeforeCallback]="1000"
-             style="min-height: 200px; width:100%; overflow: auto;"></div>
-    </div>
-
     Source code:
     <div ace-editor
          [(text)]="submission.sourceCode"
          [mode]="'c_cpp'"
+         [theme]="'eclipse'"
+         [readOnly]="true"
+         [autoUpdateContent]="true"
+         [durationBeforeCallback]="1000"
+         style="min-height: 200px; width:100%; overflow: auto;"></div>
+
+    Message:
+    <div ace-editor
+         [(text)]="submission.message"
+         [mode]="'text'"
          [theme]="'eclipse'"
          [readOnly]="true"
          [autoUpdateContent]="true"
