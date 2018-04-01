@@ -12,9 +12,8 @@ import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
-import eskimo.backend.rest.response.AdminProblemsResponse;
-import eskimo.backend.rest.response.ProblemInfoResponse;
-import eskimo.backend.rest.response.StatementsResponse;
+import eskimo.backend.rest.request.EditProblemRequest;
+import eskimo.backend.rest.response.*;
 import eskimo.backend.storage.StorageOrder;
 import eskimo.backend.storage.StorageOrderCopyFile;
 import eskimo.backend.storage.StorageService;
@@ -24,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +78,53 @@ public class ProblemService {
 
     public Problem getProblemById(Long problemId) {
         return problemDao.getProblem(problemId);
+    }
+
+    public ProblemForEditResponse getProblemForEdit(long contestId, int problemIndex) {
+        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
+        ProblemForEditResponse response = new ProblemForEditResponse();
+        response.fillProblemFields(contestProblem);
+        return response;
+    }
+
+    public ValidationResponse editProblem(long contestId, int problemIndex, EditProblemRequest editProblemRequest,
+                                          MultipartFile checkerMultipartFile) {
+        ValidationResponse validationResponse = validateProblemEdit(editProblemRequest);
+        if (!validationResponse.getErrors().isEmpty()) {
+            return validationResponse;
+        }
+        List<StorageOrder> filesToSave = new ArrayList<>();
+        if (checkerMultipartFile != null) {
+            try (TemporaryFile checkerFile =
+                         new TemporaryFile(fileUtils.saveFile(checkerMultipartFile, "checker-", ".cpp"))) {
+                filesToSave.add(new StorageOrderCopyFile(checkerFile.getFile(),
+                        storageService.getCheckerSourceFile(contestId, problemIndex)));
+                storageService.executeOrders(filesToSave);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        problemDao.editContestProblem(contestId, problemIndex, editProblemRequest);
+        return validationResponse;
+    }
+
+    private ValidationResponse validateProblemEdit(EditProblemRequest editProblemRequest) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        if (editProblemRequest.getTimeLimit() == null) {
+            validationResponse.addError("timeLimit", "Time limit should not be null");
+        } else {
+            if (editProblemRequest.getTimeLimit() <= 0) {
+                validationResponse.addError("timeLimit", "Time limit should not be less than 1");
+            }
+        }
+        if (editProblemRequest.getMemoryLimit() == null) {
+            validationResponse.addError("memoryLimit", "Memory limit should not be null");
+        } else {
+            if (editProblemRequest.getTimeLimit() <= 0) {
+                validationResponse.addError("memoryLimit", "Memory limit should not be less than 1 byte");
+            }
+        }
+        return validationResponse;
     }
 
     public StatementsResponse getStatements(Long contestId, Integer problemIndex, String language) {

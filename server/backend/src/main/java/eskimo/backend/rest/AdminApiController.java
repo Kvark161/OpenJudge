@@ -2,7 +2,10 @@ package eskimo.backend.rest;
 
 import eskimo.backend.entity.Contest;
 import eskimo.backend.exceptions.AddEskimoEntityException;
+import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.AdminProblemsResponse;
+import eskimo.backend.rest.response.ProblemForEditResponse;
+import eskimo.backend.rest.response.ValidationResponse;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.storage.TemporaryFile;
@@ -55,5 +58,18 @@ public class AdminApiController {
     @PostMapping("contest/{id}/problem/{index}/answers/generate")
     public void generateAnswers(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
         problemService.generateAnswers(contestId, problemIndex);
+    }
+
+    @GetMapping("contest/{id}/problem/{index}/edit")
+    public ProblemForEditResponse getContestProblemForEdit(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
+        return problemService.getProblemForEdit(contestId, problemIndex);
+    }
+
+    @PostMapping(value = "contest/{id}/problem/{index}/edit", consumes = {"multipart/form-data"})
+    public ValidationResponse editProblem(@PathVariable("id") Long contestId,
+                                          @PathVariable("index") Integer problemIndex,
+                                          @RequestPart(value = "checkerFile", required=false) MultipartFile checkerFile,
+                                          @RequestPart("problem") EditProblemRequest editProblemRequest) {
+        return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile);
     }
 }

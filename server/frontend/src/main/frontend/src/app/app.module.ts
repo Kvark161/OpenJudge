@@ -25,10 +25,13 @@ import {StatementsComponent} from "./pages/contests/problems/statements.componen
 import {InformationModalComponent} from "./pages/modal_dialogs/information-modal.component";
 import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
+import {Angular2FontawesomeModule} from "angular2-fontawesome";
 
 @NgModule({
     imports: [
         AceEditorModule,
+        Angular2FontawesomeModule,
         BrowserModule,
         BrowserAnimationsModule,
         FormsModule,
@@ -52,7 +55,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
         ProblemsComponent,
         AddProblemComponent,
         StatementsComponent,
-        InformationModalComponent
+        InformationModalComponent,
+        EditProblemComponent
     ],
     entryComponents: [
         InformationModalComponent

@@ -1,5 +1,5 @@
 import {Contest} from "../shared/contest";
-import {Http, RequestOptions, URLSearchParams} from "@angular/http";
+import {Headers, Http, RequestOptions, URLSearchParams} from "@angular/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 
@@ -8,6 +8,8 @@ import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import {Problem} from "../shared/problem";
 import {StatementsResponse} from "../shared/statements.response";
+import {ValidationResult} from "../shared/validation-response";
+import {EditProblemRequest} from "../shared/edit-problem";
 
 
 @Injectable()
@@ -40,8 +42,12 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/add";
     }
 
-    private getUrlStatements(contestId: number, problemIndex: number) {
+    private getUrlContestProblem(contestId: number, problemIndex: number) {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex;
+    }
+
+    private getUrlStatements(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex);
     }
     
     private getUrlAdminProblems(contestId: number) {
@@ -49,11 +55,19 @@ export class EskimoService {
     }
 
     private getUrlGenerateAnswers(contestId: number, problemIndex: number) {
-        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/answers/generate";
+        return this.getUrlContestProblem(contestId, problemIndex) + "/answers/generate";
     }
 
     private getUrlSubmitParameters(contestId: number) {
         return this.getUrlContest(contestId) + "/submitParameters";
+    }
+
+    private getUrlGetProblemForEdit(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex) + "/edit";
+    }
+
+    private getUrlEditProblem(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex) + "/edit";
     }
 
     constructor(private http: Http) {
@@ -131,6 +145,28 @@ export class EskimoService {
 
     getSubmitParameters(contestId: number) {
         return this.http.get(this.getUrlSubmitParameters(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getProblemForEdit(contestId: number, problemId: number) {
+        return this.http.get(this.getUrlGetProblemForEdit(contestId, problemId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    editProblem(contestId: number, problemId: number, problem: EditProblemRequest): Observable<ValidationResult> {
+        let formData = new FormData();
+        formData.append('checkerFile', problem.checkerFile, problem.checkerFile.name);
+        formData.append('problem', new Blob([JSON.stringify(problem)], {
+            type: "application/json"
+        }));
+
+        let headers = new Headers();
+        //headers.append('Content-Type', undefined);
+        let options = new RequestOptions({withCredentials: true, headers: headers});
+        return this.http.post(this.getUrlEditProblem(contestId, problemId),
+            formData, options)
             .map(res => res.json())
             .catch(this.handleError);
     }

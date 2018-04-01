@@ -11,6 +11,7 @@ import {AddProblemComponent} from "./pages/contests/problems/add-problem.compone
 import {ProblemsComponent} from "./pages/contests/problems/problems.component";
 import {UserService} from "./services/user.service";
 import {StatementsComponent} from "./pages/contests/problems/statements.component";
+import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 
 export const router: Routes = [
     {path: '', canActivate: [UserService], component: HomeComponent},
@@ -24,5 +25,6 @@ export const router: Routes = [
     {path: 'u/contest/:contestId/submission/:submissionId', canActivate: [UserService], component: SubmissionComponent},
     {path: 'u/contest/:contestId/problems', canActivate: [UserService], component: ProblemsComponent},
     {path: 'a/contest/:contestId/problem/add', canActivate: [UserService], component: AddProblemComponent},
-    {path: 'u/contest/:contestId/problem/:problemIndex', canActivate: [UserService], component: StatementsComponent}
+    {path: 'u/contest/:contestId/problem/:problemIndex', canActivate: [UserService], component: StatementsComponent},
+    {path: 'a/contest/:contestId/problem/:problemIndex/edit', canActivate: [UserService], component: EditProblemComponent}
 ];

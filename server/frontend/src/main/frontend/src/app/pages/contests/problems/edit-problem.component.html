@@ -1,0 +1,34 @@
+<contest-toolbar [contestId]="contestId"></contest-toolbar>
+<div class="container">
+    <div class="row"><p></p></div>
+    <form *ngIf="problem">
+        <div class="form-group row">
+            <label for="timeLimit">Choose time limit (in milliseconds):</label>
+            <input id="timeLimit" class="form-control" type="number" min="1"
+                   [(ngModel)]="problem.timeLimit" name="timeLimit"
+                   [class.is-invalid]="validationResult.errors.timeLimit"
+                    (input)="fieldChanged('timeLimit')"/>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.timeLimit">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="memoryLimit">Choose memory limit (in bytes):</label>
+            <input id="memoryLimit" class="form-control" type="number" min="1"
+                   [(ngModel)]="problem.memoryLimit" name="memoryLimit"
+                   [class.is-invalid]="validationResult.errors.memoryLimit"
+                   (input)="fieldChanged('memoryLimit')"/>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.memoryLimit">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="checker">Choose checker:</label>
+            <input type="file" id="checker" class="form-control-file" (change)="fileChange($event)" name="file">
+        </div>
+
+        <span class="help-block">{{validationResult.errors[generalErrorPath]}}</span>
+
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Edit problem</button>
+    </form>
+</div>

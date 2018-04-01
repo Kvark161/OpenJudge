@@ -38,6 +38,13 @@
                     Generate answers
                 </button>
             </td>
+            <td *ngIf="role == 'ADMIN'">
+                <button type="button" class="btn btn-primary" title="Edit problem"
+                        routerLink="/a/contest/{{contestId}}/problem/{{problem.index}}/edit">
+                    <fa [name]="'pencil'"></fa>
+                </button>
+            </td>
+            <!--pencil-alt-->
         </tr>
         </tbody>
     </table>

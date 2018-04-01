@@ -2,6 +2,7 @@ package eskimo.backend.dao;
 
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.enums.GenerationStatus;
+import eskimo.backend.rest.request.EditProblemRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -89,6 +90,18 @@ public class ProblemDao {
             return 1;
         }
         return value + 1;
+    }
+
+    public void editContestProblem(Long contestId, Integer problemIndex, EditProblemRequest editProblemRequest) {
+        String sql = "UPDATE problems " +
+                "SET " +
+                "time_limit = ?," +
+                "memory_limit = ? " +
+                "WHERE contest_id = ? AND contest_index = ?";
+        jdbcTemplate.update(sql,
+                editProblemRequest.getTimeLimit(),
+                editProblemRequest.getMemoryLimit(),
+                contestId, problemIndex);
     }
 
     @Transactional
