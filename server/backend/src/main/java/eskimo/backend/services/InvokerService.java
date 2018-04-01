@@ -5,20 +5,36 @@ import eskimo.invoker.entity.AbstractTestParams;
 import eskimo.invoker.entity.CompilationParams;
 import eskimo.invoker.entity.CompilationResult;
 import eskimo.invoker.entity.TestResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class InvokerService {
+    public static final Logger logger = LoggerFactory.getLogger(InvokerService.class);
+
 
     private final RestTemplate restTemplate = new RestTemplate();
 
     public TestResult[] test(Invoker invoker, AbstractTestParams params) {
-        return restTemplate.postForObject(invoker.getTestUrl(), params, TestResult[].class);
+        try {
+            return restTemplate.postForObject(invoker.getTestUrl(), params, TestResult[].class);
+        } catch (RestClientException e) {
+            logger.error("Invoker error while test", e);
+            return null;
+        }
+
     }
 
     public CompilationResult compile(Invoker invoker, CompilationParams params) {
+        try {
         return restTemplate.postForObject(invoker.getCompileUrl(), params, CompilationResult.class);
+        } catch (RestClientException e) {
+            logger.error("Invoker error while compile", e);
+            return null;
+        }
     }
 
 }

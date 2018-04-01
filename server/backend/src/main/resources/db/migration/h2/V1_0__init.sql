@@ -105,4 +105,4 @@ VALUES
   ('g++17', 'C++ 17', 'g++', TRUE, NULL, 'cpp', 'exe', '{COMPILER_PATH} {SOURCE_CODE} -I {TESTLIB_FILE} -o {OUTPUT_EXE}',
             '{SOLUTION_EXE}', 30000, 5242880),
   ('java8', 'Java 8', 'javac', TRUE, 'java', 'java', 'class', '{COMPILER_PATH} {SOURCE_CODE}',
-            'java {SOLUTION_EXE}', 30000, 5242880);
+            'java {SOLUTION_EXE_NAME}', 30000, 5242880);

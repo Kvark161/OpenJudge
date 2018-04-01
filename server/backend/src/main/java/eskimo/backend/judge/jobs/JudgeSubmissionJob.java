@@ -55,6 +55,10 @@ public class JudgeSubmissionJob extends JudgeJob {
                     getSourceFileBaseName(programmingLanguage, submission.getSourceCode()));
             compileJob.execute(invoker);
             compilationResult = compileJob.getCompilationResult();
+            if (compilationResult == null) {
+                updateVerdict(INTERNAL_ERROR);
+                return;
+            }
             if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
                 updateVerdict(RUNNING);
             } else {
@@ -95,7 +99,7 @@ public class JudgeSubmissionJob extends JudgeJob {
         TestLazyParams testParams = new TestLazyParams();
         testParams.setExecutable(compilationResult.getExecutable());
         if (isJavaLanguage(programmingLanguage)) {
-            testParams.setExecutableName("Main");
+            testParams.setExecutableName("Main.class");
         } else {
             testParams.setExecutableName("main.exe");
         }

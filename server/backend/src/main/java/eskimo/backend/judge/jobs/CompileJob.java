@@ -69,23 +69,7 @@ public class CompileJob extends JudgeJob {
 
     private void compile() {
         try {
-            CompilationParams compilationParams = new CompilationParams();
-            compilationParams.setMemoryLimit(programmingLanguage.getCompilationMemoryLimit());
-            compilationParams.setTimeLimit(programmingLanguage.getCompilationTimeLimit());
-            if (sourceFile != null) {
-                sourceCode = FileUtils.readFileToString(sourceFile);
-                sourceFileBaseName = FilenameUtils.getBaseName(sourceFile.getName());
-            }
-            compilationParams.setSourceCode(sourceCode);
-            compilationParams.setSourceFileName(sourceFileBaseName + "." + programmingLanguage.getExtension());
-            compilationParams.setExecutableFileName(sourceFileBaseName + "." + programmingLanguage.getBinaryExtension());
-            compilationParams.setCompilationCommand(programmingLanguage.getCompileCommand());
-            compilationParams.setCompilerPath(programmingLanguage.getCompilerPath());
-            compilationParams.setCompilerName(programmingLanguage.getName());
-            if (testLib != null) {
-                compilationParams.setTestLib(FileUtils.readFileToString(testLib));
-                compilationParams.setTestLibName(testLib.getName());
-            }
+            CompilationParams compilationParams = fillCompilationParams();
             compilationResult = invokerService.compile(invoker, compilationParams);
             callback(compilationResult);
         } catch (IOException e) {
@@ -93,6 +77,27 @@ public class CompileJob extends JudgeJob {
             callback(null);
             throw new RuntimeException(e);
         }
+    }
+
+    private CompilationParams fillCompilationParams() throws IOException {
+        CompilationParams compilationParams = new CompilationParams();
+        compilationParams.setMemoryLimit(programmingLanguage.getCompilationMemoryLimit());
+        compilationParams.setTimeLimit(programmingLanguage.getCompilationTimeLimit());
+        if (sourceFile != null) {
+            sourceCode = FileUtils.readFileToString(sourceFile);
+            sourceFileBaseName = FilenameUtils.getBaseName(sourceFile.getName());
+        }
+        compilationParams.setSourceCode(sourceCode);
+        compilationParams.setSourceFileName(sourceFileBaseName + "." + programmingLanguage.getExtension());
+        compilationParams.setExecutableFileName(sourceFileBaseName + "." + programmingLanguage.getBinaryExtension());
+        compilationParams.setCompilationCommand(programmingLanguage.getCompileCommand());
+        compilationParams.setCompilerPath(programmingLanguage.getCompilerPath());
+        compilationParams.setCompilerName(programmingLanguage.getName());
+        if (testLib != null) {
+            compilationParams.setTestLib(FileUtils.readFileToString(testLib));
+            compilationParams.setTestLibName(testLib.getName());
+        }
+        return compilationParams;
     }
 
     private void callback(CompilationResult compilationResult) {

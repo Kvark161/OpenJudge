@@ -2,6 +2,7 @@ package eskimo.invoker.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.io.FilenameUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public abstract class AbstractTestParams {
 
     public static final String CHECKER_EXE = "{CHECKER_EXE}";
     public static final String SOLUTION_EXE = "{SOLUTION_EXE}";
+    public static final String SOLUTION_EXE_NAME = "{SOLUTION_EXE_NAME}";
     public static final String INPUT_FILE = "{INPUT_FILE}";
     public static final String ANSWER_FILE = "{ANSWER_FILE}";
     public static final String OUTPUT_FILE = "{OUTPUT_EXE}";
@@ -43,8 +45,11 @@ public abstract class AbstractTestParams {
             if (INPUT_FILE.equals(el)) {
                 return inputPath;
             }
-            if (OUTPUT_FILE.equals(outputPath)) {
+            if (OUTPUT_FILE.equals(el)) {
                 return outputPath;
+            }
+            if (SOLUTION_EXE_NAME.equals(el)) {
+                return FilenameUtils.getBaseName(solutionPath);
             }
             return el;
         }).collect(Collectors.toList());
