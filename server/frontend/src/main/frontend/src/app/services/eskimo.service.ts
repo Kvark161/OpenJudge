@@ -1,5 +1,5 @@
 import {Contest} from "../shared/contest";
-import {Headers, Http, RequestOptions, URLSearchParams} from "@angular/http";
+import {Headers, Http, RequestOptions} from "@angular/http";
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
 
@@ -48,6 +48,10 @@ export class EskimoService {
 
     private getUrlStatements(contestId: number, problemIndex: number) {
         return this.getUrlContestProblem(contestId, problemIndex);
+    }
+
+    private getUrlStatementsPdf(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex) + "/pdf";
     }
     
     private getUrlAdminProblems(contestId: number) {
@@ -115,14 +119,14 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    getStatements(contestId: number, problemIndex: number, language: string): Observable<StatementsResponse> {
-        let params = new URLSearchParams();
-        params.set('language', language);
-        let options = this.optionsWithCredentials;
-        options.params = params;
-        return this.http.get(this.getUrlStatements(contestId, problemIndex), options)
+    getStatements(contestId: number, problemIndex: number): Observable<StatementsResponse> {
+        return this.http.get(this.getUrlStatements(contestId, problemIndex), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
+    }
+
+    getStatementsPdf(contestId: number, problemIndex: number) {
+        window.open(this.getUrlStatementsPdf(contestId, problemIndex));
     }
 
     submitProblem(contestId: number, problemId: number, sourceCode: string, selectedLanguage: number) : Observable<any> {

@@ -24,6 +24,8 @@ public class StatementsResponse {
     private List<SampleTest> sampleTests;
     private String notes;
 
+    private boolean hasPdf;
+
     private String error;
 
     public void fillProblemFields(Problem problem) {

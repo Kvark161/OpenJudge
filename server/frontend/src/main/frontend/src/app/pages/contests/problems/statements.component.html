@@ -38,6 +38,10 @@
         <p>{{statements.notes}}</p>
     </div>
 
+    <div *ngIf="statements.hasPdf">
+        <button class="btn btn-primary" (click)="openProblemPdf()">Download pdf</button>
+    </div>
+
 </div>
 <div class="container" *ngIf="statements && statements.error && statements.error != ''">
     {{statements.error}}

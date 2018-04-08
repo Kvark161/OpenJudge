@@ -28,8 +28,6 @@ public class StorageService {
     private static final String VALIDATORS_FILE_NAME = "validator.cpp";
     private static final String SOLUTIONS_FOLDER_NAME = "solutions";
     private static final String TESTS_FOLDER_NAME = "tests";
-    private static final String STATEMENTS_ENGLISH = "english";
-    private static final String STATEMENTS_RUSSIAN = "russian";
 
     private AppSettingsProvider appSettingsProvider;
 
@@ -53,22 +51,7 @@ public class StorageService {
      * If both files don't exist or input language is bad, returns null.
      */
     public File getStatementFile(long contestId, long problemIndex, String language) {
-        String storageLanguage = language.toLowerCase();
-        if (!storageLanguage.equals(STATEMENTS_ENGLISH) && !storageLanguage.equals(STATEMENTS_RUSSIAN)) {
-            logger.error("wrong language: {}", storageLanguage);
-            return null;
-        }
-        String statementFileTemplate = getStatementsFolder(contestId, problemIndex) + File.separator + "%s" + ".json";
-        File result = new File(String.format(statementFileTemplate, storageLanguage));
-        if (!result.exists()) {
-            String secondLanguage = storageLanguage.equals(STATEMENTS_ENGLISH) ? STATEMENTS_RUSSIAN : STATEMENTS_ENGLISH;
-            result = new File(String.format(statementFileTemplate, secondLanguage));
-        }
-        if (!result.exists()) {
-            logger.error("statements doesn't exists: {}.json", result.getName());
-            return null;
-        }
-        return result;
+        return new File(getStatementsFolder(contestId, problemIndex) + File.separator + language + ".pdf");
     }
 
     private File getProblemFolder(long contestId, long problemIndex) {

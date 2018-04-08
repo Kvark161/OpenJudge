@@ -12,6 +12,8 @@ export class StatementsResponse {
     sampleTests: SampleTest[];
     notes: string;
 
+    hasPdf: boolean;
+
     error: string;
 }
 

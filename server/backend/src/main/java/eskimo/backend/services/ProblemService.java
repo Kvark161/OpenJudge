@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,14 @@ import static java.util.Arrays.asList;
 @Service
 public class ProblemService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+
+    private static final Map<String, String> STATEMENTS_LANGUAGE_MAPPER;
+
+    static {
+        STATEMENTS_LANGUAGE_MAPPER = new HashMap<>();
+        STATEMENTS_LANGUAGE_MAPPER.put("english", "en");
+        STATEMENTS_LANGUAGE_MAPPER.put("russian", "ru");
+    }
 
     private final ProblemDao problemDao;
     private final StatementsDao statementsDao;
@@ -140,8 +149,15 @@ public class ProblemService {
         }
         Statement statements = statementsDao.getStatements(contestProblem.getId(), resultLanguage);
         statementsResponse.fillStatementsFields(statements);
+        statementsResponse.setHasPdf(storageService.getStatementFile(contestId, problemIndex, language).exists());
         return statementsResponse;
     }
+
+    public byte[] getPdfStatements(Long contestId, Integer problemIndex, String language) throws IOException {
+        File statementFile = storageService.getStatementFile(contestId, problemIndex, language);
+        return Files.readAllBytes(statementFile.toPath());
+    }
+
 
     /**
      * If statements on requested language exists - returns requested language,
@@ -233,6 +249,20 @@ public class ProblemService {
             if (test.getAnswer() != null) {
                 orders.add(new StorageOrderCopyFile(test.getAnswer(),
                         storageService.getTestAnswerFile(contestId, problemIndex, test.getIndex())));
+            }
+        }
+        for (StatementContainer statementContainer : container.getStatements()) {
+            File statementPfd = statementContainer.getStatementPfd();
+            if (statementPfd != null) {
+                String language = statementContainer.getLanguage();
+                if (!STATEMENTS_LANGUAGE_MAPPER.containsKey(language)) {
+                    logger.warn("Pdf statements from path {} wasn't saved because language {} is not supported",
+                            statementPfd.getAbsolutePath(), language);
+                    continue;
+                }
+                String storageLanguage = STATEMENTS_LANGUAGE_MAPPER.get(language);
+                orders.add(new StorageOrderCopyFile(statementPfd,
+                        storageService.getStatementFile(contestId, problemIndex, storageLanguage)));
             }
         }
         if (container.getTestlib() != null) {

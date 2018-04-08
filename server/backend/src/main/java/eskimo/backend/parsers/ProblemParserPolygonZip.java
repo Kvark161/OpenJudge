@@ -29,6 +29,8 @@ public class ProblemParserPolygonZip {
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemParserPolygonZip.class);
     private static final Map<String, String> LANGUAGE_MAPPING;
+    private static final String PDF_POLYGON_FOLDER_NAME = ".pdf";
+    private static final String PDF_POLYGON_FILE_NAME = "problem.pdf";
     public static final Long DEFAULT_TIME_LIMIT = 1000L;
     public static final Long DEFAULT_MEMORY_LIMIT = 268435456L;
 
@@ -144,20 +146,25 @@ public class ProblemParserPolygonZip {
             return;
         }
         //noinspection ConstantConditions
-        for (File file : statementsFolder.listFiles(File::isDirectory)) {
+        for (File statementFolder : statementsFolder.listFiles(File::isDirectory)) {
             StatementContainer statementContainer = new StatementContainer();
-            statementContainer.setLanguage(file.getName().toLowerCase());
-            File statementData = new File(file + File.separator + "problem-properties.json");
+            String language = statementFolder.getName().toLowerCase();
+            statementContainer.setLanguage(language);
+            File statementData = new File(statementFolder + File.separator + "problem-properties.json");
             if (!statementData.exists()) {
                 continue;
             }
-            ObjectMapper jsonMapper = new ObjectMapper();
             try {
-                Statement statement = jsonMapper.readValue(statementData, Statement.class);
+                Statement statement = new ObjectMapper().readValue(statementData, Statement.class);
                 statement.setLanguage(convertLanguage(statement.getLanguage()));
                 statementContainer.setStatement(statement);
             } catch (IOException e) {
                 throw new AddEskimoEntityException("cannot parse statements: " + statementContainer.getLanguage(), e);
+            }
+            File statementPdf = new File(statementsFolder + File.separator + PDF_POLYGON_FOLDER_NAME
+                    + File.separator + language + File.separator + PDF_POLYGON_FILE_NAME);
+            if (statementPdf.exists()) {
+                statementContainer.setStatementPfd(statementPdf);
             }
             result.add(statementContainer);
         }

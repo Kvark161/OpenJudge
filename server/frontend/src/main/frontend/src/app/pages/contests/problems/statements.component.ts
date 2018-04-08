@@ -17,7 +17,7 @@ export class StatementsComponent {
     constructor(private route: ActivatedRoute, private eskimoService: EskimoService){
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.problemIndex = +this.route.snapshot.paramMap.get('problemIndex');
-        eskimoService.getStatements(this.contestId, this.problemIndex, "")
+        eskimoService.getStatements(this.contestId, this.problemIndex)
             .subscribe(statements => {
                 if (!statements.error || statements.error == '') {
                     if (statements.memoryLimit < 1024) {
@@ -34,4 +34,9 @@ export class StatementsComponent {
 
             });
     }
+
+    openProblemPdf() {
+        this.eskimoService.getStatementsPdf(this.contestId, this.problemIndex);
+    }
+
 }
