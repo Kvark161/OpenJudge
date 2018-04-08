@@ -43,4 +43,12 @@ export class ProblemsComponent {
                 error => console.log(error)
             );
     }
+
+    deleteProblem(problem: Problem) {
+        this.eskimoService.deleteProblem(this.contestId, problem.index)
+            .subscribe(() => {
+                let index = this.problems.indexOf(problem);
+                this.problems.splice(index, 1);
+            });
+    }
 }

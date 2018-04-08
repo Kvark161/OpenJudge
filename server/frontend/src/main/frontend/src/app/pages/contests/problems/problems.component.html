@@ -44,7 +44,11 @@
                     <fa [name]="'pencil'"></fa>
                 </button>
             </td>
-            <!--pencil-alt-->
+            <td *ngIf="role == 'ADMIN'">
+                <button type="button" class="btn btn-primary" title="Delete problem" (click)="deleteProblem(problem)">
+                    <fa [name]="'trash'"></fa>
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>

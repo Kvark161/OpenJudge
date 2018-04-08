@@ -4,8 +4,10 @@ import eskimo.backend.containers.ProblemContainer;
 import eskimo.backend.containers.SolutionContainer;
 import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
+import eskimo.backend.dao.ContestDao;
 import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.StatementsDao;
+import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Statement;
 import eskimo.backend.entity.enums.GenerationStatus;
@@ -28,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,13 +48,20 @@ public class ProblemService {
         STATEMENTS_LANGUAGE_MAPPER.put("russian", "ru");
     }
 
+    private final ContestDao contestDao;
     private final ProblemDao problemDao;
     private final StatementsDao statementsDao;
     private final StorageService storageService;
     private final FileUtils fileUtils;
     private final JudgeService judgeService;
 
-    public ProblemService(ProblemDao problemDao, StatementsDao statementsDao, StorageService storageService, FileUtils fileUtils, JudgeService judgeService) {
+    public ProblemService(ContestDao contestDao,
+                          ProblemDao problemDao,
+                          StatementsDao statementsDao,
+                          StorageService storageService,
+                          FileUtils fileUtils,
+                          JudgeService judgeService) {
+        this.contestDao = contestDao;
         this.problemDao = problemDao;
         this.statementsDao = statementsDao;
         this.storageService = storageService;
@@ -269,6 +279,23 @@ public class ProblemService {
             orders.add(new StorageOrderCopyFile(container.getTestlib(), storageService.getTestlib(contestId, problemIndex)));
         }
         return orders;
+    }
+
+    public void deleteProblem(Long contestId, Integer problemIndex) {
+        Contest contestInfo = contestDao.getContestInfo(contestId);
+        if (contestInfo.getStartTime() != null && contestInfo.getStartTime().isAfter(LocalDateTime.now())) {
+            throw new UnsupportedOperationException("Can't delete problem, because contest is already started");
+        }
+        problemDao.deleteProblem(contestId, problemIndex);
+        File problemFolder = storageService.getProblemFolder(contestId, problemIndex);
+        if (problemFolder.exists()) {
+            try {
+                org.apache.commons.io.FileUtils.deleteDirectory(problemFolder);
+            } catch (IOException e) {
+                logger.error(String.format("Can't delete problem directory (contest %d, problem %d)",
+                        contestId, problemIndex), e);
+            }
+        }
     }
 
 }

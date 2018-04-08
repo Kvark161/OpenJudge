@@ -54,7 +54,7 @@ public class StorageService {
         return new File(getStatementsFolder(contestId, problemIndex) + File.separator + language + ".pdf");
     }
 
-    private File getProblemFolder(long contestId, long problemIndex) {
+    public File getProblemFolder(long contestId, long problemIndex) {
         return new File(getContestFolder(contestId) + File.separator + PROBLEMS_FOLDER_NAME
                 + File.separator + problemIndex);
     }

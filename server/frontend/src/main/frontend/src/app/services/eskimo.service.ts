@@ -175,6 +175,11 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
+    deleteProblem(contestId: number, problemIndex: number) {
+        return this.http.delete(this.getUrlContestProblem(contestId, problemIndex), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
     // noinspection JSMethodCanBeStatic
     private handleError(error: any) {
         console.error('error', error);

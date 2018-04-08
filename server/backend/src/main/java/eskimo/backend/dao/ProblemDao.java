@@ -127,6 +127,12 @@ public class ProblemDao {
         jdbcTemplate.update(sql, status.name(), message, id);
     }
 
+    @Transactional
+    public void deleteProblem(Long contestId, Integer problemIndex) {
+        String sql = "DELETE FROM problems WHERE contest_id = ? AND contest_index = ?";
+        jdbcTemplate.update(sql, contestId, problemIndex);
+    }
+
     private static class ProblemRowMapper implements RowMapper<Problem> {
         @Override
         public Problem mapRow(ResultSet rs, int i) throws SQLException {

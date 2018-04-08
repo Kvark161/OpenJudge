@@ -72,4 +72,9 @@ public class AdminApiController {
                                           @RequestPart("problem") EditProblemRequest editProblemRequest) {
         return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile);
     }
+
+    @DeleteMapping("contest/{id}/problem/{index}")
+    public void deleteProblem(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
+        problemService.deleteProblem(contestId, problemIndex);
+    }
 }
