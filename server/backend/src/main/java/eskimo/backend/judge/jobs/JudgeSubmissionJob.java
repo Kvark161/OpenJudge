@@ -3,6 +3,7 @@ package eskimo.backend.judge.jobs;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.ProgrammingLanguage;
 import eskimo.backend.entity.Submission;
+import eskimo.backend.services.DashboardService;
 import eskimo.backend.services.InvokerService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.SubmissionService;
@@ -28,6 +29,7 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final Problem problem;
     private final ProgrammingLanguage programmingLanguage;
     private final StorageService storageService;
+    private final DashboardService dashboardService;
     private CompilationResult compilationResult;
 
     public JudgeSubmissionJob(Submission submission,
@@ -35,13 +37,15 @@ public class JudgeSubmissionJob extends JudgeJob {
                               InvokerService invokerService,
                               ProblemService problemService,
                               ProgrammingLanguage programmingLanguage,
-                              StorageService storageService)
+                              StorageService storageService,
+                              DashboardService dashboardService)
     {
         this.submission = submission;
         this.submissionService = submissionService;
         this.invokerService = invokerService;
         this.programmingLanguage = programmingLanguage;
         this.storageService = storageService;
+        this.dashboardService = dashboardService;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
         problem = problemService.getProblemById(submission.getProblemId());
@@ -52,7 +56,7 @@ public class JudgeSubmissionJob extends JudgeJob {
         try {
             updateVerdict(COMPILING);
             CompileJob compileJob = new CompileJob(invokerService, programmingLanguage, submission.getSourceCode(),
-                    getSourceFileBaseName(programmingLanguage, submission.getSourceCode()));
+                    getSourceFileBaseName(programmingLanguage));
             compileJob.execute(invoker);
             compilationResult = compileJob.getCompilationResult();
             if (compilationResult == null) {
@@ -75,11 +79,12 @@ public class JudgeSubmissionJob extends JudgeJob {
             submission.setStatus(Submission.Status.INTERNAL_ERROR);
             submissionService.updateSubmission(submission);
             throw e;
+        } finally {
+            dashboardService.addSubmission(submission);
         }
-
     }
 
-    private String getSourceFileBaseName(ProgrammingLanguage programmingLanguage, String sourceCode) {
+    private String getSourceFileBaseName(ProgrammingLanguage programmingLanguage) {
         if (isJavaLanguage(programmingLanguage)) {
             return "Main";
         }

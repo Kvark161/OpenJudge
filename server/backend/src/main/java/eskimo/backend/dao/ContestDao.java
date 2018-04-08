@@ -68,7 +68,7 @@ public class ContestDao {
             contest.setName(resultSet.getString("name"));
             Timestamp startTime = resultSet.getTimestamp("start_time");
             if (startTime != null) {
-                contest.setStartTime(startTime.toLocalDateTime());
+                contest.setStartTime(startTime.toInstant());
             } else {
                 contest.setStartTime(null);
             }

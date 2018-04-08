@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import static eskimo.invoker.executers.TesterWindows.DEFAULT_CHECK_COMMAND;
+
 public class TesterMac implements Tester {
 
     private static final Logger logger = LoggerFactory.getLogger(TesterMac.class);
@@ -87,11 +89,11 @@ public class TesterMac implements Tester {
             testResult.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
         } else if (testParams.isCheckerDisabled()) {
             testResult.setVerdict(TestVerdict.CHECKER_DISABLED);
-        } else if (checkerExecutionResult.getExitCode() != 0 || checkerExecutionResult.getTimeOutExceeded()) {
+        } else if (checkerExecutionResult.getTimeOutExceeded()) {
             testResult.setVerdict(TestVerdict.CHECKER_ERROR);
         } else if (checkerExecutionResult.getStderr().startsWith("ok")) {
             testResult.setVerdict(TestVerdict.ACCEPTED);
-        } else if (checkerExecutionResult.getStderr().startsWith("wrong answer")) {
+        } else if (checkerExecutionResult.getStderr().startsWith("wrong answer") || checkerExecutionResult.getStderr().startsWith("FAIL")) {
             testResult.setVerdict(TestVerdict.WRONG_ANSWER);
         } else if (checkerExecutionResult.getStderr().startsWith("wrong output format")) {
             testResult.setVerdict(TestVerdict.PRESENTATION_ERROR);
@@ -104,6 +106,7 @@ public class TesterMac implements Tester {
     }
 
     private void runChecker() throws IOException, InterruptedException {
+        testParams.setCheckCommand(DEFAULT_CHECK_COMMAND);
         List<String> command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), "");
         checkerExecutionResult = invokerUtils.executeCommand(command, 30000);
     }

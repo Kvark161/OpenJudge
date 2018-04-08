@@ -5,7 +5,7 @@ import eskimo.backend.entity.Submission;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,7 +48,7 @@ public class SubmissionDaoTest extends BaseTest {
         submission.setProblemId(1);
         submission.setSourceCode("This is a source code");
         submission.setStatus(Submission.Status.SUBMITTED);
-        submission.setSendingDateTime(LocalDateTime.now());
+        submission.setSendingTime(Instant.now());
         return submission;
     }
 

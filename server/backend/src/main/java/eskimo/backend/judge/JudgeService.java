@@ -9,10 +9,7 @@ import eskimo.backend.judge.jobs.CompileCheckerJob;
 import eskimo.backend.judge.jobs.GenerateProblemAnswersJob;
 import eskimo.backend.judge.jobs.JudgeJob;
 import eskimo.backend.judge.jobs.JudgeSubmissionJob;
-import eskimo.backend.services.InvokerService;
-import eskimo.backend.services.ProblemService;
-import eskimo.backend.services.ProgrammingLanguageService;
-import eskimo.backend.services.SubmissionService;
+import eskimo.backend.services.*;
 import eskimo.backend.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +52,9 @@ public class JudgeService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DashboardService dashboardService;
+
     private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
     private final ExecutorService executorService = Executors.newCachedThreadPool();
@@ -75,8 +75,14 @@ public class JudgeService {
     }
 
     public void judge(Submission submission) {
-        JudgeSubmissionJob job = new JudgeSubmissionJob(submission, submissionService, invokerService, problemService,
-                programmingLanguageService.getProgrammingLanguage(submission.getProgrammingLanguageId()), storageService);
+        JudgeSubmissionJob job = new JudgeSubmissionJob(
+                submission,
+                submissionService,
+                invokerService,
+                problemService,
+                programmingLanguageService.getProgrammingLanguage(submission.getProgrammingLanguageId()),
+                storageService,
+                dashboardService);
         putJob(job);
     }
 

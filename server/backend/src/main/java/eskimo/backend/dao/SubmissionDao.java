@@ -79,7 +79,7 @@ public class SubmissionDao {
         params.put("problem_id", submission.getProblemId());
         params.put("source_code", submission.getSourceCode());
         params.put("status", submission.getStatus().toString());
-        params.put("sending_date_time", Timestamp.valueOf(submission.getSendingDateTime()));
+        params.put("sending_date_time", Timestamp.from(submission.getSendingTime()));
         params.put("number_tests", submission.getNumberTests());
         params.put("passed_tests", submission.getPassedTests());
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
@@ -128,6 +128,12 @@ public class SubmissionDao {
         return jdbcTemplate.queryForObject(sql, fullMapper, submissionId);
     }
 
+    public List<Submission> getUserProblemSubmissions(Long userId, long problemId) {
+        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+                " WHERE submissions.id = ? AND submissions.problem_id = ?";
+        return jdbcTemplate.query(sql, fullMapper, userId, problemId);
+    }
+
     private static class SubmissionRowMapper implements RowMapper<Submission> {
 
         private final boolean isFull;
@@ -149,7 +155,7 @@ public class SubmissionDao {
             submission.setProblemId(resultSet.getLong("problem_id"));
             submission.setSourceCode(resultSet.getString("source_code"));
             submission.setStatus(Submission.Status.valueOf(resultSet.getString("status")));
-            submission.setSendingDateTime(resultSet.getTimestamp("sending_date_time").toLocalDateTime());
+            submission.setSendingTime(resultSet.getTimestamp("sending_date_time").toInstant());
             submission.setNumberTests(resultSet.getInt("number_tests"));
             submission.setPassedTests(resultSet.getInt("passed_tests"));
             submission.setMessage(resultSet.getString("message"));

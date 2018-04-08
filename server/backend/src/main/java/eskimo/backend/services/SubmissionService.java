@@ -9,7 +9,7 @@ import eskimo.backend.rest.request.SubmitProblemWebRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -47,7 +47,7 @@ public class SubmissionService {
         User user = authenticationHolder.getUser();
         submission.setUserId(user.getId());
         submission.setUsername(user.getUsername());
-        submission.setSendingDateTime(LocalDateTime.now());
+        submission.setSendingTime(Instant.now());
         submission.setStatus(Submission.Status.SUBMITTED);
         return submission;
     }
@@ -58,5 +58,9 @@ public class SubmissionService {
 
     public void updateSubmissionResultData(Submission submission) {
         submissionDao.updateSubmissionResultData(submission);
+    }
+
+    public List<Submission> getUserProblemSubmissions(Long userId, long problemId) {
+        return submissionDao.getUserProblemSubmissions(userId, problemId);
     }
 }
