@@ -35,15 +35,17 @@
             <div type="text" class="invalid-feedback">{{errorSelectedLanguage}}</div>
         </div>
         <div class="form-group">
-            <label for="inputCode">Source code</label>
-            <div id="inputCode" ace-editor
-                 [(text)]="sourceCode"
-                 [mode]="'c_cpp'"
-                 [theme]="'eclipse'"
-                 [readOnly]="false"
-                 [autoUpdateContent]="true"
-                 [durationBeforeCallback]="1000"
-                 style="min-height: 400px; width: 100%; overflow: auto;"></div>
+            <label>Source code</label>
+            <ace-editor #editor
+                        id="inputCode"
+                        [mode]="'c_cpp'"
+                        [theme]="'eclipse'"
+                        [readOnly]="false"
+                        [autoUpdateContent]="true"
+                        [durationBeforeCallback]="1000"
+                        style="min-height: 400px; width: 100%; overflow: auto;">
+            </ace-editor>
+
         </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit problem</button>
     </form>

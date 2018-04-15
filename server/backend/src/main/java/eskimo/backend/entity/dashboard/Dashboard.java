@@ -1,9 +1,9 @@
 package eskimo.backend.entity.dashboard;
 
-import eskimo.backend.entity.Contest;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +11,9 @@ import java.util.List;
 @Setter
 public class Dashboard {
 
-    private Contest contest;
+    private long contestId;
     protected List<DashboardRow> table = new ArrayList<>();
+    private Instant lastUpdate;
 
     public DashboardRow getRow(long userId) {
         for (DashboardRow row : table) {

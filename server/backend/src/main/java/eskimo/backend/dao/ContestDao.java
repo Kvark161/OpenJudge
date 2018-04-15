@@ -31,7 +31,7 @@ public class ContestDao {
     }
 
     public List<Contest> getAllContests() {
-        String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests";
+        String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests ORDER BY id";
         return jdbcTemplate.query(sql, new ContestRowMapper());
     }
 
@@ -41,6 +41,8 @@ public class ContestDao {
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
         params.put("name", contest.getName());
+        params.put("start_time", Timestamp.from(contest.getStartTime()));
+        params.put("duration_in_minutes", contest.getDuration());
         return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
     }
 
@@ -66,12 +68,7 @@ public class ContestDao {
             Contest contest = new Contest();
             contest.setId(resultSet.getLong("id"));
             contest.setName(resultSet.getString("name"));
-            Timestamp startTime = resultSet.getTimestamp("start_time");
-            if (startTime != null) {
-                contest.setStartTime(startTime.toInstant());
-            } else {
-                contest.setStartTime(null);
-            }
+            contest.setStartTime(resultSet.getTimestamp("start_time").toInstant());
             contest.setDuration(resultSet.getInt("duration_in_minutes"));
             return contest;
         }

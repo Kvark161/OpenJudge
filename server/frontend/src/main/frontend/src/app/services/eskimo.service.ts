@@ -30,6 +30,10 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problems";
     }
 
+    private getUrlDashboard(contestId: number) {
+        return this.getUrlContest(contestId) + "/dashboard";
+    }
+
     private getUrlContestSubmissions(contestId: number) {
         return this.getUrlContest(contestId) + "/submissions";
     }
@@ -98,6 +102,12 @@ export class EskimoService {
 
     getContest(contestId: number) : Observable<Contest> {
         return this.http.get(this.getUrlContest(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    getDashboard(contestId: number): Observable<Contest> {
+        return this.http.get(this.getUrlDashboard(contestId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }

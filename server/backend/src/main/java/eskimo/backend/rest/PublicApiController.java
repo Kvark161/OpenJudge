@@ -3,10 +3,12 @@ package eskimo.backend.rest;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
+import eskimo.backend.entity.dashboard.Dashboard;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.response.UserInfoResponse;
 import eskimo.backend.services.ContestService;
+import eskimo.backend.services.DashboardService;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +27,17 @@ public class PublicApiController {
 
     private final ContestService contestService;
     private final UserService userService;
+    private final DashboardService dashboardService;
+
+    private final AuthenticationHolder authenticationHolder;
+
 
     @Autowired
-    private AuthenticationHolder authenticationHolder;
-
-    @Autowired
-    public PublicApiController(ContestService contestService, UserService userService) {
+    public PublicApiController(ContestService contestService, UserService userService, DashboardService dashboardService, AuthenticationHolder authenticationHolder) {
         this.contestService = contestService;
         this.userService = userService;
+        this.dashboardService = dashboardService;
+        this.authenticationHolder = authenticationHolder;
     }
 
     @GetMapping("contests")
@@ -95,5 +100,10 @@ public class PublicApiController {
                 .username(user.getUsername())
                 .role(user.getRole().name())
                 .build();
+    }
+
+    @GetMapping("contest/{id}/dashboard")
+    public Dashboard getDashboard(@PathVariable("id") Long contestId) {
+        return dashboardService.getDashboard(contestId);
     }
 }

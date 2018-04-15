@@ -27,6 +27,8 @@ import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 import {Angular2FontawesomeModule} from "angular2-fontawesome";
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 
 @NgModule({
     imports: [
@@ -38,7 +40,8 @@ import {Angular2FontawesomeModule} from "angular2-fontawesome";
         ReactiveFormsModule,
         HttpModule,
         MatDialogModule,
-        RouterModule.forRoot(router)
+        RouterModule.forRoot(router),
+        NgbModule.forRoot()
     ],
     declarations: [
         AppComponent,
@@ -56,7 +59,8 @@ import {Angular2FontawesomeModule} from "angular2-fontawesome";
         AddProblemComponent,
         StatementsComponent,
         InformationModalComponent,
-        EditProblemComponent
+        EditProblemComponent,
+        DashboardComponent
     ],
     entryComponents: [
         InformationModalComponent

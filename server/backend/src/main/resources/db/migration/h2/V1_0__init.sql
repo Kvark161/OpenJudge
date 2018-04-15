@@ -29,9 +29,9 @@ CREATE TABLE SUBMISSIONS
 CREATE TABLE CONTESTS
 (
   ID                  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  NAME                VARCHAR(128)                      NOT NULL,
-  START_TIME          TIMESTAMP WITH TIME ZONE,
-  DURATION_IN_MINUTES INTEGER
+  NAME                VARCHAR(256)                      NOT NULL,
+  START_TIME          TIMESTAMP                         NOT NULL,
+  DURATION_IN_MINUTES INTEGER                           NOT NULL
 );
 
 CREATE TABLE PROBLEMS
