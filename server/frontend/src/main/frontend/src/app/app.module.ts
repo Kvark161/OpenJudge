@@ -27,6 +27,7 @@ import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 import {Angular2FontawesomeModule} from "angular2-fontawesome";
+import {ManagementComponent} from "./pages/management/management.component";
 
 @NgModule({
     imports: [
@@ -56,7 +57,8 @@ import {Angular2FontawesomeModule} from "angular2-fontawesome";
         AddProblemComponent,
         StatementsComponent,
         InformationModalComponent,
-        EditProblemComponent
+        EditProblemComponent,
+        ManagementComponent
     ],
     entryComponents: [
         InformationModalComponent

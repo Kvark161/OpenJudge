@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -283,7 +283,7 @@ public class ProblemService {
 
     public void deleteProblem(Long contestId, Integer problemIndex) {
         Contest contestInfo = contestDao.getContestInfo(contestId);
-        if (contestInfo.getStartTime() != null && contestInfo.getStartTime().isAfter(LocalDateTime.now())) {
+        if (contestInfo.getStartTime() != null && contestInfo.getStartTime().isAfter(Instant.now())) {
             throw new UnsupportedOperationException("Can't delete problem, because contest is already started");
         }
         problemDao.deleteProblem(contestId, problemIndex);

@@ -62,7 +62,7 @@ public class UserDao {
 
     public boolean userExists(String name) {
         String sql = "SELECT users.id FROM users WHERE users.name = ?";
-        return !jdbcTemplate.query(sql, new Object[]{name}, new UserRowMapper()).isEmpty();
+        return !jdbcTemplate.query(sql, new Object[]{name}, (rs, rowNum) -> null).isEmpty();
     }
 
     @Transactional
@@ -74,6 +74,11 @@ public class UserDao {
             logger.info("can not get user by name=" + name, e);
             return null;
         }
+    }
+
+    public void deleteUser(Long id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sql, id);
     }
 
     private static class UserRowMapper implements RowMapper<User> {

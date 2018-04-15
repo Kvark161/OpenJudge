@@ -1,0 +1,63 @@
+<common-toolbar></common-toolbar>
+<div class="container">
+    <div class="row"><p></p></div>
+    User management
+    <div class="row">
+        <div class="col-sm-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Admin</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let user of users">
+                    <td>{{user.username}}</td>
+                    <td (mouseenter)="changePasswordVisibility(user, true)" (mouseleave)="changePasswordVisibility(user, false)">
+                        <span *ngIf="user.passwordVisible">{{user.password}}</span>
+                        <span *ngIf="!user.passwordVisible">&bull;&bull;&bull;&bull;&bull;&bull;</span>
+                    </td>
+                    <td>
+                        <span *ngIf="user.isAdmin"><fa [name]="'check'"></fa></span>
+                    </td>
+                    <td>
+                        <button *ngIf="currentUser.id != user.id" type="button" class="btn btn-primary"
+                                title="Delete user"
+                                (click)="deleteUser(user)">
+                            <fa [name]="'trash'"></fa>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-sm-5">
+            Create user
+            <form>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" class="form-control" [class.is-invalid]="validationResult.errors.username != null"
+                           [(ngModel)]="newUser.username" name="name" (input)="fieldChanged('username')"
+                           required>
+                    <div type="text" class="invalid-feedback">{{validationResult.errors.username}}</div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="text" id="password" class="form-control" [class.is-invalid]="validationResult.errors.password != null"
+                           [(ngModel)]="newUser.password" name="password" (input)="fieldChanged('password')"
+                           required>
+                    <div type="text" class="invalid-feedback">{{validationResult.errors.password}}</div>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="userRole" name="userRole"
+                           [class.is-invalid]="validationResult.errors.password != null" [(ngModel)]="newUser.isAdmin">
+                    <label class="form-check-label" for="userRole">Give admin role</label>
+                </div>
+                <button type="button" class="btn btn-primary" (click)="onCreateUser()">Create user</button>
+            </form>
+        </div>
+    </div>
+</div>

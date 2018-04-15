@@ -9,6 +9,10 @@ export class ValidationResult {
         return result;
     }
 
+    setErrors(errors) {
+        this.errors = errors;
+    }
+
     isEmpty() {
         for(var key in this.errors) {
             if (this.errors.hasOwnProperty(key)) {

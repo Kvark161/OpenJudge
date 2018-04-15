@@ -5,6 +5,8 @@ import eskimo.backend.dao.UserSessionsDao;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
+import eskimo.backend.rest.response.CreatingResponse;
+import eskimo.backend.rest.response.ValidationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,12 +14,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Component
 public class UserService {
     private static final Duration TOKEN_LIVE_TIME = Duration.ofDays(7);
+    private static final String USERNAME_STRING_FIELDS_MATCHER = "^[\\d\\w]+$";
 
     private final UserDao userDao;
     private final UserSessionsDao userSessionsDao;
@@ -28,21 +33,54 @@ public class UserService {
         this.userSessionsDao = userSessionsDao;
     }
 
-
-    public Long addUser(User user) {
-        if (user.getUsername() == null || user.getUsername().equals("")) {
-            throw new IllegalArgumentException("username should not be empty");
-        }
-        if (user.getPassword() == null || user.getPassword().equals("")) {
-            throw new IllegalArgumentException("password should not be empty");
-        }
-
-        if (userDao.userExists(user.getUsername())) {
-            throw new IllegalArgumentException("user already exists");
+    public CreatingResponse addUser(User user) {
+        CreatingResponse creatingResponse = new CreatingResponse();
+        ValidationResponse validationResponse = validateCreateUser(user);
+        creatingResponse.setValidationResponse(validationResponse);
+        if (validationResponse.hasErrors()) {
+            return creatingResponse;
         }
         user.setLocale(Locale.ENGLISH);
-        user.setRole(Role.USER);
-        return userDao.addUser(user);
+        if (user.getRole() != null) {
+            user.setRole(user.getRole());
+        } else {
+            user.setRole(Role.USER);
+        }
+        Long id = userDao.addUser(user);
+        user.setId(id);
+
+        creatingResponse.setCreatedObject(user);
+        return creatingResponse;
+    }
+
+    private ValidationResponse validateCreateUser(User user) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        if (user.getUsername() == null || user.getUsername().equals("")) {
+            validationResponse.addError("username", "Should not be empty");
+        }
+        if (user.getPassword() == null || user.getPassword().equals("")) {
+            validationResponse.addError("password", "Should not be empty");
+        }
+        if (validationResponse.hasErrors()) {
+            return  validationResponse;
+        }
+        if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getUsername())) {
+            validationResponse.addError("username", "Name should contain only latin letters and digits");
+        }
+        if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getPassword())) {
+            validationResponse.addError("username", "Password should contain only latin letters and digits");
+        }
+        if (validationResponse.hasErrors()) {
+            return  validationResponse;
+        }
+        if (userDao.userExists(user.getUsername())) {
+            validationResponse.addError("username", "User already exists");
+        }
+        return validationResponse;
+    }
+
+    public List<User> getUsers() {
+        return userDao.getAllUsers();
     }
 
     public User getUserById(Long id) {
@@ -54,6 +92,10 @@ public class UserService {
             throw new IllegalArgumentException("username should not be empty");
         }
         return userDao.getUserByName(name);
+    }
+
+    public void deleteUser(Long id) {
+        userDao.deleteUser(id);
     }
 
     public UserSession addUserSession(Long userId, String userAgent, String ip) {

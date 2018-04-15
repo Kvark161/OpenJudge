@@ -10,6 +10,8 @@ import {Problem} from "../shared/problem";
 import {StatementsResponse} from "../shared/statements.response";
 import {ValidationResult} from "../shared/validation-response";
 import {EditProblemRequest} from "../shared/edit-problem";
+import {User} from "../shared/user";
+import {CreatingResponse} from "../shared/creating-response";
 
 
 @Injectable()
@@ -19,6 +21,8 @@ export class EskimoService {
     private urlContests = this.urlHost + 'contests';
     private urlContestCreate = this.urlHost + 'contest/create';
     private urlSubmit = this.urlHost + "contest/submit";
+    private urlGetUsers = this.urlHost + "users";
+    private urlCreateUser = this.urlHost + "user";
 
     private optionsWithCredentials = new RequestOptions({withCredentials: true});
 
@@ -72,6 +76,10 @@ export class EskimoService {
 
     private getUrlEditProblem(contestId: number, problemIndex: number) {
         return this.getUrlContestProblem(contestId, problemIndex) + "/edit";
+    }
+
+    private getUrlDeleteUser(userId: number) {
+        return this.urlHost + "user/" + userId;
     }
 
     constructor(private http: Http) {
@@ -177,6 +185,32 @@ export class EskimoService {
 
     deleteProblem(contestId: number, problemIndex: number) {
         return this.http.delete(this.getUrlContestProblem(contestId, problemIndex), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    createUser(user: User): Observable<CreatingResponse> {
+        return this.http.post(this.urlCreateUser,
+            {username: user.username, password: user.password, role: user.isAdmin ? 'ADMIN' : 'USER'},
+            this.optionsWithCredentials)
+            .map(res => {
+                let result = res.json();
+                result.createdObject = User.fromServer(result.createdObject);
+                return result;
+            })
+            .catch(this.handleError);
+    }
+
+    getUsers(): Observable<User[]> {
+        return this.http.get(this.urlGetUsers, this.optionsWithCredentials)
+            .map(res => {
+                let result: User[] = res.json();
+                return result.map(u => User.fromServer(u));
+            })
+            .catch(this.handleError);
+    }
+
+    deleteUser(userId: number) {
+        return this.http.delete(this.getUrlDeleteUser(userId), this.optionsWithCredentials)
             .catch(this.handleError);
     }
 

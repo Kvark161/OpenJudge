@@ -71,11 +71,6 @@ public class PublicApiController {
         return true;
     }
 
-    @PostMapping("sign-in")
-    public void signIn(@RequestBody User user) {
-        userService.addUser(user);
-    }
-
     @GetMapping("log-out")
     public void logOut() {
         User user = authenticationHolder.getUser();
