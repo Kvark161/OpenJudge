@@ -17,4 +17,8 @@ public class ValidationResponse {
     public void addError(String path, String error) {
         errors.computeIfAbsent(path, key -> new ArrayList<>()).add(error);
     }
+
+    public boolean hasErrors() {
+        return !errors.isEmpty();
+    }
 }

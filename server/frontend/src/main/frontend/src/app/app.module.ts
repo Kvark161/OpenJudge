@@ -27,6 +27,7 @@ import {MAT_DIALOG_DEFAULT_OPTIONS, MatDialogModule} from "@angular/material";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 import {Angular2FontawesomeModule} from "angular2-fontawesome";
+import {ManagementComponent} from "./pages/management/management.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 
@@ -60,6 +61,7 @@ import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component
         StatementsComponent,
         InformationModalComponent,
         EditProblemComponent,
+        ManagementComponent,
         DashboardComponent
     ],
     entryComponents: [
