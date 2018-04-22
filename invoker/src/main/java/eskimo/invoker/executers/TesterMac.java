@@ -65,14 +65,6 @@ public class TesterMac implements Tester {
                 testResults[i].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
                 logger.error("Error during testing " + e.getMessage(), e);
                 return testResults;
-            } finally {
-                if (folder != null) {
-                    try {
-                        FileUtils.deleteDirectory(folder);
-                    } catch (IOException e) {
-                        logger.warn("Can't delete directory after test: " + folder.getAbsolutePath(), e);
-                    }
-                }
             }
         }
         return testResults;
@@ -120,7 +112,7 @@ public class TesterMac implements Tester {
         executableFile = new File(folder.getAbsolutePath() + File.separator + testParams.getExecutableName());
         checkerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getCheckerName());
         inputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getInputName());
-        answerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getInputName());
+        answerFile = new File(folder.getAbsolutePath() + File.separator + testParams.getAnswerName());
         outputFile = new File(folder.getAbsolutePath() + File.separator + testParams.getOutputName());
         FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
         if (!testParams.isCheckerDisabled()) {

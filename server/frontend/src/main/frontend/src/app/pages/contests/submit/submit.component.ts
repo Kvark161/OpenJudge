@@ -1,4 +1,4 @@
-import {Component} from "@angular/core";
+import {Component, ViewChild} from "@angular/core";
 import {EskimoService} from "../../../services/eskimo.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Problem} from "../../../shared/problem";
@@ -9,6 +9,7 @@ import {ProgrammingLanguage} from "../../../shared/programming-language";
     templateUrl: './submit.component.html'
 })
 export class SubmitComponent {
+    @ViewChild('editor') editor;
     contestId: number;
     problems: Problem[];
     languages: ProgrammingLanguage[];
@@ -50,6 +51,7 @@ export class SubmitComponent {
     }
 
     onSubmit() {
+        this.sourceCode = this.editor.getEditor().getValue();
         this.validate();
         if (this.hasErrors()) {
             return;

@@ -28,6 +28,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 import {Angular2FontawesomeModule} from "angular2-fontawesome";
 import {ManagementComponent} from "./pages/management/management.component";
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 
 @NgModule({
     imports: [
@@ -39,7 +41,8 @@ import {ManagementComponent} from "./pages/management/management.component";
         ReactiveFormsModule,
         HttpModule,
         MatDialogModule,
-        RouterModule.forRoot(router)
+        RouterModule.forRoot(router),
+        NgbModule.forRoot()
     ],
     declarations: [
         AppComponent,
@@ -58,7 +61,8 @@ import {ManagementComponent} from "./pages/management/management.component";
         StatementsComponent,
         InformationModalComponent,
         EditProblemComponent,
-        ManagementComponent
+        ManagementComponent,
+        DashboardComponent
     ],
     entryComponents: [
         InformationModalComponent

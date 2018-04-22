@@ -48,7 +48,7 @@ public class DashboardDao {
                     "last_update = ?";
             String data = objectMapper.writeValueAsString(dashboard.getTable());
             Timestamp now = Timestamp.from(Instant.now());
-            jdbcTemplate.update(sql, dashboard.getContest().getId(), data, now, data, now);
+            jdbcTemplate.update(sql, dashboard.getContestId(), data, now, data, now);
         } catch (JsonProcessingException e) {
             logger.error("Can't convert dashboard table to json", e);
             throw new RuntimeException(e);
@@ -60,6 +60,8 @@ public class DashboardDao {
         public Dashboard mapRow(ResultSet resultSet, int i) throws SQLException {
             Dashboard dashboard = new Dashboard();
             try {
+                dashboard.setContestId(resultSet.getLong("contest_id"));
+                dashboard.setLastUpdate(resultSet.getTimestamp("last_update").toInstant());
                 dashboard.setTable(objectMapper.readValue(resultSet.getString("data"), new TypeReference<List<DashboardRow>>() {
                 }));
             } catch (IOException e) {

@@ -9,6 +9,43 @@
                    [(ngModel)]="contest.name" name="contestName" required>
             <div type="text" class="invalid-feedback">{{errorName}}</div>
         </div>
+        <div class="form-group" [class.has-danger]="errorDateTime != null">
+            <label for="name">Start date and time</label>
+            <div id="startDate" class="input-group" style="width: 180px;">
+                <input
+                        class="form-control"
+                        placeholder="yyyy-mm-dd"
+                        name="dp"
+                        [(ngModel)]="startDate"
+                        ngbDatepicker
+                        #d="ngbDatepicker"
+                        [class.is-invalid]="errorDateTime != null">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                        <fa [name]="'table'"></fa>
+                    </button>
+                </div>
+                <ngb-timepicker
+                        name="startTime"
+                        [(ngModel)]="startTime"
+                        [class.is-invalid]="errorDateTime != null"
+                        [spinners]="false"
+                ></ngb-timepicker>
+                <div type="text" class="invalid-feedback">{{errorDateTime}}</div>
+            </div>
+        </div>
+        <div class="form-group" style="width: 150px" [class.has-danger]="errorDuration != null">
+            <label for="duration">Duration in minutes</label>
+            <input
+                    type="number"
+                    id="duration"
+                    class="form-control"
+                    [class.is-invalid]="errorDuration != null"
+                    [(ngModel)]="contest.duration"
+                    name="duration"
+                    required>
+            <div type="text" class="invalid-feedback">{{errorDuration}}</div>
+        </div>
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Create contest</button>
     </form>
 
