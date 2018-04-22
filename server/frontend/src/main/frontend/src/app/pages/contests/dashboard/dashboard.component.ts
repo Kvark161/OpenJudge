@@ -34,6 +34,9 @@ export class DashboardComponent {
     }
 
     renderLastTime(lastTime: number) {
+        if (lastTime == null) {
+            return ''
+        }
         let result = '';
         if (this.contest.duration >= 24 * 60) {
             result += Math.floor(lastTime / (24 * 60)) + ':';
