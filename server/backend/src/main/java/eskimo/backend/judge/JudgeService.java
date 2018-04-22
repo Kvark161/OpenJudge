@@ -114,9 +114,8 @@ public class JudgeService {
     private class JudgeThread extends Thread {
         @Override
         public void run() {
-            try {
-                //noinspection InfiniteLoopStatement
-                while (true) {
+            while (true) {
+                try {
                     JudgeJob job = judgeQueue.take();
                     Invoker invoker = invokerPool.take();
                     executorService.execute(() -> {
@@ -128,9 +127,9 @@ public class JudgeService {
                             invokerPool.release(invoker);
                         }
                     });
+                } catch (Throwable e) {
+                    logger.error("in judge thread", e);
                 }
-            } catch (InterruptedException e) {
-                logger.error("The judge thread was interrupted", e);
             }
         }
     }

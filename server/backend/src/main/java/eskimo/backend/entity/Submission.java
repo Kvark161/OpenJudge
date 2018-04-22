@@ -27,6 +27,7 @@ public class Submission {
     private String message;
     private DashboardStatus dashboardStatus;
     private int attempt;
+    private boolean addToDashboard;
 
     public enum Status {
         SUBMITTED,

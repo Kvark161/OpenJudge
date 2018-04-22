@@ -80,7 +80,9 @@ public class JudgeSubmissionJob extends JudgeJob {
             submissionService.updateSubmission(submission);
             throw e;
         } finally {
-            dashboardService.addSubmission(submission);
+            if (submission.isAddToDashboard()) {
+                dashboardService.addSubmission(submission);
+            }
         }
     }
 
