@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class ChangingResponse {
+public class ChangingResponse<T> {
     private ValidationResult validationResult;
-    private Object changedObject;
+    private T changedObject;
 }

@@ -82,16 +82,25 @@ export class EskimoService {
         return this.getUrlContestProblem(contestId, problemIndex) + "/edit";
     }
 
-    private getUrlDeleteUser(userId: number) {
-        return this.urlHost + "user/" + userId;
-    }
-
     private getUrlEditUser(userId: number) {
         return this.urlHost + "user/" + userId;
     }
 
+    private getUrlCreateUsers(usersNumber) {
+        return this.urlHost + "users/?usersNumber=" + usersNumber;
+    }
+
     private userMapper(jsonUser): User {
       return User.copyOf(jsonUser);
+    }
+
+    private userListMapper(jsonUsers) {
+        let result = [];
+        let users: User[] = jsonUsers;
+        for (let user of users) {
+            result.push(User.copyOf(user));
+        }
+        return result;
     }
 
     constructor(private http: Http) {
@@ -231,8 +240,9 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    deleteUser(userId: number) {
-        return this.http.delete(this.getUrlDeleteUser(userId), this.optionsWithCredentials)
+    createNUsers(usersNumber: number): Observable<CreatingResponse> {
+        return this.http.post(this.getUrlCreateUsers(usersNumber), {}, this.optionsWithCredentials)
+            .map(res => CreatingResponse.fromJson(res.json(), this.userListMapper))
             .catch(this.handleError);
     }
 

@@ -1,6 +1,7 @@
 package eskimo.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import eskimo.backend.entity.enums.Role;
 import lombok.Data;
 
@@ -14,4 +15,6 @@ public class User {
     private String password;
     private Locale locale;
     private Role role;
+    @JsonProperty("isBlocked")
+    private boolean isBlocked;
 }

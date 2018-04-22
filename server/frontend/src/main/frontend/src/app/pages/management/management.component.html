@@ -12,84 +12,99 @@
     </div>
     <div class="row"><p></p></div>
     <div class="row">
-        <div class="col-sm-7">
+        <div class="col-sm-8">
             <table class="table border">
                 <thead>
                 <tr>
                     <th>Username</th>
                     <th>Password</th>
                     <th>Admin</th>
-                    <th></th>
+                    <th>Blocked</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let user of users">
-                    <td>{{user.username}}</td>
-                    <td (mouseenter)="changePasswordVisibility(user, true)" (mouseleave)="changePasswordVisibility(user, false)">
+                <tr *ngFor="let user of users; let i = index">
+                    <td *ngIf="editingIndex == i">
+                        <input type="text" class="form-control" [class.is-invalid]="validationResult.errors.username != null"
+                               [(ngModel)]="formUser.username" name="username" (input)="fieldChanged('username')">
+                        <span type="text" class="invalid-feedback">{{validationResult.errors.username}}</span>
+                    </td>
+                    <td *ngIf="editingIndex != i">{{user.username}}</td>
+
+                    <td *ngIf="editingIndex == i">
+                        <input type="text" class="form-control" [class.is-invalid]="validationResult.errors.password != null"
+                               [(ngModel)]="formUser.password" name="password" (input)="fieldChanged('password')">
+                        <span type="text" class="invalid-feedback">{{validationResult.errors.password}}</span>
+                    </td>
+                    <td *ngIf="editingIndex != i" (mouseenter)="changePasswordVisibility(user, true)"
+                        (mouseleave)="changePasswordVisibility(user, false)">
                         <span *ngIf="user.passwordVisible">{{user.password}}</span>
                         <span *ngIf="!user.passwordVisible">&bull;&bull;&bull;&bull;&bull;&bull;</span>
                     </td>
-                    <td>
+
+                    <td *ngIf="editingIndex == i">
+                        <input class="form-check-input" type="checkbox" id="userRole" name="userRole"
+                               [(ngModel)]="isAdminChecked">
+                    </td>
+                    <td *ngIf="editingIndex != i">
                         <span *ngIf="user.isAdmin()"><fa [name]="'check'"></fa></span>
                     </td>
-                    <td>
-                        <button *ngIf="currentUser.id != user.id" type="button" class="btn btn-primary btn-sm"
-                                title="Delete user"
-                                (click)="deleteUser(user)">
-                            <fa [name]="'trash'"></fa>
-                        </button>
+
+                    <td *ngIf="editingIndex == i">
+                        <input class="form-check-input" type="checkbox" id="userBlocked" name="userBlocked"
+                               [(ngModel)]="formUser.isBlocked">
                     </td>
+                    <td *ngIf="editingIndex != i">
+                        <span *ngIf="user.isBlocked"><fa [name]="'check'"></fa></span>
+                    </td>
+
                     <td>
-                        <button *ngIf="currentUser.id != user.id" type="button" class="btn btn-primary btn-sm"
-                                title="Delete user"
-                                (click)="editUser(user)">
+                        <button *ngIf="currentUser.id != user.id && editingIndex != i" type="button" class="btn btn-primary btn-sm"
+                                title="Edit user"
+                                (click)="editUser(i)">
                             <fa [name]="'pencil'"></fa>
+                        </button>
+                        <button *ngIf="currentUser.id != user.id && editingIndex == i" type="button" class="btn btn-primary btn-sm"
+                                title="Save changes"
+                                (click)="submitUserChanges()">
+                            <fa [name]="'save'"></fa>
+                        </button>
+                        <button *ngIf="currentUser.id != user.id && editingIndex == i" type="button" class="btn btn-primary btn-sm"
+                                title="Cancel changes"
+                                (click)="cancelEditing()">
+                            <fa [name]="'ban'"></fa>
                         </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-4">
             <div class="card">
                 <div class="card-header">
-                    <span *ngIf="editing">Edit</span>
-                    <span *ngIf="!editing">Create</span>
-                     user
-                    <button *ngIf="editing" type="button" class="btn btn-primary btn-sm" title="Back to creating user" (click)="backToCreating()">
-                        <fa [name]="'arrow-left'"></fa>
-                    </button>
+                    Create user
                 </div>
                 <div class="card-body">
                     <form>
-                        <div class="form-group">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" class="form-control" [class.is-invalid]="validationResult.errors.username != null"
-                                   [(ngModel)]="formUser.username" name="name" (input)="fieldChanged('username')"
+                        <div class="input-group">
+                            <label for="userNumber"></label>
+                            <input type="number" min="1" max="100" id="userNumber" class="form-control"
+                                   [class.is-invalid]="validationResult.errors.userNumber != null"
+                                   [(ngModel)]="userNumber" name="userNumber" (input)="fieldChanged('userNumber')"
                                    required>
-                            <div type="text" class="invalid-feedback">{{validationResult.errors.username}}</div>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary" (click)="createNUsers()">
+                                    Create users
+                                </button>
+                            </span>
+                            <div type="text" class="invalid-feedback">{{validationResult.errors.userNumber}}</div>
                         </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="text" id="password" class="form-control" [class.is-invalid]="validationResult.errors.password != null"
-                                   [(ngModel)]="formUser.password" name="password" (input)="fieldChanged('password')"
-                                   required>
-                            <div type="text" class="invalid-feedback">{{validationResult.errors.password}}</div>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="userRole" name="userRole"
-                                   [(ngModel)]="isAdminChecked">
-                            <label class="form-check-label" for="userRole">Give admin role</label>
-                        </div>
-                        <button type="button" class="btn btn-primary" (click)="onSubmit()">
-                            <span *ngIf="editing">Edit</span>
-                            <span *ngIf="!editing">Create</span>
-                            user
-                        </button>
                     </form>
                 </div>
             </div>
+            <br>
+            <button type="button" class="btn btn-primary">Show users' information summary</button>
         </div>
     </div>
 </div>

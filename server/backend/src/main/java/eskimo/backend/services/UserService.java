@@ -7,6 +7,8 @@ import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.response.ChangingResponse;
 import eskimo.backend.rest.response.ValidationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +20,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
+
+import static eskimo.backend.utils.Utils.generatePassword;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class UserService {
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private static final Duration TOKEN_LIVE_TIME = Duration.ofDays(7);
     private static final String USERNAME_STRING_FIELDS_MATCHER = "^[\\d\\w]+$";
+    private static final int MAX_GENERATE_USERS_ATTEMPTS = 10;
 
     private final UserDao userDao;
     private final UserSessionsDao userSessionsDao;
@@ -33,8 +41,8 @@ public class UserService {
         this.userSessionsDao = userSessionsDao;
     }
 
-    public ChangingResponse addUser(User user) {
-        ChangingResponse changingResponse = new ChangingResponse();
+    public ChangingResponse<User> addUser(User user) {
+        ChangingResponse<User> changingResponse = new ChangingResponse<>();
         ValidationResult validationResponse = validateCommon(user);
         validateAdd(user, validationResponse);
         changingResponse.setValidationResult(validationResponse);
@@ -54,8 +62,8 @@ public class UserService {
         return changingResponse;
     }
 
-    public ChangingResponse editUser(User user) {
-        ChangingResponse changingResponse = new ChangingResponse();
+    public ChangingResponse<User> editUser(User user) {
+        ChangingResponse<User> changingResponse = new ChangingResponse<>();
         ValidationResult validationResponse = validateCommon(user);
         validateEdit(user, validationResponse);
         changingResponse.setValidationResult(validationResponse);
@@ -65,11 +73,56 @@ public class UserService {
         User oldUser = userDao.getUserById(user.getId());
         boolean passwordChanged = !oldUser.getPassword().equals(user.getPassword());
         userDao.editUser(user);
-        if (passwordChanged) {
+        if (passwordChanged || oldUser.isBlocked()) {
             userSessionsDao.deleteByUserId(oldUser.getId());
         }
         changingResponse.setChangedObject(userDao.getUserById(user.getId()));
         return changingResponse;
+    }
+
+    public ChangingResponse<List<User>> createNUsers(Integer usersNumber) {
+        ChangingResponse<List<User>> response = new ChangingResponse<>();
+        ValidationResult validationResult = new ValidationResult();
+        if (usersNumber == null || usersNumber < 1 || usersNumber > 100) {
+            validationResult.addError("usersNumber", "Should be between 1 and 100");
+        }
+        response.setValidationResult(validationResult);
+        if (validationResult.hasErrors()) {
+            return response;
+        }
+
+        List<User> users = generateUsers(usersNumber);
+        response.setChangedObject(users);
+        return response;
+    }
+
+    private List<User> generateUsers(int usersNumber) {
+        List<User> users = IntStream.range(0, usersNumber)
+                .boxed()
+                .map(i -> prepareUser())
+                .collect(toList());
+        int attempt = 1;
+        Long nextId = userDao.getNextUsernameNumber();
+        for (int i = 0; i < users.size(); ++i) {
+            users.get(i).setUsername("user" + (nextId + i));
+        }
+        do {
+            try {
+                return userDao.addUsers(users);
+            } catch (Exception e) {
+                logger.info("Generate users. Bad attempt " + attempt, e);
+            }
+        } while (attempt++ < MAX_GENERATE_USERS_ATTEMPTS);
+        throw new RuntimeException("Can't generate users after " + MAX_GENERATE_USERS_ATTEMPTS + " attempts");
+    }
+
+    private User prepareUser() {
+        User user = new User();
+        user.setPassword(generatePassword());
+        user.setRole(Role.USER);
+        user.setLocale(Locale.ENGLISH);
+        user.setBlocked(false);
+        return user;
     }
 
     private ValidationResult validateCommon(User user) {
@@ -128,10 +181,6 @@ public class UserService {
             throw new IllegalArgumentException("username should not be empty");
         }
         return userDao.getUserByName(name);
-    }
-
-    public void deleteUser(Long id) {
-        userDao.deleteUser(id);
     }
 
     public UserSession addUserSession(Long userId, String userAgent, String ip) {

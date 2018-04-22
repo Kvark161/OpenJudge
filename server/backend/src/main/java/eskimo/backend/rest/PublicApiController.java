@@ -62,8 +62,14 @@ public class PublicApiController {
     @PostMapping("log-in")
     public boolean login(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         User actualUser = userService.getUserByName(user.getUsername());
-        if (actualUser == null || !actualUser.getPassword().equals(user.getPassword())) {
+        if (actualUser == null) {
             return false;
+        }
+        if (!actualUser.getPassword().equals(user.getPassword())) {
+            throw  new RuntimeException("Wrong password");
+        }
+        if (actualUser.isBlocked()) {
+            throw  new RuntimeException("This user is blocked");
         }
         String userAgent = request.getHeader("User-Agent");
         if (userAgent == null) {

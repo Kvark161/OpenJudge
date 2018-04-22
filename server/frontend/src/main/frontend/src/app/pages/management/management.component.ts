@@ -13,12 +13,13 @@ export class ManagementComponent {
     users: User[];
     currentUser = this.userService.currentUserInfo;
 
-    private newUser: User = new User();
+    userNumber: number;
+
     validationResult: ValidationResult = ValidationResult.getEmpty();
 
-    formUser: User = this.newUser;
+    formUser: User;
     isAdminChecked = false;
-    editing: boolean = false;
+    editingIndex: number = null;
 
     constructor(private eskimoService: EskimoService, private userService: UserService) {
         this.eskimoService.getUsers().subscribe(users => {
@@ -26,43 +27,41 @@ export class ManagementComponent {
         });
     }
 
-    deleteUser(user: User) {
-        this.eskimoService.deleteUser(user.id).subscribe(() => {
-            let index = this.users.indexOf(user);
-            this.users.splice(index, 1);
-        });
+    createNUsers() {
+        if (!this.userNumber || this.userNumber < 1 || this.userNumber > 100) {
+            this.validationResult.addError("userNumber", "Should be between 1 and 100");
+        }
+        this.eskimoService.createNUsers(this.userNumber)
+            .subscribe((objectWithVr) => {
+                this.validationResult = ValidationResult.getEmpty();
+                this.validationResult.setErrors(objectWithVr.validationResult.errors);
+                if (this.validationResult.isEmpty()) {
+                    this.userNumber = 0;
+                    this.users = this.users.concat(objectWithVr.changedObject);
+                }
+            })
     }
 
-    onSubmit() {
+    submitUserChanges() {
         this.validateFormUser();
         if (!this.validationResult.isEmpty()) {
             return;
         }
-        if (this.editing) {
-            this.setFormUserRole();
-            this.eskimoService.editUser(this.formUser).subscribe((objectWithVr) => {
-                this.validationResult = ValidationResult.getEmpty();
-                this.validationResult.setErrors(objectWithVr.validationResult.errors);
-                if (this.validationResult.isEmpty()) {
-                    let editedUserIndex = this.users.findIndex(user => user.id == objectWithVr.changedObject.id);
-                    this.users[editedUserIndex] = objectWithVr.changedObject;
-                    this.newUser = new User();
-                    this.formUser = this.newUser;
-                    this.editing = false;
-                }
-            });
-        } else {
-            this.setFormUserRole();
-            this.eskimoService.createUser(this.newUser).subscribe((objectWithVr) => {
-                this.validationResult = ValidationResult.getEmpty();
-                this.validationResult.setErrors(objectWithVr.validationResult.errors);
-                if (this.validationResult.isEmpty()) {
-                    this.users.push(objectWithVr.changedObject);
-                    this.newUser = new User();
-                    this.formUser = this.newUser;
-                }
-            });
-        }
+        this.setFormUserRole();
+        this.eskimoService.editUser(this.formUser).subscribe((objectWithVr) => {
+            this.validationResult = ValidationResult.getEmpty();
+            this.validationResult.setErrors(objectWithVr.validationResult.errors);
+            if (this.validationResult.isEmpty()) {
+                this.users[this.editingIndex] = objectWithVr.changedObject;
+                this.formUser = null;
+                this.editingIndex = null;
+            }
+        });
+    }
+
+    cancelEditing() {
+        this.editingIndex = null;
+        this.formUser = null;
     }
 
     private setFormUserRole() {
@@ -97,14 +96,9 @@ export class ManagementComponent {
         this.validationResult.errors[fieldName] = null;
     }
 
-    editUser(user: User) {
-        this.formUser = User.copyOf(user);
-        this.isAdminChecked = user.isAdmin();
-        this.editing = true;
-    }
-
-    backToCreating() {
-        this.formUser = this.newUser;
-        this.editing = false;
+    editUser(index: number) {
+        this.formUser = User.copyOf(this.users[index]);
+        this.isAdminChecked = this.formUser.isAdmin();
+        this.editingIndex = index;
     }
 }
