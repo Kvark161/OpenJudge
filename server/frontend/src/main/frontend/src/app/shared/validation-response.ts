@@ -14,7 +14,7 @@ export class ValidationResult {
     }
 
     isEmpty() {
-        for(var key in this.errors) {
+        for(let key in this.errors) {
             if (this.errors.hasOwnProperty(key)) {
                 return false;
             }

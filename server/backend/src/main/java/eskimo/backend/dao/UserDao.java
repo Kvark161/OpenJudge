@@ -43,6 +43,15 @@ public class UserDao {
         return jdbcInsert.executeAndReturnKey(params).longValue();
     }
 
+    public void editUser(User user) {
+        String sql = "UPDATE USERS SET " +
+                "NAME = ?, " +
+                "PASSWORD = ?, " +
+                "ROLE = ? " +
+                "WHERE ID = ?";
+        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRole().name(), user.getId());
+    }
+
     @Transactional
     public List<User> getAllUsers() {
         String sql = "SELECT u.id, u.name, u.password, u.locale, u.role FROM users AS u";
