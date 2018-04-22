@@ -44,11 +44,11 @@ public class UserDao {
     }
 
     public void editUser(User user) {
-        String sql = "UPDATE USERS SET " +
-                "NAME = ?, " +
-                "PASSWORD = ?, " +
-                "ROLE = ? " +
-                "WHERE ID = ?";
+        String sql = "UPDATE users SET " +
+                "name = ?, " +
+                "password = ?, " +
+                "role = ? " +
+                "WHERE id = ?";
         jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRole().name(), user.getId());
     }
 
