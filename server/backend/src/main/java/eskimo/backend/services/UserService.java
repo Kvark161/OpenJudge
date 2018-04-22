@@ -5,8 +5,8 @@ import eskimo.backend.dao.UserSessionsDao;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
-import eskimo.backend.rest.response.CreatingResponse;
-import eskimo.backend.rest.response.ValidationResponse;
+import eskimo.backend.rest.response.ChangingResponse;
+import eskimo.backend.rest.response.ValidationResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +33,13 @@ public class UserService {
         this.userSessionsDao = userSessionsDao;
     }
 
-    public CreatingResponse addUser(User user) {
-        CreatingResponse creatingResponse = new CreatingResponse();
-        ValidationResponse validationResponse = validateCreateUser(user);
-        creatingResponse.setValidationResponse(validationResponse);
+    public ChangingResponse addUser(User user) {
+        ChangingResponse changingResponse = new ChangingResponse();
+        ValidationResult validationResponse = validateCommon(user);
+        validateAdd(user, validationResponse);
+        changingResponse.setValidationResult(validationResponse);
         if (validationResponse.hasErrors()) {
-            return creatingResponse;
+            return changingResponse;
         }
         user.setLocale(Locale.ENGLISH);
         if (user.getRole() != null) {
@@ -49,34 +50,64 @@ public class UserService {
         Long id = userDao.addUser(user);
         user.setId(id);
 
-        creatingResponse.setCreatedObject(user);
-        return creatingResponse;
+        changingResponse.setChangedObject(user);
+        return changingResponse;
     }
 
-    private ValidationResponse validateCreateUser(User user) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    public ChangingResponse editUser(User user) {
+        ChangingResponse changingResponse = new ChangingResponse();
+        ValidationResult validationResponse = validateCommon(user);
+        validateEdit(user, validationResponse);
+        changingResponse.setValidationResult(validationResponse);
+        if (validationResponse.hasErrors()) {
+            return changingResponse;
+        }
+        userDao.editUser(user);
+        changingResponse.setChangedObject(userDao.getUserById(user.getId()));
+        return changingResponse;
+    }
+
+    private ValidationResult validateCommon(User user) {
+        ValidationResult validationResponse = new ValidationResult();
         if (user.getUsername() == null || user.getUsername().equals("")) {
             validationResponse.addError("username", "Should not be empty");
+        } else if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getUsername())) {
+            validationResponse.addError("username", "Name should contain only latin letters and digits");
         }
         if (user.getPassword() == null || user.getPassword().equals("")) {
             validationResponse.addError("password", "Should not be empty");
-        }
-        if (validationResponse.hasErrors()) {
-            return  validationResponse;
-        }
-        if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getUsername())) {
-            validationResponse.addError("username", "Name should contain only latin letters and digits");
-        }
-        if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getPassword())) {
+        } else if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getPassword())) {
             validationResponse.addError("username", "Password should contain only latin letters and digits");
         }
-        if (validationResponse.hasErrors()) {
-            return  validationResponse;
-        }
-        if (userDao.userExists(user.getUsername())) {
+        return validationResponse;
+    }
+
+    private void validateAdd(User user, ValidationResult validationResponse) {
+        if (!validationResponse.hasErrorsOnField("username") && userDao.userExists(user.getUsername())) {
             validationResponse.addError("username", "User already exists");
         }
-        return validationResponse;
+    }
+
+    /**
+     * Additional validation for edit action
+     */
+    private void validateEdit(User user, ValidationResult validationResponse) {
+        if (user.getId() == null) {
+            validationResponse.addError("id", "Id can not be empty");
+        } else {
+            User oldUser = userDao.getUserById(user.getId());
+            if (oldUser == null) {
+                validationResponse.addError("id", "User doesn't exist");
+            } else if (!user.getUsername().equals(oldUser.getUsername()) &&
+                    userDao.userExists(user.getUsername())) {
+                validationResponse.addError("username", "User already exists");
+            }
+        }
+        if (user.getRole() == null) {
+            validationResponse.addError("role", "Role can not be empty");
+        } else if (user.getRole() == Role.ANONYMOUS) {
+            validationResponse.addError("role", "Can't set anonymous role to user");
+        }
     }
 
     public List<User> getUsers() {

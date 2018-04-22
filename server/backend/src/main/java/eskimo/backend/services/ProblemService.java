@@ -106,9 +106,9 @@ public class ProblemService {
         return response;
     }
 
-    public ValidationResponse editProblem(long contestId, int problemIndex, EditProblemRequest editProblemRequest,
-                                          MultipartFile checkerMultipartFile) {
-        ValidationResponse validationResponse = validateProblemEdit(editProblemRequest);
+    public ValidationResult editProblem(long contestId, int problemIndex, EditProblemRequest editProblemRequest,
+                                        MultipartFile checkerMultipartFile) {
+        ValidationResult validationResponse = validateProblemEdit(editProblemRequest);
         if (!validationResponse.getErrors().isEmpty()) {
             return validationResponse;
         }
@@ -127,8 +127,8 @@ public class ProblemService {
         return validationResponse;
     }
 
-    private ValidationResponse validateProblemEdit(EditProblemRequest editProblemRequest) {
-        ValidationResponse validationResponse = new ValidationResponse();
+    private ValidationResult validateProblemEdit(EditProblemRequest editProblemRequest) {
+        ValidationResult validationResponse = new ValidationResult();
         if (editProblemRequest.getTimeLimit() == null) {
             validationResponse.addError("timeLimit", "Time limit should not be null");
         } else {

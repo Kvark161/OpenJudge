@@ -13,8 +13,12 @@ export class ManagementComponent {
     users: User[];
     currentUser = this.userService.currentUserInfo;
 
-    newUser: User = new User();
+    private newUser: User = new User();
     validationResult: ValidationResult = ValidationResult.getEmpty();
+
+    formUser: User = this.newUser;
+    isAdminChecked = false;
+    editing: boolean = false;
 
     constructor(private eskimoService: EskimoService, private userService: UserService) {
         this.eskimoService.getUsers().subscribe(users => {
@@ -29,24 +33,45 @@ export class ManagementComponent {
         });
     }
 
-    onCreateUser() {
-        this.validateNewUser();
+    onSubmit() {
+        this.validateFormUser();
         if (!this.validationResult.isEmpty()) {
             return;
         }
-        this.eskimoService.createUser(this.newUser).subscribe((objectWithVr) => {
-            this.validationResult = ValidationResult.getEmpty();
-            this.validationResult.setErrors(objectWithVr.validationResult);
-            if (this.validationResult.isEmpty()) {
-                this.newUser = new User();
-                this.users.push(objectWithVr.createdObject);
-            }
-        });
+        if (this.editing) {
+            this.setFormUserRole();
+            this.eskimoService.editUser(this.formUser).subscribe((objectWithVr) => {
+                this.validationResult = ValidationResult.getEmpty();
+                this.validationResult.setErrors(objectWithVr.validationResult.errors);
+                if (this.validationResult.isEmpty()) {
+                    let editedUserIndex = this.users.findIndex(user => user.id == objectWithVr.changedObject.id);
+                    this.users[editedUserIndex] = objectWithVr.changedObject;
+                    this.newUser = new User();
+                    this.formUser = this.newUser;
+                    this.editing = false;
+                }
+            });
+        } else {
+            this.setFormUserRole();
+            this.eskimoService.createUser(this.newUser).subscribe((objectWithVr) => {
+                this.validationResult = ValidationResult.getEmpty();
+                this.validationResult.setErrors(objectWithVr.validationResult.errors);
+                if (this.validationResult.isEmpty()) {
+                    this.users.push(objectWithVr.changedObject);
+                    this.newUser = new User();
+                    this.formUser = this.newUser;
+                }
+            });
+        }
     }
 
-    private validateNewUser() {
+    private setFormUserRole() {
+        this.formUser.role = this.isAdminChecked ? "ADMIN" : "USER";
+    }
+
+    private validateFormUser() {
         this.validationResult = ValidationResult.getEmpty();
-        let username = this.newUser.username;
+        let username = this.formUser.username;
         if (!username || username.length < 1 || username.length > 128) {
             this.validationResult
                 .addError("username", "Name should be not empty and not greater than 128 symbols");
@@ -54,7 +79,7 @@ export class ManagementComponent {
             this.validationResult
                 .addError("username", "Name should contain only latin letters and digits");
         }
-        let password = this.newUser.password;
+        let password = this.formUser.password;
         if (!password || password.length < 1 || password.length > 128) {
             this.validationResult
                 .addError("password", "Password should be not empty and not greater than 128 symbols");
@@ -70,5 +95,16 @@ export class ManagementComponent {
 
     fieldChanged(fieldName: string) {
         this.validationResult.errors[fieldName] = null;
+    }
+
+    editUser(user: User) {
+        this.formUser = User.copyOf(user);
+        this.isAdminChecked = user.isAdmin();
+        this.editing = true;
+    }
+
+    backToCreating() {
+        this.formUser = this.newUser;
+        this.editing = false;
     }
 }

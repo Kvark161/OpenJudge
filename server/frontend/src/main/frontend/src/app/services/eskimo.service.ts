@@ -86,6 +86,14 @@ export class EskimoService {
         return this.urlHost + "user/" + userId;
     }
 
+    private getUrlEditUser(userId: number) {
+        return this.urlHost + "user/" + userId;
+    }
+
+    private userMapper(jsonUser): User {
+      return User.copyOf(jsonUser);
+    }
+
     constructor(private http: Http) {
     }
 
@@ -199,22 +207,26 @@ export class EskimoService {
     }
 
     createUser(user: User): Observable<CreatingResponse> {
-        return this.http.post(this.urlCreateUser,
-            {username: user.username, password: user.password, role: user.isAdmin ? 'ADMIN' : 'USER'},
-            this.optionsWithCredentials)
-            .map(res => {
-                let result = res.json();
-                result.createdObject = User.fromServer(result.createdObject);
-                return result;
-            })
+        return this.http.post(this.urlCreateUser, user, this.optionsWithCredentials)
+            .map(res => CreatingResponse.fromJson(res.json(), this.userMapper))
+            .catch(this.handleError);
+    }
+
+    editUser(user: User): Observable<CreatingResponse> {
+        return this.http.post(this.getUrlEditUser(user.id), user, this.optionsWithCredentials)
+            .map(res => CreatingResponse.fromJson(res.json(), this.userMapper))
             .catch(this.handleError);
     }
 
     getUsers(): Observable<User[]> {
         return this.http.get(this.urlGetUsers, this.optionsWithCredentials)
             .map(res => {
-                let result: User[] = res.json();
-                return result.map(u => User.fromServer(u));
+                let result: User[] = [];
+                let jsonUsers: User[] = res.json();
+                for (let jsonUser of jsonUsers) {
+                    result.push(this.userMapper(jsonUser));
+                }
+                return result;
             })
             .catch(this.handleError);
     }

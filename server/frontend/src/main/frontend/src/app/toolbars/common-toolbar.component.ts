@@ -1,6 +1,5 @@
 import {Component} from "@angular/core";
 import {UserService} from "../services/user.service";
-import {Router} from "@angular/router";
 import {CurrentUserInfo} from "../shared/current-user-info";
 
 @Component({
@@ -14,7 +13,7 @@ export class CommonToolbarComponent {
     usernameInput: string = "";
     password: string = "";
 
-    constructor(private userService: UserService, private router: Router) {
+    constructor(private userService: UserService) {
         this.currentUserInfo = this.userService.currentUserInfo;
     }
 
@@ -34,7 +33,7 @@ export class CommonToolbarComponent {
     logOut() {
         this.userService.logOut().subscribe(
             () => {
-                this.router.navigateByUrl('');
+                window.location.reload();
             },
             () => alert("Error occurred while logging out")
         );

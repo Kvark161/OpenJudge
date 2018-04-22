@@ -6,9 +6,9 @@ import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.AdminProblemsResponse;
-import eskimo.backend.rest.response.CreatingResponse;
+import eskimo.backend.rest.response.ChangingResponse;
 import eskimo.backend.rest.response.ProblemForEditResponse;
-import eskimo.backend.rest.response.ValidationResponse;
+import eskimo.backend.rest.response.ValidationResult;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.UserService;
@@ -77,10 +77,10 @@ public class AdminApiController {
     }
 
     @PostMapping(value = "contest/{id}/problem/{index}/edit", consumes = {"multipart/form-data"})
-    public ValidationResponse editProblem(@PathVariable("id") Long contestId,
-                                          @PathVariable("index") Integer problemIndex,
-                                          @RequestPart(value = "checkerFile", required=false) MultipartFile checkerFile,
-                                          @RequestPart("problem") EditProblemRequest editProblemRequest) {
+    public ValidationResult editProblem(@PathVariable("id") Long contestId,
+                                        @PathVariable("index") Integer problemIndex,
+                                        @RequestPart(value = "checkerFile", required=false) MultipartFile checkerFile,
+                                        @RequestPart("problem") EditProblemRequest editProblemRequest) {
         return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile);
     }
 
@@ -106,7 +106,12 @@ public class AdminApiController {
     }
 
     @PostMapping("/user")
-    public CreatingResponse createUser(@RequestBody User user) {
+    public ChangingResponse createUser(@RequestBody User user) {
         return userService.addUser(user);
+    }
+
+    @PostMapping("/user/{id}")
+    public ChangingResponse editUser(@RequestBody User user) {
+        return userService.editUser(user);
     }
 }
