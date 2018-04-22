@@ -38,7 +38,7 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/dashboard";
     }
 
-    private getUrlContestSubmissions(contestId: number) {
+    private getUrlUserContestSubmissions(contestId: number) {
         return this.getUrlContest(contestId) + "/submissions";
     }
 
@@ -170,8 +170,8 @@ export class EskimoService {
             this.optionsWithCredentials);
     }
 
-    getContestSubmissions(contestId: number) {
-        return this.http.get(this.getUrlContestSubmissions(contestId), this.optionsWithCredentials)
+    getUserContestSubmissions(contestId: number) {
+        return this.http.get(this.getUrlUserContestSubmissions(contestId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }

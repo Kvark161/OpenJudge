@@ -6,16 +6,23 @@ import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.dashboard.Dashboard;
 import eskimo.backend.entity.dashboard.DashboardRow;
 import eskimo.backend.entity.dashboard.ProblemResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class DashboardService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DashboardService.class);
 
     @Autowired
     private DashboardDao dashboardDao;
@@ -31,23 +38,16 @@ public class DashboardService {
 
     private Lock lock = new ReentrantLock();
 
+    private final BlockingQueue<Submission> updateQueue = new LinkedBlockingQueue<>();
+    private final UpdateThread updateThread = new UpdateThread();
+
+    @PostConstruct
+    public void init() {
+        updateThread.start();
+    }
+
     public void addSubmission(Submission submission) {
-        Contest contest = contestService.getContestById(submission.getContestId());
-        if (contest.getStartTime() == null || contest.getFinishTime() == null) {
-            return;
-        }
-        if (contest.getStartTime().compareTo(submission.getSendingTime()) > 0 ||
-                contest.getFinishTime().compareTo(submission.getSendingTime()) <= 0) {
-            return;
-        }
-        lock.lock();
-        try {
-            Dashboard dashboard = getDashboard(submission.getContestId());
-            updateDashboard(dashboard, contest, submission);
-            dashboardDao.updateDashboard(dashboard);
-        } finally {
-            lock.unlock();
-        }
+        updateQueue.add(submission);
     }
 
     public Dashboard getDashboard(long contestId) {
@@ -113,4 +113,20 @@ public class DashboardService {
         }
     }
 
+    private class UpdateThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Submission submission = updateQueue.take();
+                    Contest contest = contestService.getContestById(submission.getContestId());
+                    Dashboard dashboard = getDashboard(submission.getContestId());
+                    updateDashboard(dashboard, contest, submission);
+                    dashboardDao.updateDashboard(dashboard);
+                } catch (Throwable e) {
+                    logger.error("in dashboard thread", e);
+                }
+            }
+        }
+    }
 }

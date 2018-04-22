@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 @Repository
+@Transactional
 public class SubmissionDao {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionDao.class);
@@ -39,36 +40,18 @@ public class SubmissionDao {
         simpleMapper = new SubmissionRowMapper(objectMapper, false);
     }
 
-    @Transactional
-    public List<Submission> getAllSubmissions() {
+
+    public List<Submission> getSubmissions() {
         String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id" +
                 " ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper);
     }
 
-    @Transactional
-    public Submission getSubmissionById(Long id) {
+    public Submission getSubmission(Long id) {
         String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id WHERE s.id = ?";
         return jdbcTemplate.queryForObject(sql, simpleMapper, id);
     }
 
-    @Transactional
-    public List<Submission> getUserSubmissions(Long userId) {
-        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id" +
-                " WHERE user_id = ?" +
-                " ORDER BY sending_date_time DESC";
-        return jdbcTemplate.query(sql, simpleMapper, userId);
-    }
-
-    public List<Submission> getUserSubmissions(Long userId, Long contestId) {
-        String sql = "SELECT * " +
-                "FROM submissions " +
-                "WHERE user_id = ? AND contest_id = ? " +
-                "ORDER BY sending_date_time DESC";
-        return jdbcTemplate.query(sql, simpleMapper, userId, contestId);
-    }
-
-    @Transactional
     public void insertSubmission(Submission submission) {
         SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("submissions")
@@ -86,7 +69,6 @@ public class SubmissionDao {
         submission.setId(key.longValue());
     }
 
-    @Transactional
     public void updateSubmission(Submission submission) {
         String sql = "UPDATE submissions " +
                 "SET " +
@@ -130,8 +112,20 @@ public class SubmissionDao {
 
     public List<Submission> getUserProblemSubmissions(Long userId, long problemId) {
         String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
-                " WHERE submissions.id = ? AND submissions.problem_id = ?";
-        return jdbcTemplate.query(sql, fullMapper, userId, problemId);
+                " WHERE submissions.user_id = ? AND submissions.problem_id = ? ORDER BY sending_date_time DESC";
+        return jdbcTemplate.query(sql, simpleMapper, userId, problemId);
+    }
+
+    public List<Submission> getUserContestSubmissions(Long userId, Long contestId) {
+        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+                " WHERE submissions.user_id = ? AND submissions.contest_id = ? ORDER BY sending_date_time DESC";
+        return jdbcTemplate.query(sql, simpleMapper, userId, contestId);
+    }
+
+    public List<Submission> getContestSubmissions(Long contestId) {
+        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+                " WHERE submissions.contest_id = ? ORDER BY sending_date_time DESC";
+        return jdbcTemplate.query(sql, simpleMapper, contestId);
     }
 
     private static class SubmissionRowMapper implements RowMapper<Submission> {

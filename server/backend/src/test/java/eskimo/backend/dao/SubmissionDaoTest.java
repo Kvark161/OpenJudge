@@ -19,7 +19,7 @@ public class SubmissionDaoTest extends BaseTest {
 
     @Test
     public void test_GetAllSubmissions() {
-        List<Submission> submissions = submissionDao.getAllSubmissions();
+        List<Submission> submissions = submissionDao.getSubmissions();
         assertThat(submissions, notNullValue());
     }
 
@@ -34,7 +34,7 @@ public class SubmissionDaoTest extends BaseTest {
     public void test_GetSubmissionById() {
         Submission submission = getFullSubmission();
         submissionDao.insertSubmission(submission);
-        Submission submissionById = submissionDao.getSubmissionById(submission.getId());
+        Submission submissionById = submissionDao.getSubmission(submission.getId());
         assertThat(submissionById.getId(), is(submission.getId()));
     }
 
