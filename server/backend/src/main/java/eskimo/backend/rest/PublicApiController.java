@@ -99,6 +99,6 @@ public class PublicApiController {
 
     @GetMapping("contest/{id}/dashboard")
     public Dashboard getDashboard(@PathVariable("id") Long contestId) {
-        return dashboardService.getDashboard(contestId);
+        return dashboardService.getFullDashboard(contestId);
     }
 }

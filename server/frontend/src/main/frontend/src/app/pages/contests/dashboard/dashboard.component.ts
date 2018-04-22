@@ -26,4 +26,24 @@ export class DashboardComponent {
             })
         )
     }
+
+    adZeros(num) {
+        var s = num + "";
+        while (s.length < 2) s = "0" + s;
+        return s;
+    }
+
+    renderLastTime(lastTime: number) {
+        let result = '';
+        if (this.contest.duration >= 24 * 60) {
+            result += Math.floor(lastTime / (24 * 60)) + ':';
+        }
+        if (this.contest.duration >= 60) {
+            result += this.adZeros(Math.floor(lastTime % (24 * 60) / 60)) + ':';
+            result += this.adZeros(lastTime % 60);
+        } else {
+            result += lastTime;
+        }
+        return result;
+    }
 }
