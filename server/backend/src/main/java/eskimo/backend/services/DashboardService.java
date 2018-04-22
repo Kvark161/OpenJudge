@@ -26,6 +26,9 @@ public class DashboardService {
     @Autowired
     private SubmissionService submissionService;
 
+    @Autowired
+    private UserService userService;
+
     private Lock lock = new ReentrantLock();
 
     public void addSubmission(Submission submission) {
@@ -52,6 +55,14 @@ public class DashboardService {
         if (dashboard == null) {
             dashboard = new Dashboard();
             dashboard.setContestId(contestId);
+        }
+        return dashboard;
+    }
+
+    public Dashboard getFullDashboard(long contestId) {
+        Dashboard dashboard = dashboardDao.getDashboard(contestId);
+        for (DashboardRow dashboardRow : dashboard.getTable()) {
+            dashboardRow.setUsername(userService.getUserById(dashboardRow.getUserId()).getUsername());
         }
         return dashboard;
     }

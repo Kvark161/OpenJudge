@@ -1,31 +1,36 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
     <div class="row">
-        <table class="table table-striped table-bordered" *ngIf="dashboard != null && problems != null">
+        <table
+                class="table table-striped table-bordered"
+                style="color: black; text-align: center;"
+                *ngIf="dashboard != null && problems != null">
             <thead>
             <tr>
                 <th>#</th>
-                <th>User</th>
+                <th style="text-align: left">User</th>
+                <th>Score</th>
+                <th>Penalty</th>
                 <th *ngFor="let item of problems">
                     {{item.index}}
                 </th>
-                <th>Score</th>
-                <th>Penalty</th>
             </tr>
             </thead>
             <tbody>
             <tr *ngFor="let row of dashboard.table; let i = index">
-                <th scope="row">{{i + 1}}</th>
-                <td>{{row.userId}}</td>
-                <td *ngFor="let problem of problems">
+                <th scope="row" width="40px" style="padding: 3px; vertical-align: middle">{{i + 1}}</th>
+                <td width="100%" style="padding: 3px; text-align: left; vertical-align: middle">{{row.username}}</td>
+                <td align="center" width="30px" style="padding: 3px; vertical-align: middle">{{row.score}}</td>
+                <td align="center" width="30px" style="padding: 3px; vertical-align: middle">{{row.penalty}}</td>
+                <td align="center" width="30px" style="padding: 3px; vertical-align: middle"
+                    *ngFor="let problem of problems">
                     <div *ngIf="row.problemResults[problem.id]; let variable">
-                        <span>{{variable.success ? '+' : '-'}}{{variable.attempts}}</span>
-                        <br>
-                        <span>{{variable.lastTime // 60 }}:{{variable.lastTime % 60}}</span>
+                        <span [style.color]="variable.success == true ? 'green' : (variable.success == false ? 'red' : null)">
+                            {{variable.success ? '+' : '-'}}{{variable.attempts}}
+                        </span>
+                        <span style="font-size: 12px;">{{renderLastTime(variable.lastTime)}}</span>
                     </div>
                 </td>
-                <td>{{row.score}}</td>
-                <td>{{row.penalty}}</td>
             </tr>
             </tbody>
         </table>
