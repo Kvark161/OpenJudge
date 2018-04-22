@@ -6,29 +6,36 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserDao {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDao.class);
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public UserDao(JdbcTemplate jdbcTemplate) {
+    public UserDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     public Long addUser(User user) {
@@ -40,33 +47,81 @@ public class UserDao {
         params.put("password", user.getPassword());
         params.put("locale", user.getLocale().getLanguage());
         params.put("role", user.getRole());
+        params.put("is_blocked", user.isBlocked());
         return jdbcInsert.executeAndReturnKey(params).longValue();
+    }
+
+    @Transactional
+    public List<User> addUsers(List<User> users) {
+        String sql = "INSERT INTO users " +
+                "(name, password, role, locale, is_blocked) VALUES (?, ?, ?, ?, ?)";
+
+        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                User user = users.get(i);
+                ps.setString(1, user.getUsername());
+                ps.setString(2, user.getPassword());
+                ps.setString(3, user.getRole().name());
+                ps.setString(4, user.getLocale().getLanguage());
+                ps.setBoolean(5, user.isBlocked());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return users.size();
+            }
+        });
+        return getUsersByNames(users.stream().map(User::getUsername).collect(Collectors.toList()));
+    }
+
+    @Transactional
+    public List<User> getUsersByNames(List<String> usernames) {
+        String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u " +
+                "WHERE name in (:names)";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("names", usernames);
+        return namedParameterJdbcTemplate.query(sql, parameters, new UserRowMapper());
     }
 
     public void editUser(User user) {
         String sql = "UPDATE users SET " +
                 "name = ?, " +
                 "password = ?, " +
-                "role = ? " +
+                "role = ?, " +
+                "is_blocked = ? " +
                 "WHERE id = ?";
-        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRole().name(), user.getId());
+        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRole().name(), user.isBlocked(), user.getId());
     }
 
     @Transactional
     public List<User> getAllUsers() {
-        String sql = "SELECT u.id, u.name, u.password, u.locale, u.role FROM users AS u";
+        String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u";
         return jdbcTemplate.query(sql, new Object[]{}, new UserRowMapper());
     }
 
     @Transactional
     public User getUserById(Long id) {
         try {
-            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role FROM users AS u WHERE u.id = ?";
+            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.id = ?";
             return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             logger.info("can not get user by id=" + id, e);
             return null;
         }
+    }
+
+    public Long getNextUsernameNumber() {
+        String prefix = "user";
+        String sql = "SELECT name from users WHERE name LIKE '" + prefix + "%'";
+        List<String> names = jdbcTemplate.queryForList(sql, String.class);
+        return names.stream()
+                .map(name -> name.substring(prefix.length()))
+                .filter(s -> !s.isEmpty())
+                .map(Long::parseLong)
+                .max(Long::compareTo)
+                .orElse(0L) + 1;
     }
 
     public boolean userExists(String name) {
@@ -77,7 +132,7 @@ public class UserDao {
     @Transactional
     public User getUserByName(String name) {
         try {
-            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role FROM users AS u WHERE u.name = ?";
+            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.name = ?";
             return jdbcTemplate.queryForObject(sql, new Object[]{name}, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             logger.info("can not get user by name=" + name, e);
@@ -85,8 +140,13 @@ public class UserDao {
         }
     }
 
-    public void deleteUser(Long id) {
-        String sql = "DELETE FROM users WHERE id = ?";
+    public void blockUser(Long id) {
+        String sql = "UPDATE users SET is_blocked = true";
+        jdbcTemplate.update(sql, id);
+    }
+
+    public void unblockUser(Long id) {
+        String sql = "UPDATE users SET is_blocked = false";
         jdbcTemplate.update(sql, id);
     }
 
@@ -99,6 +159,7 @@ public class UserDao {
             user.setPassword(resultSet.getString("password"));
             user.setLocale(new Locale(resultSet.getString("locale")));
             user.setRole(Role.valueOf(resultSet.getString("role")));
+            user.setBlocked(resultSet.getBoolean("is_blocked"));
             return user;
         }
     }

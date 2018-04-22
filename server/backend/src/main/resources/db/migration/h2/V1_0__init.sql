@@ -1,10 +1,11 @@
 CREATE TABLE USERS
 (
-  ID       BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-  NAME     VARCHAR(128)                      NOT NULL,
-  PASSWORD VARCHAR(128)                      NOT NULL,
-  LOCALE   VARCHAR(128)                      NOT NULL,
-  ROLE     VARCHAR(128)                      NOT NULL
+  ID         BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+  NAME       VARCHAR(128)                      NOT NULL,
+  PASSWORD   VARCHAR(128)                      NOT NULL,
+  LOCALE     VARCHAR(128)                      NOT NULL,
+  ROLE       VARCHAR(128)                      NOT NULL,
+  IS_BLOCKED BOOLEAN                           NOT NULL
 );
 
 CREATE TABLE SUBMISSIONS
@@ -103,10 +104,10 @@ CREATE TABLE DASHBOARD
 );
 
 INSERT INTO USERS
-(NAME, PASSWORD, LOCALE, ROLE)
+(NAME, PASSWORD, LOCALE, ROLE, IS_BLOCKED)
 VALUES
-  ('admin', 'admin', 'ru', 'ADMIN'),
-  ('user', 'user', 'ru', 'USER');
+  ('admin', 'admin', 'ru', 'ADMIN', false),
+  ('user', 'user', 'ru', 'USER', false);
 
 INSERT INTO PROGRAMMING_LANGUAGES
 (name, DESCRIPTION, COMPILER_PATH, IS_COMPILED, INTERPRETER_PATH, EXTENSION, BINARY_EXTENSION, COMPILE_COMMAND, RUN_COMMAND, TIME_LIMIT, MEMORY_LIMIT)

@@ -3,6 +3,7 @@ export class User {
     username: string;
     password: string;
     role: string;
+    isBlocked: boolean;
 
     passwordVisible = false;
 
@@ -17,6 +18,7 @@ export class User {
         user.password = other.password;
         user.role = other.role;
         user.passwordVisible = other.passwordVisible;
+        user.isBlocked = other.isBlocked;
         return user;
     }
 }

@@ -102,26 +102,21 @@ public class AdminApiController {
         return new ArrayList<>(userService.getUsers());
     }
 
-    @DeleteMapping("/user/{id}")
-    public void deleteUser(@PathVariable("id") Long userId) {
-        User currentUser = authenticationHolder.getUser();
-        if (currentUser == null) {
-            throw new RuntimeException("Can not get current user");
-        } else if (currentUser.getId().equals(userId)) {
-            throw new RuntimeException("You can not delete yourself");
-        }
-        userService.deleteUser(userId);
-    }
-
     @PostMapping("/user")
-    public ChangingResponse createUser(@RequestBody User user) {
+    public ChangingResponse<User> createUser(@RequestBody User user) {
         return userService.addUser(user);
     }
 
     @PostMapping("/user/{id}")
-    public ChangingResponse editUser(@RequestBody User user) {
+    public ChangingResponse<User> editUser(@RequestBody User user) {
         return userService.editUser(user);
     }
+
+    @PostMapping("users")
+    public ChangingResponse<List<User>> createUsers(@RequestParam("usersNumber") Integer usersNumber) {
+        return userService.createNUsers(usersNumber);
+    }
+
 
     @GetMapping("contest/{id}/all-submissions")
     public List<Submission> getContestSubmissions(@PathVariable("id") Long contestId) {
