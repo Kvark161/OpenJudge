@@ -62,7 +62,12 @@ public class UserService {
         if (validationResponse.hasErrors()) {
             return changingResponse;
         }
+        User oldUser = userDao.getUserById(user.getId());
+        boolean passwordChanged = !oldUser.getPassword().equals(user.getPassword());
         userDao.editUser(user);
+        if (passwordChanged) {
+            userSessionsDao.deleteByUserId(oldUser.getId());
+        }
         changingResponse.setChangedObject(userDao.getUserById(user.getId()));
         return changingResponse;
     }

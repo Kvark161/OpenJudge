@@ -54,6 +54,14 @@ public class UserSessionsDao {
         jdbcTemplate.update(sql, id);
     }
 
+    /**
+     * Delete all user sessions
+     */
+    public void deleteByUserId(Long userId) {
+        String sql = "DELETE FROM user_sessions WHERE user_sessions.user_id = ?";
+        jdbcTemplate.update(sql, userId);
+    }
+
     public void updateRequestTime(UserSession userSession) {
         String sql = "INSERT INTO user_sessions(id, user_id, token, user_agent, ip, last_request_time) " +
                 "VALUES(?, ?, ?, ?, ?, ?) " +
