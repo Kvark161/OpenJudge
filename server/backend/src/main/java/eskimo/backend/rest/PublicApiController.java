@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.TimeZone;
 
 import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
 import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_UID_COOKIE_NAME;
@@ -100,5 +103,10 @@ public class PublicApiController {
     @GetMapping("contest/{id}/dashboard")
     public Dashboard getDashboard(@PathVariable("id") Long contestId) {
         return dashboardService.getFullDashboard(contestId);
+    }
+
+    @GetMapping("server-time")
+    public String getServerTime() {
+        return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(Instant.now().atZone(TimeZone.getDefault().toZoneId()));
     }
 }

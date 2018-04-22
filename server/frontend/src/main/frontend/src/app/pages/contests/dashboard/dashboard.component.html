@@ -27,7 +27,7 @@
                     <div *ngIf="row.problemResults[problem.id]; let variable">
                         <span
                                 [style.color]="variable.success == true ? 'green' : (variable.success == false ? 'red' : null)"
-                                style="font-weight: bold;">
+                                [style.font-weight]="variable.success ? 'bold' : null">
                             {{variable.success ? '+' : '-'}}{{variable.attempts}}
                         </span>
                         <span style="font-size: 12px;">{{renderLastTime(variable.lastTime)}}</span>

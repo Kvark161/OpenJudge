@@ -1,4 +1,5 @@
 import {Component} from "@angular/core";
+import {EskimoService} from "./services/eskimo.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,11 @@ import {Component} from "@angular/core";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+    serverTime: string = '';
+
+    constructor(private eskimoService: EskimoService) {
+        this.eskimoService.getServerTime().subscribe(serverTime => this.serverTime = serverTime);
+    }
 
 }

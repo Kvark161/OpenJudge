@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("api")
@@ -50,6 +52,8 @@ public class AdminApiController {
 
     @PostMapping("contest/create")
     public Contest createContest(@RequestBody Contest contest) {
+        Instant startTime = contest.getStartTime().minusMillis(TimeZone.getDefault().getRawOffset());
+        contest.setStartTime(startTime);
         return contestService.createContest(contest);
     }
 

@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 @Getter
 @Setter
@@ -24,7 +26,7 @@ public class Contest implements Serializable {
 
     @JsonGetter("startTime")
     public String getStartTimeJson() {
-        return startTime.toString();
+        return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(startTime.atZone(TimeZone.getDefault().toZoneId()));
     }
 
     public Instant getFinishTime() {
