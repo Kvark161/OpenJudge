@@ -1,6 +1,7 @@
 package eskimo.backend.rest;
 
 import eskimo.backend.entity.Contest;
+import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.User;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.holder.AuthenticationHolder;
@@ -11,6 +12,7 @@ import eskimo.backend.rest.response.ProblemForEditResponse;
 import eskimo.backend.rest.response.ValidationResult;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
+import eskimo.backend.services.SubmissionService;
 import eskimo.backend.services.UserService;
 import eskimo.backend.storage.TemporaryFile;
 import eskimo.backend.utils.FileUtils;
@@ -33,15 +35,17 @@ public class AdminApiController {
     private final ProblemService problemService;
     private final UserService userService;
     private final FileUtils fileUtils;
+    private final SubmissionService submissionService;
 
     @Autowired
     private AuthenticationHolder authenticationHolder;
 
-    public AdminApiController(ContestService contestService, ProblemService problemService, UserService userService, FileUtils fileUtils) {
+    public AdminApiController(ContestService contestService, ProblemService problemService, UserService userService, FileUtils fileUtils, SubmissionService submissionService) {
         this.contestService = contestService;
         this.problemService = problemService;
         this.userService = userService;
         this.fileUtils = fileUtils;
+        this.submissionService = submissionService;
     }
 
     @PostMapping("contest/create")
@@ -114,4 +118,15 @@ public class AdminApiController {
     public ChangingResponse editUser(@RequestBody User user) {
         return userService.editUser(user);
     }
+
+    @GetMapping("contest/{id}/all-submissions")
+    public List<Submission> getContestSubmissions(@PathVariable("id") Long contestId) {
+        return submissionService.getContestSubmissions(contestId);
+    }
+
+    @GetMapping("all-submissions")
+    public List<Submission> getAllSubmissions() {
+        return submissionService.getAllSubmissions();
+    }
+
 }

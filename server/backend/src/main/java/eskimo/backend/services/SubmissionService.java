@@ -30,7 +30,7 @@ public class SubmissionService {
     private AuthenticationHolder authenticationHolder;
 
     public List<Submission> getAllSubmissions() {
-        return submissionDao.getAllSubmissions();
+        return submissionDao.getSubmissions();
     }
 
     public void submit(SubmitProblemWebRequest submitProblemWebRequest) {
@@ -82,5 +82,13 @@ public class SubmissionService {
 
     public List<Submission> getUserProblemSubmissions(Long userId, long problemId) {
         return submissionDao.getUserProblemSubmissions(userId, problemId);
+    }
+
+    public List<Submission> getUserContestSubmissions(Long userId, Long contestId) {
+        return submissionDao.getUserContestSubmissions(userId, contestId);
+    }
+
+    public List<Submission> getContestSubmissions(Long contestId) {
+        return submissionDao.getContestSubmissions(contestId);
     }
 }

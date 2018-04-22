@@ -1,6 +1,8 @@
 package eskimo.backend.rest;
 
 import eskimo.backend.entity.Submission;
+import eskimo.backend.entity.User;
+import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.SubmitProblemWebRequest;
 import eskimo.backend.rest.response.ProblemInfoResponse;
@@ -77,8 +79,8 @@ public class UserApiController {
     }
 
     @GetMapping("contest/{id}/submissions")
-    public List<Submission> getSubmissions(@PathVariable("id") Long contestId) {
-        return submissionService.getAllSubmissions();
+    public List<Submission> getUserContestSubmissions(@PathVariable("id") Long contestId) {
+        return submissionService.getUserContestSubmissions(authenticationHolder.getUser().getId(), contestId);
     }
 
     @PostMapping("contest/submit")
@@ -88,7 +90,12 @@ public class UserApiController {
 
     @GetMapping("submission/{submissionId}")
     public Submission getSubmission(@PathVariable Long submissionId) {
-        return submissionService.getFullSubmission(submissionId);
+        User user = authenticationHolder.getUser();
+        Submission submission = submissionService.getFullSubmission(submissionId);
+        if (!Role.ADMIN.equals(user.getRole()) && !user.getId().equals(submission.getUserId())) {
+            throw new RuntimeException("Access denied");
+        }
+        return submission;
     }
 
     @GetMapping("contest/{contestId}/submitParameters")
