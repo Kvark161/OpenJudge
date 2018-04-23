@@ -1,21 +1,19 @@
 package eskimo.backend.rest;
 
-import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
-import eskimo.backend.entity.dashboard.Dashboard;
 import eskimo.backend.entity.enums.Role;
+import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
+import eskimo.backend.rest.response.ChangingResponse;
 import eskimo.backend.rest.response.UserInfoResponse;
-import eskimo.backend.services.ContestService;
-import eskimo.backend.services.DashboardService;
 import eskimo.backend.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_TOKEN_COOKIE_NAME;
@@ -23,35 +21,18 @@ import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_U
 
 @RestController
 @RequestMapping("api")
-public class PublicApiController {
+public class UserController {
 
-    private final ContestService contestService;
     private final UserService userService;
-    private final DashboardService dashboardService;
-
     private final AuthenticationHolder authenticationHolder;
 
-
-    @Autowired
-    public PublicApiController(ContestService contestService, UserService userService, DashboardService dashboardService, AuthenticationHolder authenticationHolder) {
-        this.contestService = contestService;
+    public UserController(UserService userService, AuthenticationHolder authenticationHolder) {
         this.userService = userService;
-        this.dashboardService = dashboardService;
         this.authenticationHolder = authenticationHolder;
     }
 
-    @GetMapping("contests")
-    public List<Contest> getAllContests() {
-        return contestService.getAllContests();
-    }
-
-    @GetMapping("contest/{id}")
-    public Contest getContest(@PathVariable("id") Long contestId) {
-        return contestService.getContestById(contestId);
-    }
-
-
     @GetMapping("role")
+    @AccessLevel(role = Role.ANONYMOUS)
     public Role getRole() {
         User user = authenticationHolder.getUser();
         UserSession userSession = authenticationHolder.getUserSession();
@@ -60,6 +41,7 @@ public class PublicApiController {
 
     //в user должны присутствовать username, password
     @PostMapping("log-in")
+    @AccessLevel(role = Role.ANONYMOUS)
     public boolean login(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         User actualUser = userService.getUserByName(user.getUsername());
         if (actualUser == null) {
@@ -83,6 +65,7 @@ public class PublicApiController {
     }
 
     @GetMapping("log-out")
+    @AccessLevel(role = Role.ANONYMOUS)
     public void logOut() {
         User user = authenticationHolder.getUser();
         UserSession userSession = authenticationHolder.getUserSession();
@@ -94,6 +77,7 @@ public class PublicApiController {
     }
 
     @GetMapping("current-user")
+    @AccessLevel(role = Role.ANONYMOUS)
     public UserInfoResponse getCurrentUserInfo() {
         User user = authenticationHolder.getUser();
         return UserInfoResponse.builder()
@@ -103,8 +87,27 @@ public class PublicApiController {
                 .build();
     }
 
-    @GetMapping("contest/{id}/dashboard")
-    public Dashboard getDashboard(@PathVariable("id") Long contestId) {
-        return dashboardService.getFullDashboard(contestId);
+    @GetMapping("users")
+    @AccessLevel(role = Role.ADMIN)
+    public List<User> getUsers() {
+        return new ArrayList<>(userService.getUsers());
+    }
+
+    @PostMapping("/user")
+    @AccessLevel(role = Role.ADMIN)
+    public ChangingResponse<User> createUser(@RequestBody User user) {
+        return userService.addUser(user);
+    }
+
+    @PostMapping("/user/{id}")
+    @AccessLevel(role = Role.ADMIN)
+    public ChangingResponse<User> editUser(@RequestBody User user) {
+        return userService.editUser(user);
+    }
+
+    @PostMapping("users")
+    @AccessLevel(role = Role.ADMIN)
+    public ChangingResponse<List<User>> createUsers(@RequestParam("usersNumber") Integer usersNumber) {
+        return userService.createNUsers(usersNumber);
     }
 }

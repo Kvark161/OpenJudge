@@ -15,10 +15,10 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.Assert.assertThat;
 
-public class UserApiControllerTest extends BaseTest {
+public class ProblemControllerTest extends BaseTest {
 
     @Autowired
-    private UserApiController userApiController;
+    private ProblemController problemController;
 
     @Autowired
     private ProblemDao problemDao;
@@ -26,7 +26,7 @@ public class UserApiControllerTest extends BaseTest {
     @Test
     public void testGetProblems() {
         Problem problem = createProblem();
-        List<ProblemInfoResponse> problems = userApiController.getProblems(problem.getContestId());
+        List<ProblemInfoResponse> problems = problemController.getProblems(problem.getContestId());
         Map<Long, String> problemNames = problemDao.getProblemNames(problem.getContestId());
         ProblemInfoResponse expected = new ProblemInfoResponse();
         expected.setIndex(problem.getIndex());

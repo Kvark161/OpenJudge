@@ -3,8 +3,7 @@ package eskimo.backend.rest.interceptor;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
-import eskimo.backend.rest.AdminApiController;
-import eskimo.backend.rest.UserApiController;
+import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.services.UserService;
 import org.slf4j.Logger;
@@ -27,9 +26,8 @@ import static org.apache.commons.lang3.math.NumberUtils.createLong;
 
 /**
  * Intercepts all requests to backend controllers. Decides can user do this request or not according to user role.
- * Anonymous user can call methods only from {@link eskimo.backend.rest.PublicApiController}.
- * User = anonymous + {@link UserApiController} methods.
- * Admin = user + {@link AdminApiController} methods.
+ * Each controller method should have {@link AccessLevel} annotation, which determines highest role,
+ * that can access that method
  */
 @Component
 public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
@@ -79,10 +77,12 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 user.setRole(Role.ANONYMOUS);
             }
             authenticationHolder.setUser(user);
-            Class<?> controllerType = handlerMethod.getBeanType();
-            boolean badUserRequest = user.getRole() == Role.USER && controllerType.equals(AdminApiController.class);
+
+            AccessLevel methodAnnotation = handlerMethod.getMethodAnnotation(AccessLevel.class);
+            Role accessRole = methodAnnotation == null ? Role.ANONYMOUS : methodAnnotation.role();
+            boolean badUserRequest = user.getRole() == Role.USER && accessRole == Role.ADMIN;
             boolean badAnonymousRequest = user.getRole() == Role.ANONYMOUS
-                    && (controllerType.equals(AdminApiController.class) || controllerType.equals(UserApiController.class));
+                    && (accessRole == Role.ADMIN || accessRole == Role.USER);
             if (badUserRequest || badAnonymousRequest) {
                 response.sendError(HttpStatus.FORBIDDEN.value());
                 return false;
