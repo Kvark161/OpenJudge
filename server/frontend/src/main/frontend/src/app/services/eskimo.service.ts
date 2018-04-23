@@ -34,6 +34,10 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problems";
     }
 
+    private getUrlServerTime() {
+        return this.urlHost + "server-time";
+    }
+
     private getUrlDashboard(contestId: number) {
         return this.getUrlContest(contestId) + "/dashboard";
     }
@@ -192,6 +196,10 @@ export class EskimoService {
         return this.http.get(this.getUrlGetProblemForEdit(contestId, problemId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
+    }
+
+    getServerTime() {
+        return this.http.get(this.getUrlServerTime()).map(res => res.text()).catch(this.handleError);
     }
 
     editProblem(contestId: number, problemId: number, problem: EditProblemRequest): Observable<ValidationResult> {

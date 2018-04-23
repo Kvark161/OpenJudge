@@ -1,27 +1,34 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
     <div class="row"><p></p></div>
-    <table class="table table-striped">
+    <table class="table table-striped table-bordered"
+           style="text-align: center;">
         <thead>
         <tr>
-            <th>Id</th>
-            <th>User</th>
-            <th>Contest id</th>
-            <th>Problem id</th>
+            <th>#</th>
+            <th>Sent time</th>
+            <th align="center">User</th>
+            <th>Problem</th>
             <th>Status</th>
+            <th>Memory</th>
+            <th>Time</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let submission of submissions">
-            <td>
+            <td align="center">
                 <span class="submissionLink" routerLink="/u/contest/{{contestId}}/submission/{{submission.id}}">
                     {{submission.id}}
                 </span>
             </td>
-            <td>{{submission.username}}</td>
-            <td>{{submission.contestId}}</td>
-            <td>{{submission.problemId}}</td>
-            <td>{{submission.status}}</td>
+            <td align="center" width="179px">{{submission.sendingTime}}</td>
+            <td align="center">{{submission.username}}</td>
+            <td width="50px" align="center">{{submission.problemId}}</td>
+            <td align="center" width="260px" [style.color]="getStatusColor(submission.status)">
+                {{getStatusShowName(submission)}}
+            </td>
+            <td align="center" width="100px">{{submission.usedTime}} ms</td>
+            <td align="center" width="100px">{{submission.usedMemory}} Kb</td>
         </tr>
         </tbody>
     </table>

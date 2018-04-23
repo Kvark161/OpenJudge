@@ -147,7 +147,6 @@ public class SubmissionDao {
             submission.setUsername(resultSet.getString("name"));
             submission.setContestId(resultSet.getLong("contest_id"));
             submission.setProblemId(resultSet.getLong("problem_id"));
-            submission.setSourceCode(resultSet.getString("source_code"));
             submission.setStatus(Submission.Status.valueOf(resultSet.getString("status")));
             submission.setSendingTime(resultSet.getTimestamp("sending_date_time").toInstant());
             submission.setNumberTests(resultSet.getInt("number_tests"));
@@ -156,6 +155,7 @@ public class SubmissionDao {
             submission.setUsedTime(resultSet.getLong("used_time"));
             submission.setUsedMemory(resultSet.getLong("used_memory"));
             if (isFull) {
+                submission.setSourceCode(resultSet.getString("source_code"));
                 String resultData = resultSet.getString("result_data");
                 try {
                     if (resultData != null && !"".equals(resultData)) {

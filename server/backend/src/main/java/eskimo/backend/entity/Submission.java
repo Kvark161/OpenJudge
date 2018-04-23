@@ -1,10 +1,13 @@
 package eskimo.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import eskimo.invoker.entity.TestResult;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.TimeZone;
 
 @Getter
 @Setter
@@ -49,5 +52,11 @@ public class Submission {
         ACCOUNTED,
         SKIPPED,
     }
+
+    @JsonGetter("sendingTime")
+    public String getSendingTimeJson() {
+        return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(sendingTime.atZone(TimeZone.getDefault().toZoneId()));
+    }
+
 
 }
