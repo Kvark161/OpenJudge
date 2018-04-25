@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Repository
@@ -69,6 +70,12 @@ public class UserSessionsDao {
         jdbcTemplate.update(sql, userSession.getId(), userSession.getUserId(), userSession.getToken(),
                 userSession.getUserAgent(), userSession.getIp(), userSession.getLastRequestTime(),
                 userSession.getLastRequestTime());
+    }
+
+    public List<UserSession> getAllUserSessions(Long userId) {
+        String sql = "SELECT us.id, us.user_id, us.token, us.user_agent, us.ip, us.last_request_time " +
+                "FROM user_sessions AS us WHERE us.user_id = ?";
+        return jdbcTemplate.query(sql, ROW_MAPPER, userId);
     }
 
     private static class UserSessionsRowMapper implements RowMapper<UserSession> {

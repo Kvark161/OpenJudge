@@ -32,6 +32,8 @@ public class UserService {
     private static final String USERNAME_STRING_FIELDS_MATCHER = "^[\\d\\w]+$";
     private static final int MAX_GENERATE_USERS_ATTEMPTS = 10;
 
+    public static final int MAX_USERNAME_LENGTH = 128;
+
     private final UserDao userDao;
     private final UserSessionsDao userSessionsDao;
 
@@ -73,7 +75,7 @@ public class UserService {
         User oldUser = userDao.getUserById(user.getId());
         boolean passwordChanged = !oldUser.getPassword().equals(user.getPassword());
         userDao.editUser(user);
-        if (passwordChanged || oldUser.isBlocked()) {
+        if (passwordChanged || user.isBlocked()) {
             userSessionsDao.deleteByUserId(oldUser.getId());
         }
         changingResponse.setChangedObject(userDao.getUserById(user.getId()));
@@ -129,13 +131,17 @@ public class UserService {
         ValidationResult validationResponse = new ValidationResult();
         if (user.getUsername() == null || user.getUsername().equals("")) {
             validationResponse.addError("username", "Should not be empty");
+        } else if (user.getUsername().length() > MAX_USERNAME_LENGTH) {
+            validationResponse.addError("username", "Name should be no longer than 128 symbols");
         } else if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getUsername())) {
             validationResponse.addError("username", "Name should contain only latin letters and digits");
         }
         if (user.getPassword() == null || user.getPassword().equals("")) {
             validationResponse.addError("password", "Should not be empty");
+        } else if (user.getPassword().length() > MAX_USERNAME_LENGTH) {
+            validationResponse.addError("password", "Password should be no longer than 128 symbols");
         } else if (!Pattern.matches(USERNAME_STRING_FIELDS_MATCHER, user.getPassword())) {
-            validationResponse.addError("username", "Password should contain only latin letters and digits");
+            validationResponse.addError("password", "Password should contain only latin letters and digits");
         }
         return validationResponse;
     }
