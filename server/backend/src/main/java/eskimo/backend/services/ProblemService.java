@@ -16,10 +16,7 @@ import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
-import eskimo.backend.storage.StorageOrder;
-import eskimo.backend.storage.StorageOrderCopyFile;
-import eskimo.backend.storage.StorageService;
-import eskimo.backend.storage.TemporaryFile;
+import eskimo.backend.storage.*;
 import eskimo.backend.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,15 +284,9 @@ public class ProblemService {
             throw new UnsupportedOperationException("Can't delete problem, because contest is already started");
         }
         problemDao.deleteProblem(contestId, problemIndex);
-        File problemFolder = storageService.getProblemFolder(contestId, problemIndex);
-        if (problemFolder.exists()) {
-            try {
-                org.apache.commons.io.FileUtils.deleteDirectory(problemFolder);
-            } catch (IOException e) {
-                logger.error(String.format("Can't delete problem directory (contest %d, problem %d)",
-                        contestId, problemIndex), e);
-            }
-        }
+        List<StorageOrder> storageOrders = new ArrayList<>();
+        storageOrders.add(new StorageOrderDeleteProblem(storageService, contestId, problemIndex));
+        storageService.executeOrders(storageOrders);
     }
 
 }

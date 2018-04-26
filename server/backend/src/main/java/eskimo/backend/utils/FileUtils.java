@@ -62,6 +62,12 @@ public class FileUtils {
         return filePath;
     }
 
+    public File createTmpFolder(File sourceFolder, String prefix) throws IOException {
+        Path targetFolder = Files.createTempDirectory(appSettingsProvider.getTempPath().toPath(), prefix);
+        org.apache.commons.io.FileUtils.copyDirectory(sourceFolder, targetFolder.toFile());
+        return targetFolder.toFile();
+    }
+
     private void deleteFile(File file) {
         try {
             org.apache.commons.io.FileUtils.forceDelete(file);
