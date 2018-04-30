@@ -32,26 +32,19 @@ public class JudgeService {
     private static final Logger logger = LoggerFactory.getLogger(JudgeService.class);
 
     @Autowired
-    private InvokerPool invokerPool;
-
-    @Autowired
     private SubmissionService submissionService;
-
+    @Autowired
+    private InvokerPool invokerPool;
     @Autowired
     private StorageService storageService;
-
     @Autowired
     private ProblemService problemService;
-
     @Autowired
     private ProgrammingLanguageService programmingLanguageService;
-
     @Autowired
     private InvokerService invokerService;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private DashboardService dashboardService;
 
@@ -124,12 +117,29 @@ public class JudgeService {
                         } catch (Throwable e) {
                             logger.error("Error occurred while job execution", e);
                         } finally {
+                            if (!invoker.isReachable()) {
+                                try {
+                                    judgeQueue.put(job);
+                                } catch (InterruptedException e) {
+                                    logger.error("Cant return failed job to judgeQueue", e);
+                                }
+                            }
                             invokerPool.release(invoker);
                         }
                     });
-                } catch (Throwable e) {
-                    logger.error("in judge thread", e);
+                } catch (Exception e) {
+                    logger.error("Exception in judge thread", e);
                 }
+            }
+        }
+    }
+
+    private class PingThread extends Thread {
+
+        @Override
+        public void run() {
+            while (true) {
+
             }
         }
     }

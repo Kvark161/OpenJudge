@@ -2,18 +2,21 @@ package eskimo.backend.judge;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
-public class Invoker {
+public class Invoker implements Cloneable {
 
+    private long id;
     private String protocol;
     private String host;
     private int port;
+    private int threadId;
     private int numberThreads;
-    private LocalDateTime lastSuccessPing;
+    private boolean reachable;
+    private Instant lastPing;
 
-    private String getUrl() {
+    public String getUrl() {
         return protocol + "://" + host + ":" + port;
     }
 
@@ -23,6 +26,24 @@ public class Invoker {
 
     public String getTestUrl() {
         return getUrl() + "/invoke/test-lazy";
+    }
+
+    public String getPingUrl() {
+        return getUrl() + "/ping";
+    }
+
+    @Override
+    public Invoker clone() {
+        Invoker result = new Invoker();
+        result.setId(id);
+        result.setProtocol(protocol);
+        result.setHost(host);
+        result.setPort(port);
+        result.setThreadId(threadId);
+        result.setNumberThreads(numberThreads);
+        result.setReachable(reachable);
+        result.setLastPing(lastPing);
+        return result;
     }
 
 }

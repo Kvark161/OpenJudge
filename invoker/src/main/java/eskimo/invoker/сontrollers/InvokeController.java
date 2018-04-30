@@ -6,8 +6,10 @@ import eskimo.invoker.services.ServerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class InvokeController {
@@ -44,9 +46,9 @@ public class InvokeController {
         return executeService.compile(compilationParams);
     }
 
-    @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = "/ping")
-    public void ping() {
+    public String ping() {
         logger.info("ping is ok");
+        return "ok";
     }
 }
