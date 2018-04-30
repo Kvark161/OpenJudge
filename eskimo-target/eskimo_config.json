@@ -1,0 +1,6 @@
+{
+  "storagePath": "~/eskimo/data/storage",
+  "tempPath": "~/eskimo/data/temp",
+  "defaultLanguage": "en",
+  "databasePath": "~/eskimo/data/h2"
+}
