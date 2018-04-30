@@ -17,7 +17,7 @@ import java.net.URL;
 public class AppSettingsProvider {
     private static final Logger logger = LoggerFactory.getLogger(AppSettingsProvider.class);
 
-    private static final String DEFAULT_PROPERTIES_PATH = "eskimo_config.json";
+    private static final String DEFAULT_PROPERTIES_PATH = "backend_config.json";
 
     @Autowired
     private Environment environment;
