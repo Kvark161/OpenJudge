@@ -18,5 +18,26 @@
             </li>
             <a routerLink="/p/contest/{{contestId}}/dashboard" class="nav-link">Dashboard</a>
         </ul>
+        <form *ngIf="!currentUserInfo.username || currentUserInfo.username == ''" class="form-inline my-2 my-lg-0">
+            <div class="form-group">
+                <input class="form-control-sm mr-sm-2 navbarInput" type="text" placeholder="Login"
+                       [(ngModel)]="usernameInput" name="username" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control-sm mr-sm-2 navbarInput" type="password" placeholder="Password"
+                       [(ngModel)]="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button class="btn-sm btn-success my-2 my-sm-0" type="submit" (click)="logIn()">Log-in</button>
+            </div>
+        </form>
+        <ul *ngIf="currentUserInfo.username && currentUserInfo.username != ''" class="navbar-nav navbar-right">
+            <li class="nav-item">
+                <p class="navbar-text">Logged in as {{currentUserInfo.username}} | </p>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" (click)="logOut()">Log-out</a>
+            </li>
+        </ul>
     </div>
 </nav>

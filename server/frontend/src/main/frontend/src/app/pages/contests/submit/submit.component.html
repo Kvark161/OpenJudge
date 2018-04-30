@@ -13,7 +13,7 @@
                     [class.is-invalid]="errorSelectedProblem != null" (change)="problemChanged()">
                 <option value="null" [selected]="true">Select problem...</option>
                 <option *ngFor="let problem of problems" [value]="problem.index">
-                    {{problem.name}}
+                    {{problem.index}}. {{problem.name}}
                 </option>
             </select>
             <div type="text" class="invalid-feedback">{{errorSelectedProblem}}</div>

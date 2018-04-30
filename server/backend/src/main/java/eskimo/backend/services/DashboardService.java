@@ -107,7 +107,7 @@ public class DashboardService {
         problemResult.setLastTime(submission.getSendingTime().getEpochSecond() - contest.getStartTime().getEpochSecond());
         if (submission.getStatus().equals(Submission.Status.ACCEPTED)) {
             problemResult.setScore(1);
-            long penalty = 20 * problemResult.getAttempts() + problemResult.getLastTime();
+            long penalty = 20 * (problemResult.getAttempts() - 1) + problemResult.getLastTime() / 60;
             problemResult.setPenalty(penalty);
             problemResult.setSuccess(true);
         }
@@ -122,6 +122,12 @@ public class DashboardService {
                     Contest contest = contestService.getContestById(submission.getContestId());
                     Dashboard dashboard = getDashboard(submission.getContestId());
                     updateDashboard(dashboard, contest, submission);
+                    dashboard.getTable().sort((a, b) -> {
+                        if (a.getScore() != b.getScore()) {
+                            return Long.compare(b.getScore(), a.getScore());
+                        }
+                        return Long.compare(a.getPenalty(), b.getPenalty());
+                    });
                     dashboardDao.updateDashboard(dashboard);
                 } catch (Throwable e) {
                     logger.error("in dashboard thread", e);

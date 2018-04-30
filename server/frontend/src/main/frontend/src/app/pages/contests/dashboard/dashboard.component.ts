@@ -34,6 +34,7 @@ export class DashboardComponent {
     }
 
     renderLastTime(lastTime: number) {
+        lastTime = Math.floor(lastTime / 60)
         if (lastTime == null) {
             return ''
         }
