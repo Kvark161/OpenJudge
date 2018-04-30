@@ -19,6 +19,7 @@ public abstract class AbstractTestParams {
     public static final String OUTPUT_FILE = "{OUTPUT_EXE}";
     public static final String CHECKER_REPORT_FILE = "{CHECKER_REPORT_FILE}";
 
+    private long submissionId;
     private List<String> runCommand;
     private List<String> checkCommand;
     private byte[] executable;

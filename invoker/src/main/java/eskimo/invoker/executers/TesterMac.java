@@ -100,12 +100,12 @@ public class TesterMac implements Tester {
     private void runChecker() throws IOException, InterruptedException {
         testParams.setCheckCommand(DEFAULT_CHECK_COMMAND);
         List<String> command = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), "");
-        checkerExecutionResult = invokerUtils.executeCommand(command, 30000);
+        checkerExecutionResult = invokerUtils.executeCommand(command, 30000, null);
     }
 
     private void runSolution() throws IOException, InterruptedException {
         List<String> command = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
-        solutionExecutionResult = invokerUtils.executeCommand(command, testParams.getTimeLimit(), inputFile, outputFile, null);
+        solutionExecutionResult = invokerUtils.executeCommand(command, testParams.getTimeLimit(), inputFile, outputFile, null, null);
     }
 
     private void prepareFolder(TestData testData, File folder) throws IOException, InterruptedException {
@@ -118,9 +118,9 @@ public class TesterMac implements Tester {
         if (!testParams.isCheckerDisabled()) {
             FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
             FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
-            invokerUtils.executeCommand(new String[]{"chmod", "+x", checkerFile.getAbsolutePath()}, 0, null, null, null);
+            invokerUtils.executeCommand(new String[]{"chmod", "+x", checkerFile.getAbsolutePath()}, 0, null, null, null, null);
         }
         FileUtils.writeStringToFile(inputFile, testData.getInputData());
-        invokerUtils.executeCommand(new String[]{"chmod", "+x", executableFile.getAbsolutePath()}, 0,  null, null, null);
+        invokerUtils.executeCommand(new String[]{"chmod", "+x", executableFile.getAbsolutePath()}, 0, null, null, null, null);
     }
 }

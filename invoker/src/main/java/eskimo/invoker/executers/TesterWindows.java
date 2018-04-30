@@ -61,6 +61,8 @@ public class TesterWindows implements Tester {
 
     @Override
     public TestResult[] test() {
+        final long submissionId = testParams.getSubmissionId();
+        logger.info("begin testing submissionId=" + submissionId);
         if (testParams.getNumberTests() <= 0) {
             return new TestResult[0];
         }
@@ -71,40 +73,49 @@ public class TesterWindows implements Tester {
             testResults[i].setIndex(i + 1);
         }
         try {
+            logger.info("initialize files for testing submissionId=" + submissionId);
             init();
+            logger.info("working folder for submissionId=" + submissionId + " is \"" + workingFolder.getAbsolutePath() + "\"");
             for (int i = 0; i < testParams.getNumberTests(); ++i) {
                 try {
                     TestData testData = testParams.getTestData(i, !testParams.isCheckerDisabled());
+                    logger.info("prepare test data for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                     prepareToTest(testData);
+                    logger.info("run solution on testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                     runTest();
                     if (!testParams.isCheckerDisabled()) {
+                        logger.info("prepare checker for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                         prepareToCheck(testData);
+                        logger.info("run checker for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                         runCheck();
                     }
+                    logger.info("prepare test result for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                     testResults[i] = prepareTestResult();
                     testResults[i].setIndex(i + 1);
                     if (TestVerdict.ACCEPTED != testResults[i].getVerdict() &&
                             TestVerdict.CHECKER_DISABLED != testResults[i].getVerdict() &&
                             testParams.isStopOnFirstFail()) {
+                        logger.info("stop testing on first fail on testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                         return testResults;
                     }
                     releaseAfterTest();
                 } catch (Throwable e) {
                     testResults[i].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-                    logger.error("Error during testing", e);
+                    logger.error("Error during testing submissionId=" + submissionId, e);
                     return testResults;
                 }
             }
         } catch (IOException e) {
             testResults[0].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-            logger.error("Can't initialize environment to test", e);
+            logger.error("Can't initialize environment to test submissionId=" + submissionId, e);
             return testResults;
         } finally {
+            logger.info("finish testing submissionId=" + submissionId);
             if (workingFolder != null && invokerSettings.deleteTempFiles()) {
                 try {
                     FileUtils.deleteDirectory(workingFolder);
                 } catch (IOException e) {
-                    logger.warn("Can't delete directory after compilation: " + workingFolder.getAbsolutePath());
+                    logger.warn("Can't delete directory after test: " + workingFolder.getAbsolutePath());
                 }
             }
         }
@@ -175,7 +186,7 @@ public class TesterWindows implements Tester {
         if (!statFile.exists()) {
             result.setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
             result.setMessage("Stat file is not exist");
-            logger.error("Stats file is not exist");
+            logger.error("Stats file is not exist for submissionId=" + testParams.getSubmissionId());
             return result;
         }
         try (InputStream is = new FileInputStream(statFile)) {
@@ -187,7 +198,7 @@ public class TesterWindows implements Tester {
         } catch (Throwable e) {
             result.setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
             result.setMessage("Can't load stats");
-            logger.error("Can't load stats", e);
+            logger.error("Can't load stats for submissionId=" + testParams.getSubmissionId(), e);
             return result;
         }
         if (result.getUsedMemory() > testParams.getMemoryLimit()) {
@@ -197,7 +208,6 @@ public class TesterWindows implements Tester {
             result.setVerdict(TestVerdict.TIME_LIMIT_EXCEED);
             result.setMessage("Used more then " + testParams.getTimeLimit() + "ms");
         } else if (executionTestResult.getExitCode() != 0) {
-            logger.info("Runtime error! Stdout: {}. Stderr: {}", executionTestResult.getStdout(), executionTestResult.getStderr());
             result.setVerdict(TestVerdict.RUNTIME_ERROR);
             result.setMessage("Exit code: " + executionTestResult.getExitCode());
         } else if (testParams.isCheckerDisabled()) {
@@ -205,7 +215,6 @@ public class TesterWindows implements Tester {
             result.setMessage("Checker is disabled");
         } else if (!checkerReportFile.exists()) {
             result.setVerdict(TestVerdict.CHECKER_ERROR);
-            logger.info("Checker error: {}", executionTestResult.getStderr());
             result.setMessage("Checker report is not exist, exit code: " + executionCheckResult.getExitCode());
         } else {
             String checkerMessage = null;
@@ -221,12 +230,11 @@ public class TesterWindows implements Tester {
                     checkerMessage = el.getFirstChild().getNodeValue();
                 }
             } catch (ParserConfigurationException | SAXException e) {
-                logger.warn("Can't parse checker report", e);
+                logger.error("Can't parse checker report for submissionId=" + testParams.getSubmissionId(), e);
                 result.setVerdict(TestVerdict.CHECKER_ERROR);
                 result.setMessage("Incorrect checker result");
                 return result;
             }
-            logger.error("checkerResult = " + checkerResult);
             result.setMessage(checkerMessage);
             if ("accepted".equals(checkerResult)) {
                 result.setVerdict(TestVerdict.ACCEPTED);

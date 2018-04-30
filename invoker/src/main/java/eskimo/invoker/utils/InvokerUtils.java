@@ -41,19 +41,22 @@ public class InvokerUtils {
         return Files.createTempDirectory(temp.toPath(), prefix).toFile();
     }
 
-    public ExecutionResult executeCommand(List<String> commands, long timeLimit) throws IOException, InterruptedException {
-        return executeCommand(commands, timeLimit, null, null, null);
+    public ExecutionResult executeCommand(List<String> commands, long timeLimit, File workingDirectory) throws IOException, InterruptedException {
+        return executeCommand(commands, timeLimit, null, null, null, workingDirectory);
     }
 
-    public ExecutionResult executeCommand(List<String> commands, long timeLimit, File redirectInput, File redirectOutput, File redirectError) throws IOException, InterruptedException {
-        return executeCommand(commands.toArray(new String[0]), timeLimit, redirectInput, redirectOutput, redirectError);
+    public ExecutionResult executeCommand(List<String> commands, long timeLimit, File redirectInput, File redirectOutput, File redirectError, File workingDirectory) throws IOException, InterruptedException {
+        return executeCommand(commands.toArray(new String[0]), timeLimit, redirectInput, redirectOutput, redirectError, workingDirectory);
     }
 
-    public ExecutionResult executeCommand(String[] commands, long timeLimit, File redirectInput, File redirectOutput, File redirectError) throws IOException, InterruptedException {
+    public ExecutionResult executeCommand(String[] commands, long timeLimit, File redirectInput, File redirectOutput, File redirectError, File workingDirectory) throws IOException, InterruptedException {
         File folder = null;
         try {
             logger.info("execute command: " + Arrays.toString(commands));
             ProcessBuilder pb = new ProcessBuilder(commands);
+            if (workingDirectory != null) {
+                pb.directory(workingDirectory);
+            }
             folder = invokerUtils.createTempFolder();
             if (redirectInput != null) {
                 pb.redirectInput(redirectInput);
@@ -130,7 +133,7 @@ public class InvokerUtils {
         }
         command.add("--allow-create-processes");
         command.addAll(programCommand);
-        return executeCommand(command, 60000);
+        return executeCommand(command, 60000, workingFolder);
     }
 
     private File prepareRunner() throws IOException {

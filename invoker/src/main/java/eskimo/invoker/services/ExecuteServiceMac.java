@@ -37,7 +37,7 @@ public class ExecuteServiceMac implements ExecuteService {
                 testLibPath = testLib.getAbsolutePath();
             }
             List<String> command = compilationParams.prepareCompilationCommand(sourceFile.getAbsolutePath(), executableFile.getAbsolutePath(), testLibPath);
-            ExecutionResult executionResult = invokerUtils.executeCommand(command, compilationParams.getTimeLimit());
+            ExecutionResult executionResult = invokerUtils.executeCommand(command, compilationParams.getTimeLimit(), null);
             CompilationResult compilationResult = new CompilationResult();
             compilationResult.setCompilerStdout(executionResult.getStdout());
             compilationResult.setCompilerStderr(executionResult.getStderr());
