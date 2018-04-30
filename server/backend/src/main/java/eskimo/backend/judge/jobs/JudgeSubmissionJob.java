@@ -128,6 +128,7 @@ public class JudgeSubmissionJob extends JudgeJob {
         testParams.setAnswerName("answer.txt");
         testParams.setCheckerTimeLimit(30000);
         testParams.setCheckerMemoryLimit(512000);
+        testParams.setSubmissionId(submission.getId());
 
         TestResult[] testResults = invokerService.test(invoker, testParams);
         submission.setTestResults(testResults);

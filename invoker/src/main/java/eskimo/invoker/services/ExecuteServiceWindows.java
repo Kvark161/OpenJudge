@@ -28,9 +28,12 @@ public class ExecuteServiceWindows implements ExecuteService {
 
     @Override
     public CompilationResult compile(CompilationParams compilationParams) {
+        final long submissionId = compilationParams.getSubmissionId();
+        logger.info("begin compilation submissionId=" + submissionId);
         File folder = null;
         try {
             folder = invokerUtils.createRunnerTempFolder("compile-");
+            logger.info("prepare folder for compilation submissionId=" + submissionId + " folder: \"" + folder.getAbsolutePath() + "\"");
             File sourceFile = new File(folder.getAbsolutePath() + File.separator + compilationParams.getSourceFileName());
             File executableFile = new File(folder.getAbsolutePath() + File.separator + compilationParams.getExecutableFileName());
             File stdout = new File(folder.getAbsolutePath() + File.separator + "stdout.txt");
@@ -44,7 +47,9 @@ public class ExecuteServiceWindows implements ExecuteService {
             }
             FileUtils.writeStringToFile(sourceFile, compilationParams.getSourceCode());
             List<String> commands = compilationParams.prepareCompilationCommand(sourceFile.getAbsolutePath(), executableFile.getAbsolutePath(), testLibPath);
+            logger.info("compile submissionId=" + submissionId);
             ExecutionResult executionResult = invokerUtils.executeRunner(commands, null, stdout, stderr, stat, compilationParams.getTimeLimit(), compilationParams.getMemoryLimit(), folder, true);
+            logger.info("prepare compilation result for submissionId=" + submissionId);
             CompilationResult compilationResult = new CompilationResult();
             if (stdout.exists()) {
                 compilationResult.setCompilerStdout(FileUtils.readFileToString(stdout));
@@ -56,17 +61,16 @@ public class ExecuteServiceWindows implements ExecuteService {
                 compilationResult.setVerdict(CompilationVerdict.SUCCESS);
                 compilationResult.setExecutable(FileUtils.readFileToByteArray(executableFile));
             } else {
-                logger.info("COMPILATION ERROR! Stdout = {}. Stderr = {}", executionResult.getStdout(), executionResult.getStderr());
-                logger.info("");
                 compilationResult.setVerdict(CompilationVerdict.COMPILATION_ERROR);
             }
             return compilationResult;
         } catch (Throwable e) {
-            logger.error("Error while compiling", e);
+            logger.error("Error while compiling submissionId=" + submissionId, e);
             CompilationResult compilationResult = new CompilationResult();
             compilationResult.setVerdict(CompilationVerdict.INTERNAL_INVOKER_ERROR);
             return compilationResult;
         } finally {
+            logger.info("finish compilation submissionId=" + submissionId);
             if (folder != null && invokerSettings.deleteTempFiles()) {
                 try {
                     FileUtils.deleteDirectory(folder);
