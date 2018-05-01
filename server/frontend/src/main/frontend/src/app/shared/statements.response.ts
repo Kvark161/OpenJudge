@@ -1,3 +1,5 @@
+import {Test} from "./test";
+
 export class StatementsResponse {
     timeLimit: number;
     memoryLimit: number;
@@ -9,15 +11,10 @@ export class StatementsResponse {
     legend: string;
     input: string;
     output: string;
-    sampleTests: SampleTest[];
+    sampleTests: Test[];
     notes: string;
 
     hasPdf: boolean;
 
     error: string;
-}
-
-export class SampleTest {
-    input: string;
-    output: string;
 }

@@ -19,7 +19,7 @@ public class Statement {
     private String legend;
     private String input;
     private String output;
-    private List<SampleTest> sampleTests;
+    private List<Integer> sampleTestIndexes;
     private String notes;
 
 }

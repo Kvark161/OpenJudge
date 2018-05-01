@@ -9,13 +9,13 @@
         <p>Output type: {{statements.outputFile}}</p>
     </div>
 
-    <p>{{statements.legend}}</p>
+    <p style="white-space: pre-line">{{statements.legend}}</p>
 
     <h3>Input:</h3>
-    <p>{{statements.input}}</p>
+    <p style="white-space: pre-line">{{statements.input}}</p>
 
     <h3>Output:</h3>
-    <p>{{statements.output}}</p>
+    <p style="white-space: pre-line">{{statements.output}}</p>
 
     <h3>Sample tests:</h3>
     <table class="table table-bordered">
@@ -27,15 +27,15 @@
         </thead>
         <tbody>
         <tr *ngFor="let sample of statements.sampleTests">
-            <td>{{sample.input}}</td>
-            <td>{{sample.output}}</td>
+            <td style="white-space: pre-line">{{sample.input}}</td>
+            <td style="white-space: pre-line">{{sample.output}}</td>
         </tr>
         </tbody>
     </table>
 
     <div *ngIf="statements.notes != ''">
         <h3>Notes:</h3>
-        <p>{{statements.notes}}</p>
+        <p style="white-space: pre-line">{{statements.notes}}</p>
     </div>
 
     <div *ngIf="statements.hasPdf">

@@ -2,8 +2,8 @@ package eskimo.backend.dao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eskimo.backend.entity.SampleTest;
 import eskimo.backend.entity.Statement;
+import eskimo.backend.rest.request.EditProblemRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +48,12 @@ public class StatementsDao {
         params.put("legend", statement.getLegend());
         params.put("input", statement.getInput());
         params.put("output", statement.getOutput());
-        params.put("samples", getStringSampleTests(statement.getSampleTests()));
+        params.put("samples", getStringSampleTests(statement.getSampleTestIndexes()));
         params.put("notes", statement.getNotes());
         return jdbcInsert.executeAndReturnKey(params).longValue();
     }
 
-    private String getStringSampleTests(List<SampleTest> sampleTests) {
+    private String getStringSampleTests(List<Integer> sampleTests) {
         try {
             return JSON_MAPPER.writer().writeValueAsString(sampleTests);
         } catch (JsonProcessingException e) {
@@ -73,6 +73,26 @@ public class StatementsDao {
         return jdbcTemplate.queryForList(sql, new Object[]{problemId}, String.class);
     }
 
+    public void editStatements(long problemId, EditProblemRequest editProblemRequest) {
+        //todo languages
+        String sql = "UPDATE statements SET " +
+                "name = ?, " +
+                "legend = ?, " +
+                "input = ?, " +
+                "output = ?, " +
+                "notes = ? " +
+                "WHERE problem_id = ? and language = 'english'";
+        jdbcTemplate.update(sql, editProblemRequest.getName(), editProblemRequest.getLegend(), editProblemRequest.getInput(),
+                editProblemRequest.getOutput(), editProblemRequest.getNotes(), problemId);
+    }
+
+    public void updateSamples(long problemId, List<Integer> sampleIndexes) {
+        String sql = "UPDATE statements SET " +
+                "samples = ? " +
+                "WHERE problem_id = ? and language = 'english'";
+        jdbcTemplate.update(sql, getStringSampleTests(sampleIndexes), problemId);
+    }
+
     private static class StatementRowMapper implements RowMapper<Statement> {
         @Override
         public Statement mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -88,7 +108,7 @@ public class StatementsDao {
             statement.setOutput(resultSet.getString("output"));
             String samples = resultSet.getString("samples");
             try {
-                statement.setSampleTests(asList(JSON_MAPPER.readValue(samples, SampleTest[].class)));
+                statement.setSampleTestIndexes(asList(JSON_MAPPER.readValue(samples, Integer[].class)));
             } catch (IOException e) {
                 logger.error("can not parse sample tests from database");
             }

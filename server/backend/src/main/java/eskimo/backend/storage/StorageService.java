@@ -71,19 +71,23 @@ public class StorageService {
         return new File(getProblemFolder(contestId, problemIndex) + File.separator + TESTS_FOLDER_NAME);
     }
 
-    public File getTestInputFile(long contestId, long problemIndex, long testIndex) {
+    public File getTestInputFile(long contestId, long problemIndex, int testIndex) {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".in");
     }
 
-    public String getTestInputData(long contestId, long problemIndex, long testIndex) throws IOException {
+    public String getTestInputData(long contestId, long problemIndex, int testIndex) throws IOException {
         return FileUtils.readFileToString(getTestInputFile(contestId, problemIndex, testIndex));
     }
 
-    public File getTestAnswerFile(long contestId, long problemIndex, long testIndex) {
+    public long getTestInputSize(long contestId, long problemIndex, int testIndex) {
+        return FileUtils.sizeOf(getTestInputFile(contestId, problemIndex, testIndex));
+    }
+
+    public File getTestAnswerFile(long contestId, long problemIndex, int testIndex) {
         return new File(getTestsFolder(contestId, problemIndex) + File.separator + String.format("%03d", testIndex) + ".ans");
     }
 
-    public String getTestAnswerData(long contestId, long problemIndex, long testIndex) throws IOException {
+    public String getTestAnswerData(long contestId, long problemIndex, int testIndex) throws IOException {
         return FileUtils.readFileToString(getTestAnswerFile(contestId, problemIndex, testIndex));
     }
 

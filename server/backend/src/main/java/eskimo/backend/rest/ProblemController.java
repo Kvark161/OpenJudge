@@ -1,5 +1,6 @@
 package eskimo.backend.rest;
 
+import eskimo.backend.entity.Test;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.annotations.AccessLevel;
@@ -10,6 +11,8 @@ import eskimo.backend.storage.TemporaryFile;
 import eskimo.backend.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -105,8 +111,18 @@ public class ProblemController {
     public ValidationResult editProblem(@PathVariable("id") Long contestId,
                                         @PathVariable("index") Integer problemIndex,
                                         @RequestPart(value = "checkerFile", required=false) MultipartFile checkerFile,
+                                        @RequestPart(value = "statementsPdf", required=false) MultipartFile statementsPdf,
                                         @RequestPart("problem") EditProblemRequest editProblemRequest) {
-        return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile);
+        return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile, statementsPdf);
+    }
+
+    @PostMapping(value = "contest/{id}/problem/{index}/edit_tests")
+    @AccessLevel(role = Role.ADMIN)
+    public ValidationResult editTests(@PathVariable("id") Long contestId,
+                                      @PathVariable("index") Integer problemIndex,
+                                      @RequestBody List<Test> tests)
+    {
+        return problemService.editTests(contestId, problemIndex, tests);
     }
 
     @DeleteMapping("contest/{id}/problem/{index}")
@@ -114,4 +130,24 @@ public class ProblemController {
     public void deleteProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
         problemService.deleteProblem(contestId, problemIndex);
     }
+
+    @GetMapping("contest/{id}/problem/{index}/checker")
+    @AccessLevel(role = Role.ADMIN)
+    public ResponseEntity<Resource> downloadChecker(@PathVariable("id") Long contestId,
+                                                    @PathVariable("index") Integer problemIndex)
+            throws FileNotFoundException
+    {
+        File checkerFile = problemService.getCheckerFile(contestId, problemIndex);
+        if (!checkerFile.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(checkerFile));
+
+        return ResponseEntity.ok()
+                .contentLength(checkerFile.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
+
 }

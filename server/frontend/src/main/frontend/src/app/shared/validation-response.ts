@@ -10,7 +10,7 @@ export class ValidationResult {
     }
 
     setErrors(errors) {
-        this.errors = errors;
+        this.errors = errors ? errors : {};
     }
 
     isEmpty() {
