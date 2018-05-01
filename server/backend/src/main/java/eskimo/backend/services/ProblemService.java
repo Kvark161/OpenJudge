@@ -97,29 +97,22 @@ public class ProblemService {
     }
 
     public ProblemForEditResponse getProblemForEdit(long contestId, long problemIndex) {
-        ProblemForEditResponse response = new ProblemForEditResponse();
-
-        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
-        response.fillProblemFields(contestProblem);
+        Problem problem = problemDao.getContestProblem(contestId, problemIndex);
 
         //todo languages
-        Statement statements = statementsDao.getStatements(contestProblem.getId(), "english");
-        response.fillStatementsFields(statements);
+        Statement statements = statementsDao.getStatements(problem.getId(), "english");
 
-        List<Integer> testIndexes = IntStream.range(1, contestProblem.getTestsCount() + 1).boxed()
+        List<Integer> testIndexes = IntStream.range(1, problem.getTestsCount() + 1).boxed()
                 .collect(Collectors.toList());
         List<Test> tests = getTests(contestId, problemIndex, testIndexes);
         statements.getSampleTestIndexes().forEach(sampleIndex -> tests.get(sampleIndex - 1).setSample(true));
-        response.setTests(tests);
 
         File checkerSourceFile = storageService.getCheckerSourceFile(contestId, problemIndex);
-        response.setCheckerExists(checkerSourceFile.exists());
 
         //todo languages
         File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex, "en");
-        response.setStatementsPdfExists(statementsPdfFile.exists());
 
-        return response;
+        return new ProblemForEditResponse(problem, statements, tests, checkerSourceFile.exists(), statementsPdfFile.exists());
     }
 
     public ValidationResult editProblem(long contestId, long problemIndex, EditProblemRequest editProblemRequest,
@@ -137,7 +130,7 @@ public class ProblemService {
         return validationResponse;
     }
 
-    private void editProblemFiles(long contestId, int problemIndex, MultipartFile checkerMultipartFile,
+    private void editProblemFiles(long contestId, long problemIndex, MultipartFile checkerMultipartFile,
                                   MultipartFile statementsPdfMultipartFile)
     {
         List<StorageOrder> filesToSave = new ArrayList<>();
@@ -187,7 +180,7 @@ public class ProblemService {
         return validationResponse;
     }
 
-    public ValidationResult editTests(long contestId, int problemIndex, List<Test> tests) {
+    public ValidationResult editTests(long contestId, long problemIndex, List<Test> tests) {
         ValidationResult validationResult = validateTests(tests);
         if (validationResult.hasErrors()) {
             return validationResult;
@@ -242,13 +235,13 @@ public class ProblemService {
             logger.info("Not found statement for contestId={} problemIndex={}", contestId, problemIndex);
             throw new RuntimeException("Statement doesn't exist");
         }
-        List<Test> sampleTests = getTests(contestId, problemIndex, statements.getSampleTestIndexes());
+        List<Test> sampleTests = getTests(contestId, problemIndex, statement.getSampleTestIndexes());
         sampleTests.forEach(test -> test.setSample(true));
         boolean hasPdf = storageService.getStatementFile(contestId, problemIndex, language).exists();
         return new StatementsResponse(problem, statement, hasPdf, sampleTests);
     }
 
-    private List<Test> getTests(long contestId, int problemIndex, List<Integer> testsIndexes) {
+    private List<Test> getTests(long contestId, long problemIndex, List<Integer> testsIndexes) {
         List<Test> tests = new ArrayList<>();
         for (Integer testIndex: testsIndexes) {
             Test test = new Test();
@@ -280,10 +273,6 @@ public class ProblemService {
     public byte[] getPdfStatements(Long contestId, Integer problemIndex, String language) throws IOException {
         File statementFile = storageService.getStatementFile(contestId, problemIndex, language);
         return Files.readAllBytes(statementFile.toPath());
-    }
-
-    public File getCheckerFile(Long contestId, Integer problemIndex) {
-        return storageService.getCheckerSourceFile(contestId, problemIndex);
     }
 
     /**

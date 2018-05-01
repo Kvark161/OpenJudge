@@ -7,6 +7,7 @@ import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
 import eskimo.backend.services.ProblemService;
+import eskimo.backend.storage.StorageService;
 import eskimo.backend.storage.TemporaryFile;
 import eskimo.backend.utils.FileUtils;
 import org.slf4j.Logger;
@@ -32,10 +33,12 @@ public class ProblemController {
     private static final Logger logger = LoggerFactory.getLogger(ProblemController.class);
 
     private final ProblemService problemService;
+    private final StorageService storageService;
     private final FileUtils fileUtils;
 
-    public ProblemController(ProblemService problemService, FileUtils fileUtils) {
+    public ProblemController(ProblemService problemService, StorageService storageService, FileUtils fileUtils) {
         this.problemService = problemService;
+        this.storageService = storageService;
         this.fileUtils = fileUtils;
     }
 
@@ -137,7 +140,7 @@ public class ProblemController {
                                                     @PathVariable("index") Integer problemIndex)
             throws FileNotFoundException
     {
-        File checkerFile = problemService.getCheckerFile(contestId, problemIndex);
+        File checkerFile = storageService.getCheckerSourceFile(contestId, problemIndex);
         if (!checkerFile.exists()) {
             return ResponseEntity.notFound().build();
         }
