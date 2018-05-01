@@ -10,6 +10,7 @@ import eskimo.backend.dao.StatementsDao;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Statement;
+import eskimo.backend.entity.Test;
 import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
@@ -30,6 +31,7 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.Arrays.asList;
 
@@ -97,31 +99,73 @@ public class ProblemService {
     }
 
     public ProblemForEditResponse getProblemForEdit(long contestId, int problemIndex) {
-        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
         ProblemForEditResponse response = new ProblemForEditResponse();
+
+        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
         response.fillProblemFields(contestProblem);
+
+        //todo languages
+        Statement statements = statementsDao.getStatements(contestProblem.getId(), "english");
+        response.fillStatementsFields(statements);
+
+        List<Integer> testIndexes = IntStream.range(1, contestProblem.getTestsCount() + 1).boxed()
+                .collect(Collectors.toList());
+        List<Test> tests = getTests(contestId, problemIndex, testIndexes);
+        statements.getSampleTestIndexes().forEach(sampleIndex -> tests.get(sampleIndex - 1).setSample(true));
+        response.setTests(tests);
+
+        File checkerSourceFile = storageService.getCheckerSourceFile(contestId, problemIndex);
+        response.setCheckerExists(checkerSourceFile.exists());
+
+        //todo languages
+        File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex, "en");
+        response.setStatementsPdfExists(statementsPdfFile.exists());
+
         return response;
     }
 
     public ValidationResult editProblem(long contestId, int problemIndex, EditProblemRequest editProblemRequest,
-                                        MultipartFile checkerMultipartFile) {
+                                        MultipartFile checkerMultipartFile,
+                                        MultipartFile statementsPdfMultipartFile)
+    {
         ValidationResult validationResponse = validateProblemEdit(editProblemRequest);
         if (!validationResponse.getErrors().isEmpty()) {
             return validationResponse;
         }
+        editProblemFiles(contestId, problemIndex, checkerMultipartFile, statementsPdfMultipartFile);
+        problemDao.editContestProblem(contestId, problemIndex, editProblemRequest);
+
+        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
+        statementsDao.editStatements(contestProblem.getId(), editProblemRequest);
+        return validationResponse;
+    }
+
+    private void editProblemFiles(long contestId, int problemIndex, MultipartFile checkerMultipartFile,
+                                  MultipartFile statementsPdfMultipartFile)
+    {
         List<StorageOrder> filesToSave = new ArrayList<>();
         if (checkerMultipartFile != null) {
             try (TemporaryFile checkerFile =
                          new TemporaryFile(fileUtils.saveFile(checkerMultipartFile, "checker-", ".cpp"))) {
                 filesToSave.add(new StorageOrderCopyFile(checkerFile.getFile(),
                         storageService.getCheckerSourceFile(contestId, problemIndex)));
-                storageService.executeOrders(filesToSave);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        problemDao.editContestProblem(contestId, problemIndex, editProblemRequest);
-        return validationResponse;
+        if (statementsPdfMultipartFile != null) {
+            try (TemporaryFile statementsPdf =
+                         new TemporaryFile(fileUtils.saveFile(checkerMultipartFile, "statements-", ".pdf"))) {
+                //todo languages
+                filesToSave.add(new StorageOrderCopyFile(statementsPdf.getFile(),
+                        storageService.getStatementFile(contestId, problemIndex, "english")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!filesToSave.isEmpty()) {
+            storageService.executeOrders(filesToSave);
+        }
     }
 
     private ValidationResult validateProblemEdit(EditProblemRequest editProblemRequest) {
@@ -140,7 +184,49 @@ public class ProblemService {
                 validationResponse.addError("memoryLimit", "Memory limit should not be less than 1 byte");
             }
         }
+        if (editProblemRequest.getName() == null || editProblemRequest.getName().equals("")) {
+            validationResponse.addError("name", "Should not be empty");
+        }
         return validationResponse;
+    }
+
+    public ValidationResult editTests(long contestId, int problemIndex, List<Test> tests) {
+        ValidationResult validationResult = validateTests(tests);
+        if (validationResult.hasErrors()) {
+            return validationResult;
+        }
+        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
+
+        List<StorageOrder> orders = new ArrayList<>();
+        for (int i = 0; i < tests.size(); ++i) {
+            Test test = tests.get(i);
+            orders.add(new StorageOrderCreateFile(storageService.getTestInputFile(contestId, problemIndex, i + 1),
+                    test.getInput()));
+        }
+        storageService.executeOrders(orders);
+
+        List<Integer> sampleIndexes = new ArrayList<>();
+        for (int i = 0; i < tests.size(); ++i) {
+            if (tests.get(i).isSample()) {
+                sampleIndexes.add(i + 1);
+            }
+        }
+        statementsDao.updateSamples(contestProblem.getId(), sampleIndexes);
+
+        generateAnswers(contestId, problemIndex);
+
+        return validationResult;
+    }
+
+    private ValidationResult validateTests(List<Test> tests) {
+        ValidationResult validationResult = new ValidationResult();
+        for (int i = 0; i < tests.size(); ++i) {
+            Test test = tests.get(i);
+            if (test.getInput() == null || test.getInput().equals("")) {
+                validationResult.addError("tests[" + i + "].input", "Should not be empty");
+            }
+        }
+        return validationResult;
     }
 
     public StatementsResponse getStatements(Long contestId, Integer problemIndex, String language) {
@@ -157,7 +243,40 @@ public class ProblemService {
         Statement statements = statementsDao.getStatements(contestProblem.getId(), resultLanguage);
         statementsResponse.fillStatementsFields(statements);
         statementsResponse.setHasPdf(storageService.getStatementFile(contestId, problemIndex, language).exists());
+
+        List<Test> sampleTests = getTests(contestId, problemIndex, statements.getSampleTestIndexes());
+        sampleTests.forEach(test -> test.setSample(true));
+        statementsResponse.setSampleTests(sampleTests);
         return statementsResponse;
+    }
+
+    private List<Test> getTests(long contestId, int problemIndex, List<Integer> testsIndexes) {
+        List<Test> tests = new ArrayList<>();
+        for (Integer testIndex: testsIndexes) {
+            Test test = new Test();
+            try {
+                long testInputSize = storageService.getTestInputSize(contestId, problemIndex, testIndex);
+                if (testInputSize > 256) {
+                    logger.info("Test too big: contestId = {}, problemIndex = {}, testIndex = {}",
+                            contestId, problemIndex, testIndex);
+                } else {
+                    String testInputData = storageService.getTestInputData(contestId, problemIndex, testIndex);
+                    test.setInput(testInputData);
+                }
+            } catch (IOException e) {
+                logger.error("Can't get test input data contestId = {}, problemIndex = {}, testIndex = {}", contestId,
+                        problemIndex, testIndex);
+            }
+            try {
+                String testAnswerData = storageService.getTestAnswerData(contestId, problemIndex, testIndex);
+                test.setOutput(testAnswerData);
+            } catch (IOException e) {
+                logger.error("Can't get test answer data contestId = {}, problemIndex = {}, testIndex = {}", contestId,
+                        problemIndex, testIndex);
+            }
+            tests.add(test);
+        }
+        return tests;
     }
 
     public byte[] getPdfStatements(Long contestId, Integer problemIndex, String language) throws IOException {
@@ -165,6 +284,9 @@ public class ProblemService {
         return Files.readAllBytes(statementFile.toPath());
     }
 
+    public File getCheckerFile(Long contestId, Integer problemIndex) {
+        return storageService.getCheckerSourceFile(contestId, problemIndex);
+    }
 
     /**
      * If statements on requested language exists - returns requested language,

@@ -9,4 +9,10 @@ import lombok.Setter;
 public class EditProblemRequest {
     private Long timeLimit;
     private Long memoryLimit;
+
+    private String name;
+    private String legend;
+    private String input;
+    private String output;
+    private String notes;
 }

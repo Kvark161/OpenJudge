@@ -9,7 +9,7 @@ import "rxjs/add/observable/throw";
 import {Problem} from "../shared/problem";
 import {StatementsResponse} from "../shared/statements.response";
 import {ValidationResult} from "../shared/validation-response";
-import {EditProblemRequest} from "../shared/edit-problem";
+import {EditProblemRequest} from "../shared/requests/edit-problem.request";
 import {User} from "../shared/user";
 import {CreatingResponse} from "../shared/creating-response";
 
@@ -92,6 +92,14 @@ export class EskimoService {
 
     private getUrlCreateUsers(usersNumber) {
         return this.urlHost + "users/?usersNumber=" + usersNumber;
+    }
+
+    private getUrlEditTests(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex) + "/edit_tests";
+    }
+
+    private getUrlGetChecker(contestId: number, problemIndex: number) {
+        return this.getUrlContestProblem(contestId, problemIndex) + "/checker";
     }
 
     private userMapper(jsonUser): User {
@@ -204,7 +212,12 @@ export class EskimoService {
 
     editProblem(contestId: number, problemId: number, problem: EditProblemRequest): Observable<ValidationResult> {
         let formData = new FormData();
-        formData.append('checkerFile', problem.checkerFile, problem.checkerFile.name);
+        if (problem.checkerFile != null) {
+            formData.append('checkerFile', problem.checkerFile, problem.checkerFile.name);
+        }
+        if (problem.statementsPdf != null) {
+            formData.append('statementsPdf', problem.statementsPdf, problem.statementsPdf.name);
+        }
         formData.append('problem', new Blob([JSON.stringify(problem)], {
             type: "application/json"
         }));
@@ -215,6 +228,12 @@ export class EskimoService {
         return this.http.post(this.getUrlEditProblem(contestId, problemId),
             formData, options)
             .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    editTests(contestId: number, problemId: number, problem: EditProblemRequest) {
+        return this.http.post(this.getUrlEditTests(contestId, problemId), problem.tests, this.optionsWithCredentials)
+            .map(res => CreatingResponse.fromJson(res.json(), this.userMapper))
             .catch(this.handleError);
     }
 
@@ -252,6 +271,11 @@ export class EskimoService {
         return this.http.post(this.getUrlCreateUsers(usersNumber), {}, this.optionsWithCredentials)
             .map(res => CreatingResponse.fromJson(res.json(), this.userListMapper))
             .catch(this.handleError);
+    }
+
+    downloadChecker(contestId: number, problemIndex: number) {
+        window.open(this.getUrlGetChecker(contestId, problemIndex));
+
     }
 
     // noinspection JSMethodCanBeStatic

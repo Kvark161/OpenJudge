@@ -1,34 +1,148 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
     <div class="row"><p></p></div>
+    <h3 style="text-align: center">Editing problem</h3>
+    <div class="row"><p></p></div>
     <form *ngIf="problem">
         <div class="form-group row">
-            <label for="timeLimit">Choose time limit (in milliseconds):</label>
-            <input id="timeLimit" class="form-control" type="number" min="1"
-                   [(ngModel)]="problem.timeLimit" name="timeLimit"
-                   [class.is-invalid]="validationResult.errors.timeLimit"
-                    (input)="fieldChanged('timeLimit')"/>
+            <label for="timeLimit" class="col-sm-3 col-form-label text-right">Time limit (in milliseconds):</label>
+            <div class="col-sm-7">
+                <input id="timeLimit" class="form-control" type="number" min="1"
+                       [(ngModel)]="problem.timeLimit" name="timeLimit"
+                       [class.is-invalid]="validationResult.errors.timeLimit"
+                       (input)="fieldChanged('timeLimit')"/>
+            </div>
             <div type="text" class="invalid-feedback">
                 <span *ngFor="let error of validationResult.errors.timeLimit">{{error}} </span>
             </div>
         </div>
+
         <div class="form-group row">
-            <label for="memoryLimit">Choose memory limit (in bytes):</label>
-            <input id="memoryLimit" class="form-control" type="number" min="1"
-                   [(ngModel)]="problem.memoryLimit" name="memoryLimit"
-                   [class.is-invalid]="validationResult.errors.memoryLimit"
-                   (input)="fieldChanged('memoryLimit')"/>
+            <label for="memoryLimit" class="col-sm-3 col-form-label text-right">Memory limit (in bytes):</label>
+            <div class="col-sm-7">
+                <input id="memoryLimit" class="form-control" type="number" min="1"
+                       [(ngModel)]="problem.memoryLimit" name="memoryLimit"
+                       [class.is-invalid]="validationResult.errors.memoryLimit"
+                       (input)="fieldChanged('memoryLimit')"/>
+            </div>
             <div type="text" class="invalid-feedback">
                 <span *ngFor="let error of validationResult.errors.memoryLimit">{{error}} </span>
             </div>
         </div>
         <div class="form-group row">
-            <label for="checker">Choose checker:</label>
-            <input type="file" id="checker" class="form-control-file" (change)="fileChange($event)" name="file">
+            <label for="checker" class="col-sm-3 col-form-label text-right">Checker file:</label>
+            <div class="col-sm-7 align-middle">
+                <input type="file" id="checker" class="form-control-file" (change)="fileChange($event)" name="file">
+                <button *ngIf="problem.checkerExists" class="btn btn-link" (click)="downloadChecker()">
+                    Download current checker
+                </button>
+            </div>
+        </div>
+
+        <!--statements-->
+        <div class="form-group row">
+            <label for="name" class="col-sm-3 col-form-label text-right">Name:</label>
+            <div class="col-sm-7">
+                <input id="name" class="form-control" type="text"
+                       [(ngModel)]="problem.name" name="problemName"
+                       [class.is-invalid]="validationResult.errors.name"
+                       (input)="fieldChanged('name')"/>
+            </div>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.name">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="legend" class="col-sm-3 col-form-label text-right">Legend:</label>
+            <div class="col-sm-7">
+                <textarea id="legend" class="form-control" type="text"
+                          [(ngModel)]="problem.legend" name="legend"
+                          [class.is-invalid]="validationResult.errors.legend"
+                          (input)="fieldChanged('legend')"></textarea>
+            </div>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.legend">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="input" class="col-sm-3 col-form-label text-right">Input description:</label>
+            <div class="col-sm-7">
+                <textarea id="input" class="form-control" type="text"
+                          [(ngModel)]="problem.input" name="input"
+                          [class.is-invalid]="validationResult.errors.input"
+                          (input)="fieldChanged('input')"></textarea>
+            </div>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.input">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="output" class="col-sm-3 col-form-label text-right">Output description:</label>
+            <div class="col-sm-7">
+                <textarea id="output" class="form-control" type="text"
+                          [(ngModel)]="problem.output" name="output"
+                          [class.is-invalid]="validationResult.errors.output"
+                          (input)="fieldChanged('output')"></textarea>
+            </div>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.output">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="notes" class="col-sm-3 col-form-label text-right">Notes:</label>
+            <div class="col-sm-7">
+                <textarea id="notes" class="form-control" type="text"
+                          [(ngModel)]="problem.notes" name="notes"
+                          [class.is-invalid]="validationResult.errors.notes"
+                          (input)="fieldChanged('notes')"></textarea>
+            </div>
+            <div type="text" class="invalid-feedback">
+                <span *ngFor="let error of validationResult.errors.notes">{{error}} </span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="statementsPdf" class="col-sm-3 col-form-label text-right">Statements pdf:</label>
+            <div class="col-sm-7 align-middle">
+                <input type="file" id="statementsPdf" class="form-control-file" (change)="fileChange($event)"
+                       name="statementsPdf">
+                <button *ngIf="problem.statementsPdfExists" class="btn btn-link" (click)="downloadStatementsPdf()">
+                    Download current pdf statements
+                </button>
+            </div>
         </div>
 
         <span class="help-block">{{validationResult.errors[generalErrorPath]}}</span>
 
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Edit problem</button>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Save problem</button>
+        <span *ngIf="problemEditedSuccessfully" style="color: green">Successful</span>
+    </form>
+    <div class="row"><p></p></div>
+    <h3 style="text-align: center">Editing tests</h3>
+    <div class="row"><p></p></div>
+    <form *ngIf="problem">
+        <table class="table table-bordered">
+            <thead>
+            <td>№</td>
+            <td>Input</td>
+            <td>Output</td>
+            <td>Sample</td>
+            </thead>
+            <tbody>
+            <tr *ngFor="let test of problem.tests; let i = index">
+                <td>{{i + 1}}</td>
+                <td>
+                    <textarea class="form-control" type="text" name="testInput{{i}}"
+                              [class.is-invalid]="validationResult.errors['tests[' + i + '].input']"
+                              (input)="fieldChanged('tests[' + i + '].input')">{{test.input}}</textarea>
+                </td>
+                <td>{{test.output ? test.output : 'Not generated'}}</td>
+                <td>
+                    <input type="checkbox" id="userRole" name="isSampleTest{{i}}" [(ngModel)]="test.isSample" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" (click)="editTests()">Save tests</button>
+        <span *ngIf="testsEditedSuccessfully" style="color: green">Successful</span>
     </form>
 </div>

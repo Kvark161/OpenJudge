@@ -1,14 +1,12 @@
 package eskimo.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
-import java.io.File;
 
 @Data
 public class Test {
-
-    private long index;
-    private File inputFile;
-    private File answerFile;
-
+    private String input;
+    private String output;
+    @JsonProperty("isSample")
+    private boolean isSample;
 }

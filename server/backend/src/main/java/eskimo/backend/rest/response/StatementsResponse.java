@@ -1,8 +1,8 @@
 package eskimo.backend.rest.response;
 
 import eskimo.backend.entity.Problem;
-import eskimo.backend.entity.SampleTest;
 import eskimo.backend.entity.Statement;
+import eskimo.backend.entity.Test;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +21,7 @@ public class StatementsResponse {
     private String legend;
     private String input;
     private String output;
-    private List<SampleTest> sampleTests;
+    private List<Test> sampleTests;
     private String notes;
 
     private boolean hasPdf;
@@ -40,7 +40,10 @@ public class StatementsResponse {
         legend = statement.getLegend();
         input = statement.getInput();
         output = statement.getOutput();
-        sampleTests = statement.getSampleTests();
         notes = statement.getNotes();
+    }
+
+    public void setSampleTests(List<Test> tests) {
+        sampleTests = tests;
     }
 }
