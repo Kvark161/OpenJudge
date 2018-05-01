@@ -6,12 +6,15 @@ import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.dashboard.Dashboard;
 import eskimo.backend.entity.dashboard.DashboardRow;
 import eskimo.backend.entity.dashboard.ProblemResult;
+import eskimo.backend.entity.enums.ScoringSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -23,6 +26,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class DashboardService {
 
     private static final Logger logger = LoggerFactory.getLogger(DashboardService.class);
+
+    private static long KIROV_MAX_SCORE = 100;
 
     @Autowired
     private DashboardDao dashboardDao;
@@ -55,6 +60,8 @@ public class DashboardService {
         if (dashboard == null) {
             dashboard = new Dashboard();
             dashboard.setContestId(contestId);
+            dashboard.setTable(new ArrayList<>());
+            dashboard.setLastUpdate(Instant.now());
         }
         return dashboard;
     }
@@ -103,6 +110,16 @@ public class DashboardService {
         if (problemResult.isSuccess()) {
             return;
         }
+        if (contest.getScoringSystem() == ScoringSystem.ACM) {
+            lightUpdateACM(contest, problemResult, submission);
+        } else if (contest.getScoringSystem() == ScoringSystem.KIROV) {
+            lightUpdateKirov(contest, problemResult, submission);
+        } else {
+            logger.error("Dashboard is disable as scoring system is not set for contestId=" + contest.getId());
+        }
+    }
+
+    private void lightUpdateACM(Contest contest, ProblemResult problemResult, Submission submission) {
         problemResult.setAttempts(problemResult.getAttempts() + 1);
         problemResult.setLastTime(submission.getSendingTime().getEpochSecond() - contest.getStartTime().getEpochSecond());
         if (submission.getStatus().equals(Submission.Status.ACCEPTED)) {
@@ -112,6 +129,24 @@ public class DashboardService {
             problemResult.setSuccess(true);
         }
     }
+
+    private void lightUpdateKirov(Contest contest, ProblemResult problemResult, Submission submission) {
+        long score = 0;
+        if (submission.getStatus().equals(Submission.Status.ACCEPTED)) {
+            score = KIROV_MAX_SCORE;
+        } else if (submission.getNumberTests() > 0) {
+            score = KIROV_MAX_SCORE * submission.getPassedTests() / submission.getNumberTests();
+        }
+        final long currentScore = problemResult.getAttempts() == 0 ? -1 : problemResult.getScore();
+        if (score > currentScore) {
+            problemResult.setScore(score);
+            problemResult.setAttempts(problemResult.getAttempts() + 1);
+            problemResult.setLastTime(submission.getSendingTime().getEpochSecond() - contest.getStartTime().getEpochSecond());
+            problemResult.setPenalty(0);
+            problemResult.setSuccess(score == KIROV_MAX_SCORE);
+        }
+    }
+
 
     private class UpdateThread extends Thread {
         @Override

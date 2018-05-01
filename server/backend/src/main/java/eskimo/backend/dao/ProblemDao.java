@@ -75,7 +75,7 @@ public class ProblemDao {
     }
 
     @Transactional
-    public Problem getContestProblem(Long contestId, Integer problemIndex) {
+    public Problem getContestProblem(Long contestId, Long problemIndex) {
         String sql = "SELECT * FROM problems " +
                 " WHERE contest_id = ? AND contest_index = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{contestId, problemIndex}, ROW_MAPPER);
@@ -92,7 +92,7 @@ public class ProblemDao {
         return value + 1;
     }
 
-    public void editContestProblem(Long contestId, Integer problemIndex, EditProblemRequest editProblemRequest) {
+    public void editContestProblem(Long contestId, Long problemIndex, EditProblemRequest editProblemRequest) {
         String sql = "UPDATE problems " +
                 "SET " +
                 "time_limit = ?," +
@@ -128,7 +128,7 @@ public class ProblemDao {
     }
 
     @Transactional
-    public void deleteProblem(Long contestId, Integer problemIndex) {
+    public void deleteProblem(Long contestId, Long problemIndex) {
         String sql = "DELETE FROM problems WHERE contest_id = ? AND contest_index = ?";
         jdbcTemplate.update(sql, contestId, problemIndex);
     }

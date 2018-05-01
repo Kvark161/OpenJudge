@@ -2,6 +2,7 @@ package eskimo.backend.rest;
 
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.enums.Role;
+import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.services.ContestService;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class ContestController {
     public Contest createContest(@RequestBody Contest contest) {
         Instant startTime = contest.getStartTime().minusMillis(TimeZone.getDefault().getRawOffset());
         contest.setStartTime(startTime);
+        contest.setScoringSystem(ScoringSystem.KIROV);
         return contestService.createContest(contest);
     }
 }

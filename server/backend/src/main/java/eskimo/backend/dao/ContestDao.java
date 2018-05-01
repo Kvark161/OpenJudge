@@ -1,6 +1,7 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.entity.Contest;
+import eskimo.backend.entity.enums.ScoringSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +26,16 @@ public class ContestDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private final ContestRowMapper rowMapper = new ContestRowMapper();
+
     @Autowired
     public ContestDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Contest> getAllContests() {
-        String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests ORDER BY id";
-        return jdbcTemplate.query(sql, new ContestRowMapper());
+        String sql = "SELECT * FROM contests ORDER BY id";
+        return jdbcTemplate.query(sql, rowMapper);
     }
 
     public Long insertContest(Contest contest) {
@@ -43,13 +46,14 @@ public class ContestDao {
         params.put("name", contest.getName());
         params.put("start_time", Timestamp.from(contest.getStartTime()));
         params.put("duration_in_minutes", contest.getDuration());
+        params.put("scoring_system", contest.getScoringSystem());
         return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
     }
 
     public Contest getContestInfo(long id) {
         try {
-            String sql = "SELECT id, name, start_time, duration_in_minutes FROM contests WHERE id = ?";
-            return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ContestDao.ContestRowMapper());
+            String sql = "SELECT * FROM contests WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{id}, rowMapper);
         } catch (EmptyResultDataAccessException e) {
             logger.warn("can not get contest by id = " + id, e);
             return null;
@@ -70,6 +74,7 @@ public class ContestDao {
             contest.setName(resultSet.getString("name"));
             contest.setStartTime(resultSet.getTimestamp("start_time").toInstant());
             contest.setDuration(resultSet.getInt("duration_in_minutes"));
+            contest.setScoringSystem(ScoringSystem.valueOf(resultSet.getString("scoring_system")));
             return contest;
         }
     }

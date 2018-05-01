@@ -1,12 +1,11 @@
 package eskimo.backend.judge.jobs;
 
+import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.ProgrammingLanguage;
 import eskimo.backend.entity.Submission;
-import eskimo.backend.services.DashboardService;
-import eskimo.backend.services.InvokerService;
-import eskimo.backend.services.ProblemService;
-import eskimo.backend.services.SubmissionService;
+import eskimo.backend.entity.enums.ScoringSystem;
+import eskimo.backend.services.*;
 import eskimo.backend.storage.StorageService;
 import eskimo.invoker.entity.CompilationResult;
 import eskimo.invoker.entity.TestLazyParams;
@@ -26,10 +25,13 @@ public class JudgeSubmissionJob extends JudgeJob {
     private final Submission submission;
     private final SubmissionService submissionService;
     private final InvokerService invokerService;
-    private final Problem problem;
     private final ProgrammingLanguage programmingLanguage;
     private final StorageService storageService;
     private final DashboardService dashboardService;
+    private final ContestService contestService;
+
+    private final Problem problem;
+    private final Contest contest;
     private CompilationResult compilationResult;
 
     public JudgeSubmissionJob(Submission submission,
@@ -38,7 +40,8 @@ public class JudgeSubmissionJob extends JudgeJob {
                               ProblemService problemService,
                               ProgrammingLanguage programmingLanguage,
                               StorageService storageService,
-                              DashboardService dashboardService)
+                              DashboardService dashboardService,
+                              ContestService contestService)
     {
         this.submission = submission;
         this.submissionService = submissionService;
@@ -46,9 +49,11 @@ public class JudgeSubmissionJob extends JudgeJob {
         this.programmingLanguage = programmingLanguage;
         this.storageService = storageService;
         this.dashboardService = dashboardService;
+        this.contestService = contestService;
         submission.setStatus(Submission.Status.PENDING);
         submissionService.updateSubmission(submission);
         problem = problemService.getProblemById(submission.getProblemId());
+        contest = contestService.getContestById(submission.getContestId());
     }
 
     @Override
@@ -66,7 +71,6 @@ public class JudgeSubmissionJob extends JudgeJob {
             if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
                 updateVerdict(RUNNING);
             } else {
-                logger.info("Compilation error: {}", compilationResult.getCompilerStderr() );
                 submission.setMessage(compilationResult.getCompilerStderr());
                 updateVerdict(COMPILATION_ERROR);
                 return;
@@ -111,7 +115,7 @@ public class JudgeSubmissionJob extends JudgeJob {
             testParams.setExecutableName("main.exe");
         }
         try {
-            testParams.setChecker(org.apache.commons.io.FileUtils.readFileToByteArray(storageService.getCheckerExe(submission.getContestId(), submission.getProblemId())));
+            testParams.setChecker(org.apache.commons.io.FileUtils.readFileToByteArray(storageService.getCheckerExe(submission.getContestId(), submission.getProblemIndex())));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -120,8 +124,8 @@ public class JudgeSubmissionJob extends JudgeJob {
         testParams.setTimeLimit(problem.getTimeLimit());
         testParams.setMemoryLimit(problem.getMemoryLimit());
         testParams.setContestId(submission.getContestId());
-        testParams.setProblemId(submission.getProblemId());
-        testParams.setNumberTests(problem.getTestsCount());
+        testParams.setProblemIndex(submission.getProblemIndex());
+        testParams.setNumberTests(submission.getNumberTests());
         testParams.setRunCommand(programmingLanguage.getRunCommand());
         testParams.setInputName("input.txt");
         testParams.setOutputName("output.txt");
@@ -129,6 +133,7 @@ public class JudgeSubmissionJob extends JudgeJob {
         testParams.setCheckerTimeLimit(30000);
         testParams.setCheckerMemoryLimit(512000);
         testParams.setSubmissionId(submission.getId());
+        testParams.setStopOnFirstFail(contest.getScoringSystem() == ScoringSystem.ACM);
 
         TestResult[] testResults = invokerService.test(invoker, testParams);
         submission.setTestResults(testResults);
@@ -153,6 +158,7 @@ public class JudgeSubmissionJob extends JudgeJob {
             } else if (ACCEPTED == submission.getStatus()) {
                 submission.setStatus(verdictToStatus(result.getVerdict()));
                 submission.setMessage(result.getMessage());
+                submission.setFirstFailTest(result.getIndex());
             }
         }
     }

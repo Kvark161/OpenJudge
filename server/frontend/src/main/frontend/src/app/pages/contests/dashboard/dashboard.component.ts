@@ -10,7 +10,7 @@ import {Problem} from "../../../shared/problem";
 })
 export class DashboardComponent {
     contestId: number;
-    contest: Contest = new Contest(null, null, null, null);
+    contest: Contest;
     dashboard;
     problems: Problem[];
 

@@ -26,14 +26,9 @@ public class StatementsResponse {
 
     private boolean hasPdf;
 
-    private String error;
-
-    public void fillProblemFields(Problem problem) {
+    public StatementsResponse(Problem problem, Statement statement, boolean hasPdf) {
         timeLimit = problem.getTimeLimit();
         memoryLimit = problem.getMemoryLimit();
-    }
-
-    public void fillStatementsFields(Statement statement) {
         inputFile = statement.getInputFile();
         outputFile = statement.getOutputFile();
         name = statement.getName();
@@ -42,5 +37,7 @@ public class StatementsResponse {
         output = statement.getOutput();
         sampleTests = statement.getSampleTests();
         notes = statement.getNotes();
+        this.hasPdf = hasPdf;
     }
+
 }

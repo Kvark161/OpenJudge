@@ -11,9 +11,9 @@ public class StorageOrderDeleteProblem extends StorageOrder {
 
     private StorageService storageService;
     private Long contestId;
-    private Integer problemIndex;
+    private Long problemIndex;
 
-    public StorageOrderDeleteProblem(StorageService storageService, Long contestId, Integer problemIndex) {
+    public StorageOrderDeleteProblem(StorageService storageService, Long contestId, Long problemIndex) {
         this.storageService = storageService;
         this.contestId = contestId;
         this.problemIndex = problemIndex;

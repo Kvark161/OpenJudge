@@ -12,12 +12,12 @@ public class TestLazyParams extends AbstractTestParams {
     private ServerService serverService;
 
     private long contestId;
-    private long problemId;
+    private long problemIndex;
     private int numberTests;
 
     @Override
     public TestData getTestData(int testIndex, boolean needAnswer) {
-        return serverService.getTestData(contestId, problemId, testIndex + 1L, needAnswer);
+        return serverService.getTestData(contestId, problemIndex, testIndex + 1L, needAnswer);
     }
 
     @Override

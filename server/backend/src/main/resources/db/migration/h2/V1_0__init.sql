@@ -14,16 +14,17 @@ CREATE TABLE SUBMISSIONS
   USER_ID           BIGINT                            NOT NULL,
   CONTEST_ID        BIGINT                            NOT NULL,
   PROBLEM_ID        BIGINT                            NOT NULL,
-  SOURCE_CODE       CLOB                              NOT NULL,
-  STATUS            VARCHAR(64)                       NOT NULL,
-  SENDING_DATE_TIME TIMESTAMP                         NOT NULL,
-  USED_TIME         BIGINT                            NOT NULL,
-  USED_MEMORY       BIGINT                            NOT NULL,
-  RESULT_DATA       CLOB                              NOT NULL,
-  NUMBER_TESTS      BIGINT                            NOT NULL,
-  PASSED_TESTS      BIGINT                            NOT NULL,
+  SOURCE_CODE       CLOB        NOT NULL,
+  STATUS            VARCHAR(64) NOT NULL,
+  SENDING_DATE_TIME TIMESTAMP   NOT NULL,
+  USED_TIME         BIGINT      NOT NULL,
+  USED_MEMORY       BIGINT      NOT NULL,
+  RESULT_DATA       CLOB        NOT NULL,
+  NUMBER_TESTS      BIGINT      NOT NULL,
+  PASSED_TESTS      BIGINT      NOT NULL,
+  FIRST_FAIL_TEST   BIGINT      NOT NULL,
   MESSAGE           VARCHAR(4096),
-  DASHBOARD_STATUS  VARCHAR(64)                       NOT NULL,
+  DASHBOARD_STATUS  VARCHAR(64) NOT NULL,
   CONSTRAINT FK_SUBMISSIONS_USERS FOREIGN KEY (USER_ID) REFERENCES USERS (ID)
 );
 
@@ -32,6 +33,7 @@ CREATE TABLE CONTESTS
   ID                  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   NAME                VARCHAR(256)                      NOT NULL,
   START_TIME          TIMESTAMP                         NOT NULL,
+  SCORING_SYSTEM      VARCHAR(64)                       NOT NULL,
   DURATION_IN_MINUTES INTEGER                           NOT NULL
 );
 

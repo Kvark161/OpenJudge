@@ -42,7 +42,7 @@ public class ProblemController {
     @GetMapping("contest/{id}/problem/{index}")
     @AccessLevel(role = Role.USER)
     public StatementsResponse getStatements(@PathVariable("id") Long contestId,
-                                            @PathVariable("index") Integer problemIndex) {
+                                            @PathVariable("index") Long problemIndex) {
         //todo user language
         String language = "en";
         return problemService.getStatements(contestId, problemIndex, language);
@@ -90,7 +90,7 @@ public class ProblemController {
 
     @PostMapping("contest/{id}/problem/{index}/answers/generate")
     @AccessLevel(role = Role.ADMIN)
-    public void generateAnswers(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
+    public void generateAnswers(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
         problemService.generateAnswers(contestId, problemIndex);
     }
 
@@ -111,7 +111,7 @@ public class ProblemController {
 
     @DeleteMapping("contest/{id}/problem/{index}")
     @AccessLevel(role = Role.ADMIN)
-    public void deleteProblem(@PathVariable("id") Long contestId, @PathVariable("index") Integer problemIndex) {
+    public void deleteProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
         problemService.deleteProblem(contestId, problemIndex);
     }
 }

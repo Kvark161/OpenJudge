@@ -71,9 +71,7 @@ public class ProblemService {
         Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
         return contestProblems.stream()
                 .map(problem -> {
-                    ProblemInfoResponse response = new ProblemInfoResponse();
-                    response.fillProblemFields(problem);
-                    response.setName(problemNames.get(problem.getId()));
+                    ProblemInfoResponse response = new ProblemInfoResponse(problem, problemNames.get(problem.getId()));
                     return response;
                 })
                 .collect(Collectors.toList());
@@ -96,14 +94,13 @@ public class ProblemService {
         return problemDao.getProblem(problemId);
     }
 
-    public ProblemForEditResponse getProblemForEdit(long contestId, int problemIndex) {
+    public ProblemForEditResponse getProblemForEdit(long contestId, long problemIndex) {
         Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
-        ProblemForEditResponse response = new ProblemForEditResponse();
-        response.fillProblemFields(contestProblem);
+        ProblemForEditResponse response = new ProblemForEditResponse(contestProblem);
         return response;
     }
 
-    public ValidationResult editProblem(long contestId, int problemIndex, EditProblemRequest editProblemRequest,
+    public ValidationResult editProblem(long contestId, long problemIndex, EditProblemRequest editProblemRequest,
                                         MultipartFile checkerMultipartFile) {
         ValidationResult validationResponse = validateProblemEdit(editProblemRequest);
         if (!validationResponse.getErrors().isEmpty()) {
@@ -143,21 +140,24 @@ public class ProblemService {
         return validationResponse;
     }
 
-    public StatementsResponse getStatements(Long contestId, Integer problemIndex, String language) {
-        StatementsResponse statementsResponse = new StatementsResponse();
-        Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
-        statementsResponse.fillProblemFields(contestProblem);
-
-        String resultLanguage = getExistingSuitableLanguage(contestProblem.getId(), language);
-        if (resultLanguage == null) {
-            statementsResponse.setError("There is no statements");
-            logger.warn("There is no statements for problem {} in contest {}", problemIndex, contestId);
-            return statementsResponse;
+    public StatementsResponse getStatements(Long contestId, Long problemIndex, String language) {
+        Problem problem = problemDao.getContestProblem(contestId, problemIndex);
+        if (problem == null) {
+            logger.info("Problem is not exists contestId={} problemIndex={}", contestId, problemIndex);
+            throw new RuntimeException("Problem doesn't exist");
         }
-        Statement statements = statementsDao.getStatements(contestProblem.getId(), resultLanguage);
-        statementsResponse.fillStatementsFields(statements);
-        statementsResponse.setHasPdf(storageService.getStatementFile(contestId, problemIndex, language).exists());
-        return statementsResponse;
+        String resultLanguage = getExistingSuitableLanguage(problem.getId(), language);
+        if (resultLanguage == null) {
+            logger.info("Not found language for statement for contestId={} problemIndex={}", contestId, problemIndex);
+            throw new RuntimeException("Statement doesn't exist");
+        }
+        Statement statement = statementsDao.getStatements(problem.getId(), resultLanguage);
+        if (statement == null) {
+            logger.info("Not found statement for contestId={} problemIndex={}", contestId, problemIndex);
+            throw new RuntimeException("Statement doesn't exist");
+        }
+        boolean hasPdf = storageService.getStatementFile(contestId, problemIndex, language).exists();
+        return new StatementsResponse(problem, statement, hasPdf);
     }
 
     public byte[] getPdfStatements(Long contestId, Integer problemIndex, String language) throws IOException {
@@ -210,7 +210,7 @@ public class ProblemService {
     }
 
     @Transactional
-    public void generateAnswers(Long contestId, Integer problemIndex) {
+    public void generateAnswers(Long contestId, Long problemIndex) {
         //todo problem doesn't exist
         Problem contestProblem = problemDao.getContestProblem(contestId, problemIndex);
         judgeService.generateAnswers(contestProblem);
@@ -278,7 +278,7 @@ public class ProblemService {
         return orders;
     }
 
-    public void deleteProblem(Long contestId, Integer problemIndex) {
+    public void deleteProblem(Long contestId, Long problemIndex) {
         Contest contestInfo = contestDao.getContestInfo(contestId);
         if (contestInfo.getStartTime() != null && contestInfo.getStartTime().isAfter(Instant.now())) {
             throw new UnsupportedOperationException("Can't delete problem, because contest is already started");
@@ -289,4 +289,7 @@ public class ProblemService {
         storageService.executeOrders(storageOrders);
     }
 
+    public Problem getProblem(long contestId, Long problemIndex) {
+        return problemDao.getContestProblem(contestId, problemIndex);
+    }
 }

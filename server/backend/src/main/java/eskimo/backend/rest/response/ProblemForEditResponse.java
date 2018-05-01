@@ -4,15 +4,16 @@ import eskimo.backend.entity.Problem;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Information for edit problem
- */
-@Getter @Setter
+@Getter
+@Setter
 public class ProblemForEditResponse {
+
+    private long id;
     private long timeLimit;
     private long memoryLimit;
 
-    public void fillProblemFields(Problem problem) {
+    public ProblemForEditResponse(Problem problem) {
+        id = problem.getId();
         timeLimit = problem.getTimeLimit();
         memoryLimit = problem.getMemoryLimit();
     }

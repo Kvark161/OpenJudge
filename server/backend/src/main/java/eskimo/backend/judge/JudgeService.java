@@ -47,6 +47,8 @@ public class JudgeService {
     private ObjectMapper objectMapper;
     @Autowired
     private DashboardService dashboardService;
+    @Autowired
+    private ContestService contestService;
 
     private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
@@ -75,7 +77,8 @@ public class JudgeService {
                 problemService,
                 programmingLanguageService.getProgrammingLanguage(submission.getProgrammingLanguageId()),
                 storageService,
-                dashboardService);
+                dashboardService,
+                contestService);
         putJob(job);
     }
 

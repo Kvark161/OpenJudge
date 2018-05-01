@@ -2,6 +2,7 @@ package eskimo.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import eskimo.backend.entity.enums.ScoringSystem;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ public class Contest implements Serializable {
     private String name;
     private Instant startTime;
     private Integer duration;
+    private ScoringSystem scoringSystem;
 
     @JsonSetter("startTime")
     public void setStartTimeJson(String startTime) {

@@ -168,8 +168,9 @@ export class EskimoService {
         window.open(this.getUrlStatementsPdf(contestId, problemIndex));
     }
 
-    submitProblem(contestId: number, problemId: number, sourceCode: string, selectedLanguage: number) : Observable<any> {
-        return this.http.post(this.urlSubmit, {contestId: contestId, problemId: problemId, sourceCode: sourceCode,
+    submitProblem(contestId: number, problemIndex: number, sourceCode: string, selectedLanguage: number): Observable<any> {
+        return this.http.post(this.urlSubmit, {
+                contestId: contestId, problemIndex: problemIndex, sourceCode: sourceCode,
             languageId: selectedLanguage},
             this.optionsWithCredentials);
     }
@@ -192,8 +193,8 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    getProblemForEdit(contestId: number, problemId: number) {
-        return this.http.get(this.getUrlGetProblemForEdit(contestId, problemId), this.optionsWithCredentials)
+    getProblemForEdit(contestId: number, problemIndex: number) {
+        return this.http.get(this.getUrlGetProblemForEdit(contestId, problemIndex), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }
@@ -202,7 +203,7 @@ export class EskimoService {
         return this.http.get(this.getUrlServerTime()).map(res => res.text()).catch(this.handleError);
     }
 
-    editProblem(contestId: number, problemId: number, problem: EditProblemRequest): Observable<ValidationResult> {
+    editProblem(contestId: number, problemIndex: number, problem: EditProblemRequest): Observable<ValidationResult> {
         let formData = new FormData();
         formData.append('checkerFile', problem.checkerFile, problem.checkerFile.name);
         formData.append('problem', new Blob([JSON.stringify(problem)], {
@@ -212,7 +213,7 @@ export class EskimoService {
         let headers = new Headers();
         //headers.append('Content-Type', undefined);
         let options = new RequestOptions({withCredentials: true, headers: headers});
-        return this.http.post(this.getUrlEditProblem(contestId, problemId),
+        return this.http.post(this.getUrlEditProblem(contestId, problemIndex),
             formData, options)
             .map(res => res.json())
             .catch(this.handleError);

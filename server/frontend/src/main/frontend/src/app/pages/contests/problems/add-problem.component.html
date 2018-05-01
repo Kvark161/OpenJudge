@@ -3,18 +3,24 @@
     <div class="row"><p></p></div>
     <form>
         <div class="form-group row">
-            <label for="inputType">Choose input type:</label>
-            <select id="inputType" class="form-control" [(ngModel)]="inputType" name="inputType">
+            <label for="inputType">Choose input type</label>
+            <select
+                    id="inputType"
+                    class="form-control"
+                    [(ngModel)]="inputType"
+                    name="inputType"
+                    style="width: 150px">
                 <option selected>Polygon zip</option>
-                <option>Polygon API</option>
             </select>
         </div>
         <div *ngIf="inputType=='Polygon zip'" class="form-group row">
             <label for="file">Input file</label>
-            <input type="file" id="file" class="form-control-file" (change)="fileChange($event)" name="file">
-        </div>
-        <div *ngIf="inputType=='Polygon API'" class="form-group row">
-            Not supported :D
+            <input type="file"
+                   id="file"
+                   class="form-control-file"
+                   (change)="fileChange($event)"
+                   name="file"
+                   style="width: 250px;">
         </div>
 
         <span class="help-block">{{error}}</span>

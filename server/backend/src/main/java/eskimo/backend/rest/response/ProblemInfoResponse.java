@@ -13,10 +13,11 @@ public class ProblemInfoResponse {
     private long timeLimit;
     private long memoryLimit;
 
-    public void fillProblemFields(Problem problem) {
+    public ProblemInfoResponse(Problem problem, String name) {
         id = problem.getId();
         index = problem.getIndex();
         timeLimit = problem.getTimeLimit();
         memoryLimit = problem.getMemoryLimit();
+        this.name = name;
     }
 }

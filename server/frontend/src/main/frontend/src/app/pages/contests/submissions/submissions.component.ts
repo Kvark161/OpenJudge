@@ -77,7 +77,7 @@ export class SubmissionsComponent {
         let status = submission.status;
         let result = this.Statuses[status].name;
         if (status == 'WRONG_ANSWER' || status == 'PRESENTATION_ERROR' || status == 'RUNTIME_ERROR' || status == 'TIME_LIMIT_EXCEED') {
-            result += ' on test ' + (submission.passedTests + 1);
+            result += ' on test ' + (submission.firstFailTest);
         }
         return result;
     }

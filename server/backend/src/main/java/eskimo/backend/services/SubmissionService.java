@@ -2,6 +2,7 @@ package eskimo.backend.services;
 
 import eskimo.backend.dao.SubmissionDao;
 import eskimo.backend.entity.Contest;
+import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.enums.Role;
@@ -28,6 +29,9 @@ public class SubmissionService {
 
     @Autowired
     private AuthenticationHolder authenticationHolder;
+
+    @Autowired
+    private ProblemService problemService;
 
     public List<Submission> getAllSubmissions() {
         return submissionDao.getSubmissions();
@@ -61,7 +65,6 @@ public class SubmissionService {
     private Submission createSubmission(SubmitProblemWebRequest submitProblemWebRequest) {
         Submission submission = new Submission();
         submission.setContestId(submitProblemWebRequest.getContestId());
-        submission.setProblemId(submitProblemWebRequest.getProblemId());
         submission.setSourceCode(submitProblemWebRequest.getSourceCode());
         submission.setProgrammingLanguageId(submitProblemWebRequest.getLanguageId());
         User user = authenticationHolder.getUser();
@@ -69,6 +72,10 @@ public class SubmissionService {
         submission.setUsername(user.getUsername());
         submission.setSendingTime(Instant.now());
         submission.setStatus(Submission.Status.SUBMITTED);
+        Problem problem = problemService.getProblem(submission.getContestId(), submitProblemWebRequest.getProblemIndex());
+        submission.setProblemId(problem.getId());
+        submission.setProblemIndex(problem.getIndex());
+        submission.setNumberTests(problem.getTestsCount());
         return submission;
     }
 

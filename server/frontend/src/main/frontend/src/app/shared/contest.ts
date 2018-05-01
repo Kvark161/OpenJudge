@@ -3,6 +3,7 @@ export class Contest {
     name: string;
     startTime: string;
     duration: number;
+    scoringSystem: string;
 
     constructor(id: number, name: string, startTime: string, duration: number) {
         this.id = id;

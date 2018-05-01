@@ -18,11 +18,13 @@ public class Submission {
     private String username;
     private long contestId;
     private long problemId;
+    private long problemIndex;
     private String sourceCode;
     private long programmingLanguageId;
     private Status status;
     private int passedTests;
     private int numberTests;
+    private int firstFailTest;
     private Instant sendingTime;
     private TestResult[] testResults;
     private long usedTime;

@@ -5,7 +5,7 @@ import eskimo.backend.dao.UserSessionsDao;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
-import eskimo.backend.rest.response.ChangingResponse;
+import eskimo.backend.rest.response.UpdateResponse;
 import eskimo.backend.rest.response.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +43,8 @@ public class UserService {
         this.userSessionsDao = userSessionsDao;
     }
 
-    public ChangingResponse<User> addUser(User user) {
-        ChangingResponse<User> changingResponse = new ChangingResponse<>();
+    public UpdateResponse<User> addUser(User user) {
+        UpdateResponse<User> changingResponse = new UpdateResponse<>();
         ValidationResult validationResponse = validateCommon(user);
         validateAdd(user, validationResponse);
         changingResponse.setValidationResult(validationResponse);
@@ -64,8 +64,8 @@ public class UserService {
         return changingResponse;
     }
 
-    public ChangingResponse<User> editUser(User user) {
-        ChangingResponse<User> changingResponse = new ChangingResponse<>();
+    public UpdateResponse<User> editUser(User user) {
+        UpdateResponse<User> changingResponse = new UpdateResponse<>();
         ValidationResult validationResponse = validateCommon(user);
         validateEdit(user, validationResponse);
         changingResponse.setValidationResult(validationResponse);
@@ -82,8 +82,8 @@ public class UserService {
         return changingResponse;
     }
 
-    public ChangingResponse<List<User>> createNUsers(Integer usersNumber) {
-        ChangingResponse<List<User>> response = new ChangingResponse<>();
+    public UpdateResponse<List<User>> createNUsers(Integer usersNumber) {
+        UpdateResponse<List<User>> response = new UpdateResponse<>();
         ValidationResult validationResult = new ValidationResult();
         if (usersNumber == null || usersNumber < 1 || usersNumber > 100) {
             validationResult.addError("usersNumber", "Should be between 1 and 100");

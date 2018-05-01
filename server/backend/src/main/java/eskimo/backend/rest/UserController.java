@@ -5,7 +5,7 @@ import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
-import eskimo.backend.rest.response.ChangingResponse;
+import eskimo.backend.rest.response.UpdateResponse;
 import eskimo.backend.rest.response.UserInfoResponse;
 import eskimo.backend.services.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -95,19 +95,19 @@ public class UserController {
 
     @PostMapping("/user")
     @AccessLevel(role = Role.ADMIN)
-    public ChangingResponse<User> createUser(@RequestBody User user) {
+    public UpdateResponse<User> createUser(@RequestBody User user) {
         return userService.addUser(user);
     }
 
     @PostMapping("/user/{id}")
     @AccessLevel(role = Role.ADMIN)
-    public ChangingResponse<User> editUser(@RequestBody User user) {
+    public UpdateResponse<User> editUser(@RequestBody User user) {
         return userService.editUser(user);
     }
 
     @PostMapping("users")
     @AccessLevel(role = Role.ADMIN)
-    public ChangingResponse<List<User>> createUsers(@RequestParam("usersNumber") Integer usersNumber) {
+    public UpdateResponse<List<User>> createUsers(@RequestParam("usersNumber") Integer usersNumber) {
         return userService.createNUsers(usersNumber);
     }
 }

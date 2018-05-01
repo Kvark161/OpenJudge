@@ -87,9 +87,6 @@ public class InvokerUtils {
             }
             if (redirectError.exists()) {
                 result.setStderr(FileUtils.readFileToString(redirectError));
-                if (!result.getStderr().equals("")) {
-                    logger.info("Stderr: {}", result.getStderr());
-                }
             }
             result.setTimeOutExceeded(timeOutExceeded);
             return result;

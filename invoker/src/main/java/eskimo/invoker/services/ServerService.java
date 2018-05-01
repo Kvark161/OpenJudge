@@ -25,11 +25,13 @@ public class ServerService {
         this.invokerConfig = invokerConfig;
     }
 
-    public TestData getTestData(long contestId, long problemId, long testId, boolean needAnswer) {
+    public TestData getTestData(long contestId, long problemIndex, long testId, boolean needAnswer) {
         TestData testData = restTemplate.getForObject(invokerConfig.getServerUrlGetTestData() + "?" +
-                "contestId=" + contestId + "&problemId=" + problemId + "&testId=" + testId +
+                "contestId=" + contestId + "&problemIndex=" + problemIndex + "&testId=" + testId +
                 "&needAnswer=" + needAnswer, TestData.class);
-        logger.info("Download test data for contestId=" + contestId + " problemId=" + problemId + " testId=" + testId + " needAnswer=" + needAnswer + " inputSize=" + testData.getInputData().length() + " answerSize=" + testData.getAnswerData().length());
+        int inputSize = testData.getInputData() == null ? 0 : testData.getInputData().length();
+        int answerSize = testData.getAnswerData() == null ? 0 : testData.getAnswerData().length();
+        logger.info("Download test data for contestId=" + contestId + " problemIndex=" + problemIndex + " testId=" + testId + " needAnswer=" + needAnswer + " inputSize=" + inputSize + " answerSize=" + answerSize);
         return testData;
     }
 

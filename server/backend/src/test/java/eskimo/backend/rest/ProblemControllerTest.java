@@ -28,11 +28,7 @@ public class ProblemControllerTest extends BaseTest {
         Problem problem = createProblem();
         List<ProblemInfoResponse> problems = problemController.getProblems(problem.getContestId());
         Map<Long, String> problemNames = problemDao.getProblemNames(problem.getContestId());
-        ProblemInfoResponse expected = new ProblemInfoResponse();
-        expected.setIndex(problem.getIndex());
-        expected.setName(problemNames.get(problem.getId()));
-        expected.setMemoryLimit(problem.getMemoryLimit());
-        expected.setTimeLimit(problem.getTimeLimit());
+        ProblemInfoResponse expected = new ProblemInfoResponse(problem, problemNames.get(problem.getId()));
         assertThat(problems, containsInAnyOrder(singletonList(samePropertyValuesAs(expected))));
     }
 

@@ -103,7 +103,7 @@ public class GenerateProblemAnswersJob extends JudgeJob {
         testParams.setExecutableName(FilenameUtils.getBaseName(solutionFile.getName()) + "." + solutionLanguage.getBinaryExtension());
         testParams.setCheckerDisabled(true);
         testParams.setContestId(problem.getContestId());
-        testParams.setProblemId(problem.getId());
+        testParams.setProblemIndex(problem.getIndex());
         testParams.setNumberTests(problem.getTestsCount());
         testParams.setStopOnFirstFail(false);
         testParams.setRunCommand(solutionLanguage.getRunCommand());

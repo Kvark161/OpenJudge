@@ -6,7 +6,7 @@ import eskimo.backend.dao.UserSessionsDao;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
-import eskimo.backend.rest.response.ChangingResponse;
+import eskimo.backend.rest.response.UpdateResponse;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +36,7 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void validateCommon_UsernameEmpty() {
         User user = new User();
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field username",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(true));
@@ -46,7 +46,7 @@ public class UserServiceTest extends BaseTest {
     public void validateCommon_UsernameHasWrongSymbols() {
         User user = new User();
         user.setUsername("asd7200-AG");
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field username",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(true));
@@ -59,7 +59,7 @@ public class UserServiceTest extends BaseTest {
                 .map(Object::toString)
                 .collect(joining(""))
         );
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field username",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(true));
@@ -72,7 +72,7 @@ public class UserServiceTest extends BaseTest {
                 .map(Object::toString)
                 .collect(joining(""))
         );
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("username should be valid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(false));
@@ -82,7 +82,7 @@ public class UserServiceTest extends BaseTest {
     public void validateCommon_ValidUsername() {
         User user = new User();
         user.setUsername("asdjk7899AHS");
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("username should be valid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(false));
@@ -92,7 +92,7 @@ public class UserServiceTest extends BaseTest {
     public void validateAdd_UserAlreadyExists() {
         Long id = userDao.addUser(getValidUser());
         User validUserToAdd = getValidUser();
-        ChangingResponse<User> userChangingResponse = userService.addUser(validUserToAdd);
+        UpdateResponse<User> userChangingResponse = userService.addUser(validUserToAdd);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field username",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(true));
@@ -103,7 +103,7 @@ public class UserServiceTest extends BaseTest {
     @Test
     public void validateCommon_PasswordEmpty() {
         User user = new User();
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field password",
                 userChangingResponse.getValidationResult().hasErrorsOnField("password"), is(true));
@@ -113,7 +113,7 @@ public class UserServiceTest extends BaseTest {
     public void validateCommon_PasswordHasWrongSymbols() {
         User user = new User();
         user.setPassword("asd7200-AG");
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field password",
                 userChangingResponse.getValidationResult().hasErrorsOnField("password"), is(true));
@@ -126,7 +126,7 @@ public class UserServiceTest extends BaseTest {
                 .map(Object::toString)
                 .collect(joining(""))
         );
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("should be validation error on field password",
                 userChangingResponse.getValidationResult().hasErrorsOnField("password"), is(true));
@@ -139,7 +139,7 @@ public class UserServiceTest extends BaseTest {
                 .map(Object::toString)
                 .collect(joining(""))
         );
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("password should be valid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("password"), is(false));
@@ -149,7 +149,7 @@ public class UserServiceTest extends BaseTest {
     public void validateCommon_ValidPassword() {
         User user = new User();
         user.setPassword("asdjk7899AHS");
-        ChangingResponse<User> userChangingResponse = userService.addUser(user);
+        UpdateResponse<User> userChangingResponse = userService.addUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("password should be valid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("password"), is(false));
@@ -160,7 +160,7 @@ public class UserServiceTest extends BaseTest {
         User userToAdd = new User();
         userToAdd.setUsername("aaa123");
         userToAdd.setPassword("lksdf234");
-        ChangingResponse<User> userChangingResponse = userService.addUser(userToAdd);
+        UpdateResponse<User> userChangingResponse = userService.addUser(userToAdd);
         Long id = userChangingResponse.getChangedObject().getId();
         User actualUser = userDao.getUserById(id);
 
@@ -181,7 +181,7 @@ public class UserServiceTest extends BaseTest {
         userToAdd.setUsername("aaa123");
         userToAdd.setPassword("lksdf234");
         userToAdd.setRole(Role.ADMIN);
-        ChangingResponse<User> userChangingResponse = userService.addUser(userToAdd);
+        UpdateResponse<User> userChangingResponse = userService.addUser(userToAdd);
         Long id = userChangingResponse.getChangedObject().getId();
         User actualUser = userDao.getUserById(id);
 
@@ -200,7 +200,7 @@ public class UserServiceTest extends BaseTest {
     public void validateEdit_InvalidId() {
         User user = getValidUser();
         user.setId(null);
-        ChangingResponse<User> userChangingResponse = userService.editUser(user);
+        UpdateResponse<User> userChangingResponse = userService.editUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("id should be invalid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("id"), is(true));
@@ -210,7 +210,7 @@ public class UserServiceTest extends BaseTest {
     public void validateEdit_UserDoesntExist() {
         User user = getValidUser();
         user.setId(123L);//only 1 and 2 exists
-        ChangingResponse<User> userChangingResponse = userService.editUser(user);
+        UpdateResponse<User> userChangingResponse = userService.editUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("id should be invalid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("id"), is(true));
@@ -222,7 +222,7 @@ public class UserServiceTest extends BaseTest {
         User user = getValidUser();
         user.setId(1L);
         user.setUsername("user");
-        ChangingResponse<User> userChangingResponse = userService.editUser(user);
+        UpdateResponse<User> userChangingResponse = userService.editUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("username should be invalid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("username"), is(true));
@@ -232,7 +232,7 @@ public class UserServiceTest extends BaseTest {
     public void validateEdit_EmptyRole() {
         User user = getValidUser();
         user.setRole(null);
-        ChangingResponse<User> userChangingResponse = userService.editUser(user);
+        UpdateResponse<User> userChangingResponse = userService.editUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("role should be invalid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("role"), is(true));
@@ -242,7 +242,7 @@ public class UserServiceTest extends BaseTest {
     public void validateEdit_AnonymousRole() {
         User user = getValidUser();
         user.setRole(Role.ANONYMOUS);
-        ChangingResponse<User> userChangingResponse = userService.editUser(user);
+        UpdateResponse<User> userChangingResponse = userService.editUser(user);
         assumeThat("validation result should exist", userChangingResponse.getValidationResult(), notNullValue());
         assertThat("role should be invalid",
                 userChangingResponse.getValidationResult().hasErrorsOnField("role"), is(true));
@@ -250,7 +250,7 @@ public class UserServiceTest extends BaseTest {
 
     @Test
     public void editUser_SessionsRemovedWhenPasswordChanged() {
-        ChangingResponse<User> userChangingResponse = userService.addUser(getValidUser());
+        UpdateResponse<User> userChangingResponse = userService.addUser(getValidUser());
         User userToEdit = userChangingResponse.getChangedObject();
 
         userService.addUserSession(userToEdit.getId(), "userAgent", "1.2.3.4");
@@ -264,7 +264,7 @@ public class UserServiceTest extends BaseTest {
 
     @Test
     public void editUser_SessionsRemovedWhenUserBecomeBlocked() {
-        ChangingResponse<User> userChangingResponse = userService.addUser(getValidUser());
+        UpdateResponse<User> userChangingResponse = userService.addUser(getValidUser());
         User userToEdit = userChangingResponse.getChangedObject();
 
         userService.addUserSession(userToEdit.getId(), "userAgent", "1.2.3.4");
@@ -278,13 +278,13 @@ public class UserServiceTest extends BaseTest {
 
     @Test
     public void editUser_EditedSuccessfully() {
-        ChangingResponse<User> userChangingResponse = userService.addUser(getValidUser());
+        UpdateResponse<User> userChangingResponse = userService.addUser(getValidUser());
         User userToEdit = userChangingResponse.getChangedObject();
         userToEdit.setUsername("anyOtherUsername");
         userToEdit.setPassword("otherPassword");
         userToEdit.setRole(Role.ADMIN);
         userToEdit.setBlocked(true);
-        ChangingResponse<User> editResponse = userService.editUser(userToEdit);
+        UpdateResponse<User> editResponse = userService.editUser(userToEdit);
         assertThat("no validation errors expected", editResponse.getValidationResult().hasErrors(), is(false));
 
         User actualUser = editResponse.getChangedObject();

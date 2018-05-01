@@ -42,13 +42,18 @@ public class SubmissionDao {
 
 
     public List<Submission> getSubmissions() {
-        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id" +
-                " ORDER BY sending_date_time DESC";
+        String sql = "SELECT submissions.*, users.name, problems.contest_index FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems ON submissions.problem_id = problems.id " +
+                " ORDER BY submissions.sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper);
     }
 
     public Submission getSubmission(Long id) {
-        String sql = "SELECT * FROM submissions as s JOIN users as u ON s.user_id = u.id WHERE s.id = ?";
+        String sql = "SELECT submissions.*, users.name, problems.contest_index FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems ON submissions.problem_id = problems.id " +
+                " WHERE submissions.id = ?";
         return jdbcTemplate.queryForObject(sql, simpleMapper, id);
     }
 
@@ -65,6 +70,7 @@ public class SubmissionDao {
         params.put("sending_date_time", Timestamp.from(submission.getSendingTime()));
         params.put("number_tests", submission.getNumberTests());
         params.put("passed_tests", submission.getPassedTests());
+        params.put("first_fail_test", submission.getFirstFailTest());
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
         submission.setId(key.longValue());
     }
@@ -77,6 +83,7 @@ public class SubmissionDao {
                 "used_memory = ? ," +
                 "number_tests = ?, " +
                 "passed_tests = ?, " +
+                "first_fail_test = ?, " +
                 "message = ? " +
                 "WHERE id = ?";
 
@@ -86,6 +93,7 @@ public class SubmissionDao {
                 submission.getUsedMemory(),
                 submission.getNumberTests(),
                 submission.getPassedTests(),
+                submission.getFirstFailTest(),
                 submission.getMessage(),
                 submission.getId());
     }
@@ -106,24 +114,33 @@ public class SubmissionDao {
     }
 
     public Submission getFullSubmission(Long submissionId) {
-        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id WHERE submissions.id = ?";
+        String sql = "SELECT submissions.*, users.name, problems.contest_index AS username FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems as problems ON submissions.problem_id = problems.id " +
+                " WHERE submissions.id = ?";
         return jdbcTemplate.queryForObject(sql, fullMapper, submissionId);
     }
 
     public List<Submission> getUserProblemSubmissions(Long userId, long problemId) {
-        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+        String sql = "SELECT submissions.*, users.name, problems.contest_index AS username FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems as problems ON submissions.problem_id = problems.id " +
                 " WHERE submissions.user_id = ? AND submissions.problem_id = ? ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper, userId, problemId);
     }
 
     public List<Submission> getUserContestSubmissions(Long userId, Long contestId) {
-        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+        String sql = "SELECT submissions.*, users.name, problems.contest_index AS username FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems as problems ON submissions.problem_id = problems.id " +
                 " WHERE submissions.user_id = ? AND submissions.contest_id = ? ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper, userId, contestId);
     }
 
     public List<Submission> getContestSubmissions(Long contestId) {
-        String sql = "SELECT submissions.*, users.name AS username FROM submissions JOIN users ON submissions.user_id = users.id " +
+        String sql = "SELECT submissions.*, users.name, problems.contest_index AS username FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems as problems ON submissions.problem_id = problems.id " +
                 " WHERE submissions.contest_id = ? ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper, contestId);
     }
@@ -151,9 +168,11 @@ public class SubmissionDao {
             submission.setSendingTime(resultSet.getTimestamp("sending_date_time").toInstant());
             submission.setNumberTests(resultSet.getInt("number_tests"));
             submission.setPassedTests(resultSet.getInt("passed_tests"));
+            submission.setFirstFailTest(resultSet.getInt("first_fail_test"));
             submission.setMessage(resultSet.getString("message"));
             submission.setUsedTime(resultSet.getLong("used_time"));
             submission.setUsedMemory(resultSet.getLong("used_memory"));
+            submission.setProblemIndex(resultSet.getLong("contest_index"));
             if (isFull) {
                 submission.setSourceCode(resultSet.getString("source_code"));
                 String resultData = resultSet.getString("result_data");
