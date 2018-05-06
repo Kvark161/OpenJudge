@@ -10,7 +10,6 @@ import java.util.List;
 public class Statement {
     private Long id;
     private Long problemId;
-    private String language;
 
     private String inputFile;
     private String outputFile;

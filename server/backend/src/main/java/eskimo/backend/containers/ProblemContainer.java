@@ -16,6 +16,6 @@ public class ProblemContainer {
     private File validator;
     private List<SolutionContainer> solutions;
     private List<TestContainer> tests;
-    private List<StatementContainer> statements;
+    private StatementContainer statements;
     private File testlib;
 }

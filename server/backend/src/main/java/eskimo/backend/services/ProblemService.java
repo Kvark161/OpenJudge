@@ -29,23 +29,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static java.util.Arrays.asList;
 
 @Service
 public class ProblemService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
-
-    private static final Map<String, String> STATEMENTS_LANGUAGE_MAPPER;
-
-    static {
-        STATEMENTS_LANGUAGE_MAPPER = new HashMap<>();
-        STATEMENTS_LANGUAGE_MAPPER.put("english", "en");
-        STATEMENTS_LANGUAGE_MAPPER.put("russian", "ru");
-    }
 
     private final ContestDao contestDao;
     private final ProblemDao problemDao;
@@ -98,9 +90,7 @@ public class ProblemService {
 
     public ProblemForEditResponse getProblemForEdit(long contestId, long problemIndex) {
         Problem problem = problemDao.getContestProblem(contestId, problemIndex);
-
-        //todo languages
-        Statement statements = statementsDao.getStatements(problem.getId(), "english");
+        Statement statements = statementsDao.getStatements(problem.getId());
 
         List<Integer> testIndexes = IntStream.range(1, problem.getTestsCount() + 1).boxed()
                 .collect(Collectors.toList());
@@ -108,9 +98,7 @@ public class ProblemService {
         statements.getSampleTestIndexes().forEach(sampleIndex -> tests.get(sampleIndex - 1).setSample(true));
 
         File checkerSourceFile = storageService.getCheckerSourceFile(contestId, problemIndex);
-
-        //todo languages
-        File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex, "en");
+        File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex);
 
         return new ProblemForEditResponse(problem, statements, tests, checkerSourceFile.exists(), statementsPdfFile.exists());
     }
@@ -131,8 +119,7 @@ public class ProblemService {
     }
 
     private void editProblemFiles(long contestId, long problemIndex, MultipartFile checkerMultipartFile,
-                                  MultipartFile statementsPdfMultipartFile)
-    {
+                                  MultipartFile statementsPdfMultipartFile) {
         List<StorageOrder> filesToSave = new ArrayList<>();
         if (checkerMultipartFile != null) {
             try (TemporaryFile checkerFile =
@@ -146,9 +133,8 @@ public class ProblemService {
         if (statementsPdfMultipartFile != null) {
             try (TemporaryFile statementsPdf =
                          new TemporaryFile(fileUtils.saveFile(checkerMultipartFile, "statements-", ".pdf"))) {
-                //todo languages
                 filesToSave.add(new StorageOrderCopyFile(statementsPdf.getFile(),
-                        storageService.getStatementFile(contestId, problemIndex, "english")));
+                        storageService.getStatementFile(contestId, problemIndex)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -219,31 +205,26 @@ public class ProblemService {
         return validationResult;
     }
 
-    public StatementsResponse getStatements(Long contestId, Long problemIndex, String language) {
+    public StatementsResponse getStatements(Long contestId, Long problemIndex) {
         Problem problem = problemDao.getContestProblem(contestId, problemIndex);
         if (problem == null) {
             logger.info("Problem is not exists contestId={} problemIndex={}", contestId, problemIndex);
             throw new RuntimeException("Problem doesn't exist");
         }
-        String resultLanguage = getExistingSuitableLanguage(problem.getId(), language);
-        if (resultLanguage == null) {
-            logger.info("Not found language for statement for contestId={} problemIndex={}", contestId, problemIndex);
-            throw new RuntimeException("Statement doesn't exist");
-        }
-        Statement statement = statementsDao.getStatements(problem.getId(), resultLanguage);
+        Statement statement = statementsDao.getStatements(problem.getId());
         if (statement == null) {
             logger.info("Not found statement for contestId={} problemIndex={}", contestId, problemIndex);
             throw new RuntimeException("Statement doesn't exist");
         }
         List<Test> sampleTests = getTests(contestId, problemIndex, statement.getSampleTestIndexes());
         sampleTests.forEach(test -> test.setSample(true));
-        boolean hasPdf = storageService.getStatementFile(contestId, problemIndex, language).exists();
+        boolean hasPdf = storageService.getStatementFile(contestId, problemIndex).exists();
         return new StatementsResponse(problem, statement, hasPdf, sampleTests);
     }
 
     private List<Test> getTests(long contestId, long problemIndex, List<Integer> testsIndexes) {
         List<Test> tests = new ArrayList<>();
-        for (Integer testIndex: testsIndexes) {
+        for (Integer testIndex : testsIndexes) {
             Test test = new Test();
             try {
                 long testInputSize = storageService.getTestInputSize(contestId, problemIndex, testIndex);
@@ -270,30 +251,9 @@ public class ProblemService {
         return tests;
     }
 
-    public byte[] getPdfStatements(Long contestId, Integer problemIndex, String language) throws IOException {
-        File statementFile = storageService.getStatementFile(contestId, problemIndex, language);
+    public byte[] getPdfStatements(Long contestId, Integer problemIndex) throws IOException {
+        File statementFile = storageService.getStatementFile(contestId, problemIndex);
         return Files.readAllBytes(statementFile.toPath());
-    }
-
-    /**
-     * If statements on requested language exists - returns requested language,
-     * then try to get english statements (if it is not requested language),
-     * else returns any language on which statements (for this problem) exists.
-     */
-    private String getExistingSuitableLanguage(Long problemId, String requestedLanguage) {
-        List<String> languagesPriority = asList(requestedLanguage, "en", "ru");
-        Set<String> supportedLanguages = new HashSet<>(statementsDao.getSupportedLanguages(problemId));
-        if (supportedLanguages.isEmpty()) {
-            return null;
-        }
-        String resultLanguage = null;
-        for (String language : languagesPriority) {
-            if (supportedLanguages.contains(language)) {
-                resultLanguage = language;
-                break;
-            }
-        }
-        return Optional.ofNullable(resultLanguage).orElse(supportedLanguages.iterator().next());
     }
 
     @Transactional
@@ -331,9 +291,7 @@ public class ProblemService {
         problemContainer.getProblem().setContestId(contestId);
         Long id = problemDao.insertProblem(problemContainer.getProblem());
         problemContainer.getProblem().setId(id);
-        for (StatementContainer statementContainer: problemContainer.getStatements()) {
-            addStatements(problemContainer.getProblem(), statementContainer);
-        }
+        addStatements(problemContainer.getProblem(), problemContainer.getStatements());
         List<StorageOrder> orders = prepareStorageOrdersToSave(problemContainer);
         storageService.executeOrders(orders);
         return problemContainer.getProblem();
@@ -342,7 +300,6 @@ public class ProblemService {
     private void addStatements(Problem problem, StatementContainer statementContainer) {
         Statement statement = statementContainer.getStatement();
         statement.setProblemId(problem.getId());
-        statement.setLanguage(statementContainer.getLanguage());
         statementsDao.addStatements(statement);
     }
 
@@ -367,20 +324,13 @@ public class ProblemService {
                         storageService.getTestAnswerFile(contestId, problemIndex, test.getIndex())));
             }
         }
-        for (StatementContainer statementContainer : container.getStatements()) {
-            File statementPfd = statementContainer.getStatementPfd();
-            if (statementPfd != null) {
-                String language = statementContainer.getLanguage();
-                if (!STATEMENTS_LANGUAGE_MAPPER.containsKey(language)) {
-                    logger.warn("Pdf statements from path {} wasn't saved because language {} is not supported",
-                            statementPfd.getAbsolutePath(), language);
-                    continue;
-                }
-                String storageLanguage = STATEMENTS_LANGUAGE_MAPPER.get(language);
-                orders.add(new StorageOrderCopyFile(statementPfd,
-                        storageService.getStatementFile(contestId, problemIndex, storageLanguage)));
-            }
+
+        StatementContainer statementContainer = container.getStatements();
+        File statementPfd = statementContainer.getStatementPfd();
+        if (statementPfd != null) {
+            orders.add(new StorageOrderCopyFile(statementPfd, storageService.getStatementFile(contestId, problemIndex)));
         }
+
         if (container.getTestlib() != null) {
             orders.add(new StorageOrderCopyFile(container.getTestlib(), storageService.getTestlib(contestId, problemIndex)));
         }

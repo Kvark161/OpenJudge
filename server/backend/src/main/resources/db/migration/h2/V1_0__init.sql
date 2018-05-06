@@ -74,7 +74,6 @@ CREATE TABLE STATEMENTS
 (
   ID          BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
   PROBLEM_ID  BIGINT                            NOT NULL,
-  LANGUAGE    VARCHAR(128)                      NOT NULL,
   INPUT_FILE  VARCHAR(128)                      NOT NULL,
   OUTPUT_FILE VARCHAR(128)                      NOT NULL,
   NAME        VARCHAR(128)                      NOT NULL,

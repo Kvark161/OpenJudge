@@ -47,11 +47,9 @@ public class StorageService {
 
     /**
      * Returns path to existing json file with statements for appropriate contest and problem.
-     * If file for given language doesn't exist, returns another one (only english and russian supported).
-     * If both files don't exist or input language is bad, returns null.
      */
-    public File getStatementFile(long contestId, long problemIndex, String language) {
-        return new File(getStatementsFolder(contestId, problemIndex) + File.separator + language + ".pdf");
+    public File getStatementFile(long contestId, long problemIndex) {
+        return new File(getStatementsFolder(contestId, problemIndex) + File.separator + "statements.pdf");
     }
 
     public File getProblemFolder(long contestId, long problemIndex) {

@@ -9,7 +9,6 @@ import java.io.File;
 @Getter
 @Setter
 public class StatementContainer {
-    String language;
     Statement statement;
     File statementPfd;
 }

@@ -41,7 +41,6 @@ public class StatementsDao {
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
         params.put("problem_id", statement.getProblemId());
-        params.put("language", statement.getLanguage());
         params.put("input_file", statement.getInputFile());
         params.put("output_file", statement.getOutputFile());
         params.put("name", statement.getName());
@@ -62,26 +61,20 @@ public class StatementsDao {
         }
     }
 
-    public Statement getStatements(Long problemId, String language) {
-        String sql = "SELECT id, problem_id, language, input_file, output_file, name, legend, input, output, " +
-                "samples, notes FROM statements WHERE problem_id = ? AND language = ?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{problemId, language}, ROW_MAPPER);
-    }
-
-    public List<String> getSupportedLanguages(Long problemId) {
-        String sql = "SELECT language FROM statements WHERE problem_id = ?";
-        return jdbcTemplate.queryForList(sql, new Object[]{problemId}, String.class);
+    public Statement getStatements(Long problemId) {
+        String sql = "SELECT id, problem_id, input_file, output_file, name, legend, input, output, " +
+                "samples, notes FROM statements WHERE problem_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{problemId}, ROW_MAPPER);
     }
 
     public void editStatements(long problemId, EditProblemRequest editProblemRequest) {
-        //todo languages
         String sql = "UPDATE statements SET " +
                 "name = ?, " +
                 "legend = ?, " +
                 "input = ?, " +
                 "output = ?, " +
                 "notes = ? " +
-                "WHERE problem_id = ? and language = 'english'";
+                "WHERE problem_id = ?";
         jdbcTemplate.update(sql, editProblemRequest.getName(), editProblemRequest.getLegend(), editProblemRequest.getInput(),
                 editProblemRequest.getOutput(), editProblemRequest.getNotes(), problemId);
     }
@@ -89,7 +82,7 @@ public class StatementsDao {
     public void updateSamples(long problemId, List<Integer> sampleIndexes) {
         String sql = "UPDATE statements SET " +
                 "samples = ? " +
-                "WHERE problem_id = ? and language = 'english'";
+                "WHERE problem_id = ?";
         jdbcTemplate.update(sql, getStringSampleTests(sampleIndexes), problemId);
     }
 
@@ -99,7 +92,6 @@ public class StatementsDao {
             Statement statement = new Statement();
             statement.setId(resultSet.getLong("id"));
             statement.setProblemId(resultSet.getLong("problem_id"));
-            statement.setLanguage(resultSet.getString("language"));
             statement.setInputFile(resultSet.getString("input_file"));
             statement.setOutputFile(resultSet.getString("output_file"));
             statement.setName(resultSet.getString("name"));

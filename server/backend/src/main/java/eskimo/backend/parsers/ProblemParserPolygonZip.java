@@ -139,8 +139,6 @@ public class ProblemParserPolygonZip {
     }
 
     private void parseStatements() {
-        List<StatementContainer> result = new ArrayList<>();
-        problemContainer.setStatements(result);
         File statementsFolder = new File(root + File.separator + "statements");
         if (!statementsFolder.exists()) {
             return;
@@ -149,25 +147,24 @@ public class ProblemParserPolygonZip {
         for (File statementFolder : statementsFolder.listFiles(File::isDirectory)) {
             StatementContainer statementContainer = new StatementContainer();
             String language = statementFolder.getName().toLowerCase();
-            statementContainer.setLanguage(language);
             File statementData = new File(statementFolder + File.separator + "problem-properties.json");
             if (!statementData.exists()) {
                 continue;
             }
             try {
                 Statement statement = new ObjectMapper().readValue(statementData, Statement.class);
-                statement.setLanguage(convertLanguage(statement.getLanguage()));
                 statement.setSampleTestIndexes(parseSampleTestIndexes());
                 statementContainer.setStatement(statement);
             } catch (IOException e) {
-                throw new AddEskimoEntityException("cannot parse statements: " + statementContainer.getLanguage(), e);
+                throw new AddEskimoEntityException("cannot parse statements", e);
             }
             File statementPdf = new File(statementsFolder + File.separator + PDF_POLYGON_FOLDER_NAME
                     + File.separator + language + File.separator + PDF_POLYGON_FILE_NAME);
             if (statementPdf.exists()) {
                 statementContainer.setStatementPfd(statementPdf);
             }
-            result.add(statementContainer);
+            problemContainer.setStatements(statementContainer);
+            return;
         }
     }
 

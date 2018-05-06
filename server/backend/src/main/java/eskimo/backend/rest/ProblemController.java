@@ -52,19 +52,15 @@ public class ProblemController {
     @AccessLevel(role = Role.USER)
     public StatementsResponse getStatements(@PathVariable("id") Long contestId,
                                             @PathVariable("index") Long problemIndex) {
-        //todo user language
-        String language = "en";
-        return problemService.getStatements(contestId, problemIndex, language);
+        return problemService.getStatements(contestId, problemIndex);
     }
 
     @GetMapping("contest/{id}/problem/{index}/pdf")
     @AccessLevel(role = Role.USER)
     public ResponseEntity<byte[]> getStatementsPdf(@PathVariable("id") Long contestId,
                                                    @PathVariable("index") Integer problemIndex) {
-        //todo user language (authenticationHolder.getUser().getLocale().getLanguage())
-        String language = "en";
         try {
-            byte[] statements = problemService.getPdfStatements(contestId, problemIndex, language);
+            byte[] statements = problemService.getPdfStatements(contestId, problemIndex);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
