@@ -12,6 +12,7 @@ import {ValidationResult} from "../shared/validation-response";
 import {EditProblemRequest} from "../shared/requests/edit-problem.request";
 import {User} from "../shared/user";
 import {CreatingResponse} from "../shared/creating-response";
+import {Test} from "../shared/test";
 
 
 @Injectable()
@@ -232,8 +233,14 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    editTests(contestId: number, problemId: number, problem: EditProblemRequest) {
-        return this.http.post(this.getUrlEditTests(contestId, problemId), problem.tests, this.optionsWithCredentials)
+    getTestsForEdit(contestId: number, problemIndex: number): Observable<Test[]> {
+        return this.http.get(this.getUrlEditTests(contestId, problemIndex), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    editTests(contestId: number, problemId: number, tests: Test[]) {
+        return this.http.post(this.getUrlEditTests(contestId, problemId), tests, this.optionsWithCredentials)
             .map(res => CreatingResponse.fromJson(res.json(), this.userMapper))
             .catch(this.handleError);
     }

@@ -14,6 +14,7 @@ import {StatementsComponent} from "./pages/contests/problems/statements.componen
 import {EditProblemComponent} from "./pages/contests/problems/edit-problem.component";
 import {ManagementComponent} from "./pages/management/management.component";
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
+import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component";
 
 export const router: Routes = [
     {path: '', canActivate: [UserService], component: HomeComponent},
@@ -29,6 +30,7 @@ export const router: Routes = [
     {path: 'a/contest/:contestId/problem/add', canActivate: [UserService], component: AddProblemComponent},
     {path: 'u/contest/:contestId/problem/:problemIndex', canActivate: [UserService], component: StatementsComponent},
     {path: 'a/contest/:contestId/problem/:problemIndex/edit', canActivate: [UserService], component: EditProblemComponent},
+    {path: 'a/contest/:contestId/problem/:problemIndex/edit_tests', canActivate: [UserService], component: EditTestsComponent},
     {path: 'a/management', canActivate: [UserService], component: ManagementComponent},
     {path: 'p/contest/:contestId/dashboard', canActivate: [UserService], component: DashboardComponent}
 ];

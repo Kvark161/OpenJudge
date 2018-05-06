@@ -30,6 +30,7 @@ import {Angular2FontawesomeModule} from "angular2-fontawesome";
 import {ManagementComponent} from "./pages/management/management.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
+import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component";
 
 @NgModule({
     imports: [
@@ -61,6 +62,7 @@ import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component
         StatementsComponent,
         InformationModalComponent,
         EditProblemComponent,
+        EditTestsComponent,
         ManagementComponent,
         DashboardComponent
     ],

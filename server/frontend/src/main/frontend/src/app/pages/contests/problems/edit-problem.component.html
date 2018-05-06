@@ -1,7 +1,12 @@
 <contest-toolbar [contestId]="contestId"></contest-toolbar>
 <div class="container">
     <div class="row"><p></p></div>
-    <h3 style="text-align: center">Editing problem</h3>
+    <div style="text-align: center; font-size: x-large; color: black;">
+        <a style="text-decoration: underline; text-decoration-color: gray;">Editing problem</a> |
+        <a routerLink="/a/contest/{{contestId}}/problem/{{problemIndex}}/edit_tests" style="color: black">
+            Editing tests
+        </a>
+    </div>
     <div class="row"><p></p></div>
     <form *ngIf="problem">
         <div class="form-group row">
@@ -115,34 +120,5 @@
 
         <button type="button" class="btn btn-primary" (click)="onSubmit()">Save problem</button>
         <span *ngIf="problemEditedSuccessfully" style="color: green">Successful</span>
-    </form>
-    <div class="row"><p></p></div>
-    <h3 style="text-align: center">Editing tests</h3>
-    <div class="row"><p></p></div>
-    <form *ngIf="problem">
-        <table class="table table-bordered">
-            <thead>
-            <td>№</td>
-            <td>Input</td>
-            <td>Output</td>
-            <td>Sample</td>
-            </thead>
-            <tbody>
-            <tr *ngFor="let test of problem.tests; let i = index">
-                <td>{{i + 1}}</td>
-                <td>
-                    <textarea class="form-control" type="text" name="testInput{{i}}"
-                              [class.is-invalid]="validationResult.errors['tests[' + i + '].input']"
-                              (input)="fieldChanged('tests[' + i + '].input')">{{test.input}}</textarea>
-                </td>
-                <td>{{test.output ? test.output : 'Not generated'}}</td>
-                <td>
-                    <input type="checkbox" id="userRole" name="isSampleTest{{i}}" [(ngModel)]="test.isSample" />
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <button type="button" class="btn btn-primary" (click)="editTests()">Save tests</button>
-        <span *ngIf="testsEditedSuccessfully" style="color: green">Successful</span>
     </form>
 </div>

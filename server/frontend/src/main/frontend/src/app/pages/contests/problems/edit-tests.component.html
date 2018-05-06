@@ -1,0 +1,40 @@
+<contest-toolbar [contestId]="contestId"></contest-toolbar>
+<div class="container">
+    <div class="row"><p></p></div>
+    <div style="text-align: center; font-size: x-large; color: black;">
+        <a routerLink="/a/contest/{{contestId}}/problem/{{problemIndex}}/edit" style="color: black">
+            Editing problem
+        </a> |
+        <a style="text-decoration: underline; text-decoration-color: gray;">
+            Editing tests
+        </a>
+    </div>
+    <div class="row"><p></p></div>
+    <form>
+        <table class="table table-bordered">
+            <thead>
+            <td>№</td>
+            <td>Input</td>
+            <td>Output</td>
+            <td>Sample</td>
+            </thead>
+            <tbody>
+            <tr *ngFor="let test of tests; let i = index">
+                <td>{{i + 1}}</td>
+                <td>
+                    <textarea class="form-control" type="text" name="testInput{{i}}"
+                              [class.is-invalid]="validationResult.errors['tests[' + i + '].input']"
+                              (input)="fieldChanged('tests[' + i + '].input')">{{test.input}}</textarea>
+                </td>
+                <td>{{test.output ? test.output : 'Not generated'}}</td>
+                <td>
+                    <input type="checkbox" id="userRole" name="isSampleTest{{i}}" [(ngModel)]="test.isSample" />
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <span class="help-block">{{validationResult.errors[generalErrorPath]}}</span>
+        <button type="button" class="btn btn-primary" (click)="editTests()">Save tests</button>
+        <span *ngIf="testsEditedSuccessfully" style="color: green">Successful</span>
+    </form>
+</div>

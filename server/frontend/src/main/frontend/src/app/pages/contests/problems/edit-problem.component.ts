@@ -18,7 +18,6 @@ export class EditProblemComponent {
     error: string;
 
     problemEditedSuccessfully = false;
-    testsEditedSuccessfully = false;
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
@@ -66,37 +65,11 @@ export class EditProblemComponent {
 
     fieldChanged(fieldName: string) {
         this.problemEditedSuccessfully = false;
-        this.testsEditedSuccessfully = false;
         this.validationResult.errors[fieldName] = null;
     }
 
     fileChange(event) {
         this.checkerFiles = event.target.files;
-    }
-
-    editTests() {
-        this.validateTests();
-        if (this.validationResult.isEmpty()) {
-            this.eskimoService.editTests(this.contestId, this.problemIndex, this.problem)
-                .subscribe(validationResult => {
-                        this.validationResult = ValidationResult.getEmpty();
-                        this.validationResult.setErrors(validationResult.errors);
-                        if (this.validationResult.isEmpty()) {
-                            this.testsEditedSuccessfully = true;
-                        }
-                    },
-                    error => this.validationResult.setGeneralError(error))
-        }
-    }
-
-    private validateTests() {
-        this.validationResult = ValidationResult.getEmpty();
-        for (let i = 0; i < this.problem.tests.length; ++i) {
-            let test = this.problem.tests[i];
-            if (!test.input || test.input == "") {
-                this.validationResult.addError('tests[' + i + '].input', "Should not be empty");
-            }
-        }
     }
 
     downloadChecker() {

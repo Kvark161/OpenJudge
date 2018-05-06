@@ -92,15 +92,22 @@ public class ProblemService {
         Problem problem = problemDao.getContestProblem(contestId, problemIndex);
         Statement statements = statementsDao.getStatements(problem.getId());
 
+        File checkerSourceFile = storageService.getCheckerSourceFile(contestId, problemIndex);
+        File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex);
+
+        return new ProblemForEditResponse(problem, statements, checkerSourceFile.exists(), statementsPdfFile.exists());
+    }
+
+    public List<Test> getTestsForEdit(long contestId, long problemIndex) {
+        Problem problem = problemDao.getContestProblem(contestId, problemIndex);
+        Statement statements = statementsDao.getStatements(problem.getId());
+
         List<Integer> testIndexes = IntStream.range(1, problem.getTestsCount() + 1).boxed()
                 .collect(Collectors.toList());
         List<Test> tests = getTests(contestId, problemIndex, testIndexes);
         statements.getSampleTestIndexes().forEach(sampleIndex -> tests.get(sampleIndex - 1).setSample(true));
 
-        File checkerSourceFile = storageService.getCheckerSourceFile(contestId, problemIndex);
-        File statementsPdfFile = storageService.getStatementFile(contestId, problemIndex);
-
-        return new ProblemForEditResponse(problem, statements, tests, checkerSourceFile.exists(), statementsPdfFile.exists());
+        return tests;
     }
 
     public ValidationResult editProblem(long contestId, long problemIndex, EditProblemRequest editProblemRequest,

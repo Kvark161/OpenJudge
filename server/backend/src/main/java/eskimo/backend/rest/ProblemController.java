@@ -115,6 +115,14 @@ public class ProblemController {
         return problemService.editProblem(contestId, problemIndex, editProblemRequest, checkerFile, statementsPdf);
     }
 
+    @GetMapping(value = "contest/{id}/problem/{index}/edit_tests")
+    @AccessLevel(role = Role.ADMIN)
+    public List<Test> getTestsForEdit(@PathVariable("id") Long contestId,
+                                      @PathVariable("index") Integer problemIndex)
+    {
+        return problemService.getTestsForEdit(contestId, problemIndex);
+    }
+
     @PostMapping(value = "contest/{id}/problem/{index}/edit_tests")
     @AccessLevel(role = Role.ADMIN)
     public ValidationResult editTests(@PathVariable("id") Long contestId,
