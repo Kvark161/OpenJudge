@@ -59,6 +59,14 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex;
     }
 
+    private getUrlHideProblem(contestId: number, problemIndex: number) {
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/hide";
+    }
+
+    private getUrlShowProblem(contestId: number, problemIndex: number) {
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/show";
+    }
+
     private getUrlStatements(contestId: number, problemIndex: number) {
         return this.getUrlContestProblem(contestId, problemIndex);
     }
@@ -245,8 +253,13 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    deleteProblem(contestId: number, problemIndex: number) {
-        return this.http.delete(this.getUrlContestProblem(contestId, problemIndex), this.optionsWithCredentials)
+    hideProblem(contestId: number, problemIndex: number) {
+        return this.http.get(this.getUrlHideProblem(contestId, problemIndex), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    showProblem(contestId: number, problemIndex: number) {
+        return this.http.get(this.getUrlShowProblem(contestId, problemIndex), this.optionsWithCredentials)
             .catch(this.handleError);
     }
 

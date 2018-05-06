@@ -9,3 +9,7 @@
     color: #00526e;
     text-decoration: underline;
 }
+
+.hiddenProblem {
+    background-color: gray !important;
+}

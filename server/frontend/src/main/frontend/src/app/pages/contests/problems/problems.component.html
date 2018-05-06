@@ -24,7 +24,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let problem of problems">
+        <tr *ngFor="let problem of problems; let i = index" [ngClass]="{'hiddenProblem': problem.hidden}">
             <td>{{problem.index}}</td>
             <td><a routerLink="/u/contest/{{contestId}}/problem/{{problem.index}}">{{problem.name}}</a></td>
             <td>{{problem.timeLimit}}</td>
@@ -47,8 +47,13 @@
                 </button>
             </td>
             <td *ngIf="role == 'ADMIN'">
-                <button type="button" class="btn btn-primary" title="Delete problem" (click)="deleteProblem(problem)">
-                    <fa [name]="'trash'"></fa>
+                <button *ngIf="!problem.hidden" type="button" class="btn btn-primary" title="Hide problem"
+                        (click)="hideProblem(i)">
+                    <fa [name]="'eye-slash'"></fa>
+                </button>
+                <button *ngIf="problem.hidden" type="button" class="btn btn-primary" title="Show problem"
+                        (click)="showProblem(i)">
+                    <fa [name]="'eye'"></fa>
                 </button>
             </td>
         </tr>

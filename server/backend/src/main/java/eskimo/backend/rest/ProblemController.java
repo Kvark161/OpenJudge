@@ -132,10 +132,16 @@ public class ProblemController {
         return problemService.editTests(contestId, problemIndex, tests);
     }
 
-    @DeleteMapping("contest/{id}/problem/{index}")
+    @GetMapping("contest/{id}/problem/{index}/hide")
     @AccessLevel(role = Role.ADMIN)
-    public void deleteProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
-        problemService.deleteProblem(contestId, problemIndex);
+    public void hideProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
+        problemService.hideProblem(contestId, problemIndex);
+    }
+
+    @GetMapping("contest/{id}/problem/{index}/show")
+    @AccessLevel(role = Role.ADMIN)
+    public void showProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
+        problemService.showProblem(contestId, problemIndex);
     }
 
     @GetMapping("contest/{id}/problem/{index}/checker")

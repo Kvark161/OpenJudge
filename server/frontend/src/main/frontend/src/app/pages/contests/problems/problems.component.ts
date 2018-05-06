@@ -44,11 +44,17 @@ export class ProblemsComponent {
             );
     }
 
-    deleteProblem(problem: Problem) {
-        this.eskimoService.deleteProblem(this.contestId, problem.index)
+    hideProblem(problemIndex: number) {
+        this.eskimoService.hideProblem(this.contestId, this.problems[problemIndex].index)
             .subscribe(() => {
-                let index = this.problems.indexOf(problem);
-                this.problems.splice(index, 1);
+                this.problems[problemIndex].hidden = true;
+            });
+    }
+
+    showProblem(problemIndex: number) {
+        this.eskimoService.showProblem(this.contestId, this.problems[problemIndex].index)
+            .subscribe(() => {
+                this.problems[problemIndex].hidden = false;
             });
     }
 }

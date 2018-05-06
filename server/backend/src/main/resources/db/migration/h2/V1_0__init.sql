@@ -45,6 +45,7 @@ CREATE TABLE PROBLEMS
   TIME_LIMIT                  BIGINT                            NOT NULL,
   MEMORY_LIMIT                BIGINT                            NOT NULL,
   TESTS_COUNT                 BIGINT                            NOT NULL,
+  HIDDEN                      BOOLEAN                           NOT NULL DEFAULT FALSE,
   ANSWERS_GENERATION_STATUS   VARCHAR(64)                       NOT NULL,
   ANSWERS_GENERATION_MESSAGE  VARCHAR(4096)                     NOT NULL,
   CHECKER_COMPILATION_STATUS  VARCHAR(64)                       NOT NULL,

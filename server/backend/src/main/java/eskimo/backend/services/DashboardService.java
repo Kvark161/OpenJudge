@@ -74,6 +74,10 @@ public class DashboardService {
         return dashboard;
     }
 
+    public void rebuild() {
+        //todo implement
+    }
+
     private void updateDashboard(Dashboard dashboard, Contest contest, Submission submission) {
         DashboardRow row = dashboard.getRow(submission.getUserId());
         ProblemResult problemResult = row.getProblem(submission.getProblemId());

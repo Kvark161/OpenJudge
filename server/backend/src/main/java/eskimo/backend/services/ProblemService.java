@@ -4,10 +4,8 @@ import eskimo.backend.containers.ProblemContainer;
 import eskimo.backend.containers.SolutionContainer;
 import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
-import eskimo.backend.dao.ContestDao;
 import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.StatementsDao;
-import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Statement;
 import eskimo.backend.entity.Test;
@@ -28,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,25 +36,26 @@ import java.util.stream.IntStream;
 public class ProblemService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
 
-    private final ContestDao contestDao;
     private final ProblemDao problemDao;
     private final StatementsDao statementsDao;
     private final StorageService storageService;
     private final FileUtils fileUtils;
     private final JudgeService judgeService;
+    private final DashboardService dashboardService;
 
-    public ProblemService(ContestDao contestDao,
+    public ProblemService(
                           ProblemDao problemDao,
                           StatementsDao statementsDao,
                           StorageService storageService,
                           FileUtils fileUtils,
-                          JudgeService judgeService) {
-        this.contestDao = contestDao;
+                          JudgeService judgeService,
+                          DashboardService dashboardService) {
         this.problemDao = problemDao;
         this.statementsDao = statementsDao;
         this.storageService = storageService;
         this.fileUtils = fileUtils;
         this.judgeService = judgeService;
+        this.dashboardService = dashboardService;
     }
 
     public List<ProblemInfoResponse> getContestProblems(Long contestId) {
@@ -344,15 +342,14 @@ public class ProblemService {
         return orders;
     }
 
-    public void deleteProblem(Long contestId, Long problemIndex) {
-        Contest contestInfo = contestDao.getContestInfo(contestId);
-        if (contestInfo.getStartTime() != null && contestInfo.getStartTime().isAfter(Instant.now())) {
-            throw new UnsupportedOperationException("Can't delete problem, because contest is already started");
-        }
-        problemDao.deleteProblem(contestId, problemIndex);
-        List<StorageOrder> storageOrders = new ArrayList<>();
-        storageOrders.add(new StorageOrderDeleteProblem(storageService, contestId, problemIndex));
-        storageService.executeOrders(storageOrders);
+    public void hideProblem(Long contestId, Long problemIndex) {
+        problemDao.hideProblem(contestId, problemIndex);
+        dashboardService.rebuild();
+    }
+
+    public void showProblem(Long contestId, Long problemIndex) {
+        problemDao.showProblem(contestId, problemIndex);
+        dashboardService.rebuild();
     }
 
     public Problem getProblem(long contestId, Long problemIndex) {

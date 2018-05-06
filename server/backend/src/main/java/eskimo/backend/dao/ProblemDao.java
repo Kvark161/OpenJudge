@@ -128,8 +128,20 @@ public class ProblemDao {
     }
 
     @Transactional
-    public void deleteProblem(Long contestId, Long problemIndex) {
-        String sql = "DELETE FROM problems WHERE contest_id = ? AND contest_index = ?";
+    public void hideProblem(Long contestId, Long problemIndex) {
+        String sql = "UPDATE problems " +
+                "SET " +
+                "hidden = true " +
+                "WHERE contest_id = ? AND contest_index = ?";
+        jdbcTemplate.update(sql, contestId, problemIndex);
+    }
+
+    @Transactional
+    public void showProblem(Long contestId, Long problemIndex) {
+        String sql = "UPDATE problems " +
+                "SET " +
+                "hidden = false " +
+                "WHERE contest_id = ? AND contest_index = ?";
         jdbcTemplate.update(sql, contestId, problemIndex);
     }
 
