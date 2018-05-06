@@ -5,13 +5,9 @@ import lombok.Setter;
 
 import java.io.File;
 
-@Getter
-@Setter
+@Getter @Setter
 public class TestContainer {
-
     private File input;
     private File answer;
-    private boolean isSample;
     private int index;
-
 }

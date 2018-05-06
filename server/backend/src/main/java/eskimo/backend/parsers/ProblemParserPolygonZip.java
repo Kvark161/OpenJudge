@@ -157,6 +157,7 @@ public class ProblemParserPolygonZip {
             try {
                 Statement statement = new ObjectMapper().readValue(statementData, Statement.class);
                 statement.setLanguage(convertLanguage(statement.getLanguage()));
+                statement.setSampleTestIndexes(parseSampleTestIndexes());
                 statementContainer.setStatement(statement);
             } catch (IOException e) {
                 throw new AddEskimoEntityException("cannot parse statements: " + statementContainer.getLanguage(), e);
@@ -168,6 +169,27 @@ public class ProblemParserPolygonZip {
             }
             result.add(statementContainer);
         }
+    }
+
+    private List<Integer> parseSampleTestIndexes() {
+        List<Integer> sampleTestIndexes = new ArrayList<>();
+        Node testsNode = problemDoc.getElementsByTagName("tests").item(0);
+        if (testsNode == null) {
+            return sampleTestIndexes;
+        }
+        NodeList childNodes = testsNode.getChildNodes();
+        int testIndex = 1;
+        for (int i = 0; i < childNodes.getLength(); ++i) {
+            Node test = childNodes.item(i);
+            if (!test.getNodeName().equals("test")) {
+                continue;
+            }
+            if (test.getAttributes().getNamedItem("sample") != null) {
+                sampleTestIndexes.add(testIndex);
+            }
+            ++testIndex;
+        }
+        return sampleTestIndexes;
     }
 
     private void parseAdditionalFiles() {
