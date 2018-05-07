@@ -1,5 +1,7 @@
 package eskimo.backend.rest;
 
+import eskimo.backend.entity.enums.Role;
+import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.storage.StorageService;
 import eskimo.invoker.entity.TestData;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ public class InvokerController {
     private StorageService storageService;
 
     @GetMapping("test-data")
+    @AccessLevel(role = Role.INVOKER)
     public ResponseEntity<TestData> getTestData(long contestId, long problemIndex, int testId, boolean needAnswer) {
         try {
             TestData testData = new TestData();

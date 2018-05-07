@@ -83,4 +83,8 @@ public class InvokerSettingsProvider {
         return !"false".equals(invokerSettings.getInvokerDeleteTempFiles());
     }
 
+    public String getInvokerToken() {
+        return invokerSettings.getInvokerToken();
+    }
+
 }

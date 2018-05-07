@@ -1,5 +1,6 @@
 package eskimo.backend.rest.interceptor;
 
+import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
 import eskimo.backend.entity.enums.Role;
@@ -47,6 +48,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
     private AuthenticationHolder authenticationHolder;
 
     @Autowired
+    private AppSettingsProvider appSettingsProvider;
+
+    @Autowired
     public AuthenticationInterceptor(UserService userService) {
         this.userService = userService;
     }
@@ -57,9 +61,11 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
+        AccessLevel methodAnnotation = handlerMethod.getMethodAnnotation(AccessLevel.class);
+        Role accessRole = methodAnnotation == null ? Role.ANONYMOUS : methodAnnotation.role();
         String servletPath = request.getServletPath();
-        if (servletPath.startsWith("/api/invoker")) {
-            authenticateInvoker();
+        if (accessRole == Role.INVOKER) {
+            return authenticateInvoker(request, response);
         } else {
             Map<String, String> cookies = getAuthorizationCookies(
                     Optional.ofNullable(request.getCookies()).orElse(new Cookie[]{}));
@@ -77,9 +83,6 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 user.setRole(Role.ANONYMOUS);
             }
             authenticationHolder.setUser(user);
-
-            AccessLevel methodAnnotation = handlerMethod.getMethodAnnotation(AccessLevel.class);
-            Role accessRole = methodAnnotation == null ? Role.ANONYMOUS : methodAnnotation.role();
             boolean badUserRequest = user.getRole() == Role.USER && accessRole == Role.ADMIN;
             boolean badAnonymousRequest = user.getRole() == Role.ANONYMOUS
                     && (accessRole == Role.ADMIN || accessRole == Role.USER);
@@ -116,8 +119,13 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private void authenticateInvoker() {
-        //todo check allowed hosts
+    private boolean authenticateInvoker(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String token = request.getParameter("token");
+        if (token == null || !token.equalsIgnoreCase(appSettingsProvider.getInvokerToken())) {
+            response.sendError(HttpStatus.FORBIDDEN.value());
+            return false;
+        }
+        return true;
     }
 
     /**

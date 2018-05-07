@@ -16,4 +16,5 @@ public class InvokerSettings {
     private String invokerRunnerLogin;
     private String invokerRunnerPassword;
     private String invokerDeleteTempFiles;
+    private String invokerToken;
 }

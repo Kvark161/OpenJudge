@@ -32,7 +32,7 @@ class InvokerPool {
         new PingThread().start();
     }
 
-    void add(Invoker[] invokers) {
+    void add(List<Invoker> invokers) {
         for (Invoker invoker : invokers) {
             add(invoker);
         }

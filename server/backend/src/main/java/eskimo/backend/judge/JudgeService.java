@@ -1,8 +1,7 @@
 package eskimo.backend.judge;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
 import eskimo.backend.judge.jobs.CompileCheckerJob;
@@ -14,12 +13,9 @@ import eskimo.backend.storage.StorageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,6 +45,8 @@ public class JudgeService {
     private DashboardService dashboardService;
     @Autowired
     private ContestService contestService;
+    @Autowired
+    private AppSettingsProvider appSettingsProvider;
 
     private final BlockingQueue<JudgeJob> judgeQueue = new LinkedBlockingQueue<>();
     private final JudgeThread judgeThread = new JudgeThread();
@@ -57,16 +55,7 @@ public class JudgeService {
     @PostConstruct
     private void init() {
         judgeThread.start();
-        try (InputStream is = new ClassPathResource("invokers.json").getInputStream()) {
-            Invoker[] invokers = objectMapper.readValue(is, Invoker[].class);
-            invokerPool.add(invokers);
-        } catch (JsonParseException e) {
-            logger.error("Can not parse invokers.json", e);
-        } catch (JsonMappingException e) {
-            logger.error("Incorrect invoker.json", e);
-        } catch (IOException e) {
-            logger.error("Can not read invokers.json", e);
-        }
+        invokerPool.add(appSettingsProvider.getInvokers());
     }
 
     public void judge(Submission submission) {

@@ -1,6 +1,7 @@
 package eskimo.backend.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eskimo.backend.judge.Invoker;
 import eskimo.invoker.config.InvokerSettingsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 @Component
 public class AppSettingsProvider {
@@ -61,5 +63,13 @@ public class AppSettingsProvider {
 
     public String getDatabasePath() {
         return appSettings.getDatabasePath();
+    }
+
+    public String getInvokerToken() {
+        return appSettings.getInvokerToken();
+    }
+
+    public List<Invoker> getInvokers() {
+        return appSettings.getInvokers();
     }
 }

@@ -118,8 +118,7 @@ public class ProblemController {
     @GetMapping(value = "contest/{id}/problem/{index}/edit_tests")
     @AccessLevel(role = Role.ADMIN)
     public List<Test> getTestsForEdit(@PathVariable("id") Long contestId,
-                                      @PathVariable("index") Integer problemIndex)
-    {
+                                      @PathVariable("index") Integer problemIndex) {
         return problemService.getTestsForEdit(contestId, problemIndex);
     }
 
@@ -127,8 +126,7 @@ public class ProblemController {
     @AccessLevel(role = Role.ADMIN)
     public ValidationResult editTests(@PathVariable("id") Long contestId,
                                       @PathVariable("index") Integer problemIndex,
-                                      @RequestBody List<Test> tests)
-    {
+                                      @RequestBody List<Test> tests) {
         return problemService.editTests(contestId, problemIndex, tests);
     }
 
