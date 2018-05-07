@@ -13,6 +13,7 @@ import eskimo.backend.entity.enums.GenerationStatus;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
+import eskimo.backend.rest.request.AddProblemCustomRequest;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
 import eskimo.backend.storage.*;
@@ -35,6 +36,9 @@ import java.util.stream.IntStream;
 @Service
 public class ProblemService {
     private static final Logger logger = LoggerFactory.getLogger(ProblemService.class);
+
+    public static final Long DEFAULT_TIME_LIMIT = 1000L;
+    public static final Long DEFAULT_MEMORY_LIMIT = 268435456L;
 
     private final ProblemDao problemDao;
     private final StatementsDao statementsDao;
@@ -275,6 +279,43 @@ public class ProblemService {
         }
     }
 
+    @Transactional
+    public ValidationResult addProblemCustom(long contestId, AddProblemCustomRequest request) {
+        ValidationResult validationResult = validateAddProblemCustom(request);
+        if (validationResult.hasErrors()) {
+            return validationResult;
+        }
+
+        ProblemContainer problemContainer = new ProblemContainer();
+
+        Problem problem = new Problem();
+        problem.setTimeLimit(DEFAULT_TIME_LIMIT);
+        problem.setMemoryLimit(DEFAULT_MEMORY_LIMIT);
+        problem.setAnswersGenerationStatus(GenerationStatus.NOT_STARTED);
+        problem.setTestsCount(0);
+        problemContainer.setProblem(problem);
+
+        Statement statement = new Statement();
+        statement.setName(request.getProblemName());
+        StatementContainer statementContainer = new StatementContainer();
+        statementContainer.setStatement(statement);
+        problemContainer.setStatements(statementContainer);
+
+        addProblem(contestId, problemContainer);
+        return validationResult;
+    }
+
+    private ValidationResult validateAddProblemCustom(AddProblemCustomRequest request) {
+        ValidationResult validationResult = new ValidationResult();
+        String problemName = request.getProblemName();
+        if (problemName == null || problemName.equals("")) {
+            validationResult.addError("problemName", "Should not be null");
+        } else if (problemName.length() > 128) {
+            validationResult.addError("problemName", "Should not be longer than 128 symbols");
+        }
+        return validationResult;
+    }
+
     public void updateAnswerGenerationProblemStatuses(Problem problem) {
         problemDao.updateAnswerGenerationProblemStatuses(problem);
     }
@@ -312,10 +353,14 @@ public class ProblemService {
         List<StorageOrder> orders = new ArrayList<>();
         long problemIndex = container.getProblem().getIndex();
         long contestId = container.getProblem().getContestId();
-        orders.add(new StorageOrderCopyFile(container.getChecker(),
-                storageService.getCheckerSourceFile(contestId, problemIndex)));
-        orders.add(new StorageOrderCopyFile(container.getValidator(),
-                storageService.getValidatorFile(contestId, problemIndex)));
+        if (container.getChecker() != null) {
+            orders.add(new StorageOrderCopyFile(container.getChecker(),
+                    storageService.getCheckerSourceFile(contestId, problemIndex)));
+        }
+        if (container.getValidator() != null) {
+            orders.add(new StorageOrderCopyFile(container.getValidator(),
+                    storageService.getValidatorFile(contestId, problemIndex)));
+        }
         for (SolutionContainer solution : container.getSolutions()) {
             File storageFile = storageService.getSolutionFile(contestId, problemIndex,
                     solution.getSolution().getName(), solution.getTag());

@@ -3,6 +3,7 @@ package eskimo.backend.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,7 +19,7 @@ public class Statement {
     private String legend;
     private String input;
     private String output;
-    private List<Integer> sampleTestIndexes;
+    private List<Integer> sampleTestIndexes = new ArrayList<>();
     private String notes;
 
 }

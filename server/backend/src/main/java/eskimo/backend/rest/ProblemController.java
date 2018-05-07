@@ -4,6 +4,7 @@ import eskimo.backend.entity.Test;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.annotations.AccessLevel;
+import eskimo.backend.rest.request.AddProblemCustomRequest;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
 import eskimo.backend.services.ProblemService;
@@ -85,6 +86,12 @@ public class ProblemController {
             logger.error("Can't add problem", e);
             throw new AddEskimoEntityException("Can't add problem", e);
         }
+    }
+
+    @PostMapping("contest/{id}/problem/add/custom")
+    @AccessLevel(role = Role.ADMIN)
+    public ValidationResult addProblemCustom(@PathVariable("id") Long contestId, @RequestBody AddProblemCustomRequest request) {
+        return problemService.addProblemCustom(contestId, request);
     }
 
     @GetMapping("contest/{id}/problems/admin")
