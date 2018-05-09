@@ -2,13 +2,7 @@
     <div class="container" id="navbarColor01">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a routerLink="" class="nav-link">Home</a>
-            </li>
-            <li class="nav-item">
                 <a routerLink="/contests" class="nav-link">Contests</a>
-            </li>
-            <li class="nav-item">
-                <a routerLink="/about" class="nav-link">About</a>
             </li>
             <li class="nav-item" *ngIf="currentUserInfo.role == 'ADMIN'">
                 <a routerLink="/a/management" class="nav-link">Management</a>

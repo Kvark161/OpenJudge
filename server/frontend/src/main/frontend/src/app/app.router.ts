@@ -1,6 +1,5 @@
 import {Routes} from "@angular/router";
 import {HomeComponent} from "./pages/home/home.component";
-import {AboutComponent} from "./pages/about/about.component";
 import {ContestsComponent} from "./pages/contests/contests.component";
 import {NewContestComponent} from "./pages/contests/new/new-contest.component";
 import {ContestComponent} from "./pages/contests/info/contest.component";
@@ -18,10 +17,8 @@ import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component
 
 export const router: Routes = [
     {path: '', canActivate: [UserService], component: HomeComponent},
-    {path: 'home', canActivate: [UserService], component: HomeComponent},
     {path: 'contests', canActivate: [UserService], component: ContestsComponent},
     {path: 'a/contests/new', canActivate: [UserService], component: NewContestComponent},
-    {path: 'about', canActivate: [UserService], component: AboutComponent},
     {path: 'contest/:contestId', canActivate: [UserService], component: ContestComponent},
     {path: 'u/contest/:contestId/submit', canActivate: [UserService], component: SubmitComponent},
     {path: 'u/contest/:contestId/submissions', canActivate: [UserService], component: SubmissionsComponent},

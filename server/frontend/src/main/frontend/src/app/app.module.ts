@@ -9,7 +9,6 @@ import {router} from "./app.router";
 import {EskimoService} from "./services/eskimo.service";
 import {ContestsComponent} from "./pages/contests/contests.component";
 import {AppComponent} from "./app.component";
-import {AboutComponent} from "./pages/about/about.component";
 import {HomeComponent} from "./pages/home/home.component";
 import {NewContestComponent} from "./pages/contests/new/new-contest.component";
 import {CommonToolbarComponent} from "./toolbars/common-toolbar.component";
@@ -47,7 +46,6 @@ import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component
     ],
     declarations: [
         AppComponent,
-        AboutComponent,
         HomeComponent,
         ContestsComponent,
         NewContestComponent,
