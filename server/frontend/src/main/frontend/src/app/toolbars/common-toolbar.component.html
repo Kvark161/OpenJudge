@@ -7,6 +7,9 @@
             <li class="nav-item" *ngIf="currentUserInfo.role == 'ADMIN'">
                 <a routerLink="/a/management" class="nav-link">Management</a>
             </li>
+            <li class="nav-item" *ngIf="currentUserInfo.role == 'ADMIN'">
+                <a routerLink="/a/programming-languages" class="nav-link">Programming languages</a>
+            </li>
         </ul>
         <form *ngIf="!currentUserInfo.username || currentUserInfo.username == ''" class="form-inline my-2 my-lg-0">
             <div class="form-group">

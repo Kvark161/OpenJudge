@@ -1,0 +1,39 @@
+<common-toolbar></common-toolbar>
+<div class="container">
+    <div class="row"><p></p></div>
+    <div class="row"><p></p></div>
+    <div class="row">
+        <table class="table border">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Compiler path</th>
+                <th>compiled</th>
+                <th>Interpreter path</th>
+                <th>Extension</th>
+                <th>Binary extension</th>
+                <th>Compile command</th>
+                <th>Run command</th>
+                <th>Compilation time limit</th>
+                <th>Compilation memory limit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let lang of programmingLanguages; let i = index">
+                <td>{{lang.name}}</td>
+                <td>{{lang.description}}</td>
+                <td>{{lang.compilerPath}}</td>
+                <td>{{lang.isCompiled}}</td>
+                <td>{{lang.interpreterPath}}</td>
+                <td>{{lang.extension}}</td>
+                <td>{{lang.binaryExtension}}</td>
+                <td>{{lang.compileCommand}}</td>
+                <td>{{lang.runCommand}}</td>
+                <td>{{lang.compilationTimeLimit}}</td>
+                <td>{{lang.compilationMemoryLimit}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

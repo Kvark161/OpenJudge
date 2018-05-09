@@ -65,8 +65,6 @@ CREATE TABLE PROGRAMMING_LANGUAGES
   BINARY_EXTENSION         VARCHAR(10)                       NOT NULL,
   COMPILE_COMMAND          VARCHAR(4096),
   RUN_COMMAND              VARCHAR(4096)                     NOT NULL,
-  COMPILATION_MEMORY_LIMIT BIGINT                            NOT NULL,
-  COMPILATION_TIME_LIMIT   BIGINT                            NOT NULL,
   TIME_LIMIT               BIGINT                            NOT NULL,
   MEMORY_LIMIT             BIGINT                            NOT NULL
 );

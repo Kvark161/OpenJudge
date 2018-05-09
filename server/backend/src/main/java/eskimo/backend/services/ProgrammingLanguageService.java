@@ -5,6 +5,7 @@ import eskimo.backend.entity.ProgrammingLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,5 +42,18 @@ public class ProgrammingLanguageService {
             }
         }
         return null;
+    }
+
+    public ProgrammingLanguage insert(String name) {
+        ProgrammingLanguage programmingLanguage = new ProgrammingLanguage();
+        programmingLanguage.setName(name);
+        programmingLanguage.setCompilationMemoryLimit(5242880);
+        programmingLanguage.setCompilationMemoryLimit(30000);
+        programmingLanguage.setBinaryExtension("exe");
+        programmingLanguage.setCompiled(true);
+        programmingLanguage.setDescription(name);
+        programmingLanguage.setCompileCommand(new ArrayList<>());
+        programmingLanguage.setRunCommand(new ArrayList<>());
+        return programmingLanguageDao.insert(programmingLanguage);
     }
 }

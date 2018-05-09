@@ -51,6 +51,26 @@ public class ProgrammingLanguageDao {
         return jdbcTemplate.queryForObject(sql, new Object[]{name}, new ProgrammingLanguageRowMapper());
     }
 
+    public ProgrammingLanguage insert(ProgrammingLanguage language) {
+        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("programming_languages")
+                .usingGeneratedKeyColumns("id");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", language.getName());
+        params.put("DESCRIPTION", language.getDescription());
+        params.put("COMPILER_PATH", language.getCompilerPath());
+        params.put("IS_COMPILED", language.isCompiled());
+        params.put("INTERPRETER_PATH", language.getInterpreterPath());
+        params.put("EXTENSION", language.getExtension());
+        params.put("BINARY_EXTENSION", language.getBinaryExtension());
+        params.put("COMPILE_COMMAND", Commandline.toString(language.getCompileCommand().toArray(new String[0])));
+        params.put("RUN_COMMAND", Commandline.toString(language.getRunCommand().toArray(new String[0])));
+        params.put("TIME_LIMIT", language.getCompilationTimeLimit());
+        params.put("MEMORY_LIMIT", language.getCompilationMemoryLimit());
+        Long id = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
+        return getProgrammingLanguage(id);
+    }
+
     private static class ProgrammingLanguageRowMapper implements RowMapper<ProgrammingLanguage> {
 
         @Override

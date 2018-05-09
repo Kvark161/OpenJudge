@@ -30,6 +30,7 @@ import {ManagementComponent} from "./pages/management/management.component";
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component";
+import {ProgrammingLanguagesComponent} from "./pages/programming-languages/programming-languages.component";
 
 @NgModule({
     imports: [
@@ -56,6 +57,7 @@ import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component
         SubmissionsComponent,
         SubmissionComponent,
         ProblemsComponent,
+        ProgrammingLanguagesComponent,
         AddProblemComponent,
         StatementsComponent,
         InformationModalComponent,
