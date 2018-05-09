@@ -25,14 +25,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static eskimo.backend.services.ProblemService.DEFAULT_MEMORY_LIMIT;
+import static eskimo.backend.services.ProblemService.DEFAULT_TIME_LIMIT;
+
 public class ProblemParserPolygonZip {
 
     private static final Logger logger = LoggerFactory.getLogger(ProblemParserPolygonZip.class);
     private static final Map<String, String> LANGUAGE_MAPPING;
     private static final String PDF_POLYGON_FOLDER_NAME = ".pdf";
     private static final String PDF_POLYGON_FILE_NAME = "problem.pdf";
-    public static final Long DEFAULT_TIME_LIMIT = 1000L;
-    public static final Long DEFAULT_MEMORY_LIMIT = 268435456L;
 
     static {
         LANGUAGE_MAPPING = new HashMap<>();

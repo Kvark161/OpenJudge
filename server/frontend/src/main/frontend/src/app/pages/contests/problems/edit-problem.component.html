@@ -11,32 +11,32 @@
     <form *ngIf="problem">
         <div class="form-group row">
             <label for="timeLimit" class="col-sm-3 col-form-label text-right">Time limit (in milliseconds):</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <input id="timeLimit" class="form-control" type="number" min="1"
                        [(ngModel)]="problem.timeLimit" name="timeLimit"
                        [class.is-invalid]="validationResult.errors.timeLimit"
                        (input)="fieldChanged('timeLimit')"/>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.timeLimit">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.timeLimit" class="text-danger">{{error}} </small>
             </div>
         </div>
 
         <div class="form-group row">
             <label for="memoryLimit" class="col-sm-3 col-form-label text-right">Memory limit (in bytes):</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <input id="memoryLimit" class="form-control" type="number" min="1"
                        [(ngModel)]="problem.memoryLimit" name="memoryLimit"
                        [class.is-invalid]="validationResult.errors.memoryLimit"
                        (input)="fieldChanged('memoryLimit')"/>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.memoryLimit">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.memoryLimit" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="checker" class="col-sm-3 col-form-label text-right">Checker file:</label>
-            <div class="col-sm-7 align-middle">
+            <div class="col-sm-6 align-middle">
                 <input type="file" id="checker" class="form-control-file" (change)="fileChange($event)" name="file">
                 <button *ngIf="problem.checkerExists" class="btn btn-link" (click)="downloadChecker()">
                     Download current checker
@@ -47,67 +47,67 @@
         <!--statements-->
         <div class="form-group row">
             <label for="name" class="col-sm-3 col-form-label text-right">Name:</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <input id="name" class="form-control" type="text"
                        [(ngModel)]="problem.name" name="problemName"
                        [class.is-invalid]="validationResult.errors.name"
                        (input)="fieldChanged('name')"/>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.name">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.name" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="legend" class="col-sm-3 col-form-label text-right">Legend:</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <textarea id="legend" class="form-control" type="text"
                           [(ngModel)]="problem.legend" name="legend"
                           [class.is-invalid]="validationResult.errors.legend"
                           (input)="fieldChanged('legend')"></textarea>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.legend">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.legend" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="input" class="col-sm-3 col-form-label text-right">Input description:</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <textarea id="input" class="form-control" type="text"
                           [(ngModel)]="problem.input" name="input"
                           [class.is-invalid]="validationResult.errors.input"
                           (input)="fieldChanged('input')"></textarea>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.input">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.input" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="output" class="col-sm-3 col-form-label text-right">Output description:</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <textarea id="output" class="form-control" type="text"
                           [(ngModel)]="problem.output" name="output"
                           [class.is-invalid]="validationResult.errors.output"
                           (input)="fieldChanged('output')"></textarea>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.output">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.output" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="notes" class="col-sm-3 col-form-label text-right">Notes:</label>
-            <div class="col-sm-7">
+            <div class="col-sm-6">
                 <textarea id="notes" class="form-control" type="text"
                           [(ngModel)]="problem.notes" name="notes"
                           [class.is-invalid]="validationResult.errors.notes"
                           (input)="fieldChanged('notes')"></textarea>
             </div>
-            <div type="text" class="invalid-feedback">
-                <span *ngFor="let error of validationResult.errors.notes">{{error}} </span>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.notes" class="text-danger">{{error}} </small>
             </div>
         </div>
         <div class="form-group row">
             <label for="statementsPdf" class="col-sm-3 col-form-label text-right">Statements pdf:</label>
-            <div class="col-sm-7 align-middle">
+            <div class="col-sm-6 align-middle">
                 <input type="file" id="statementsPdf" class="form-control-file" (change)="fileChange($event)"
                        name="statementsPdf">
                 <button *ngIf="problem.statementsPdfExists" class="btn btn-link" (click)="downloadStatementsPdf()">
@@ -117,8 +117,11 @@
         </div>
 
         <span class="help-block">{{validationResult.errors[generalErrorPath]}}</span>
-
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Save problem</button>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button type="button" class="btn btn-primary" (click)="onSubmit()">Save problem</button>
+            </div>
+        </div>
         <span *ngIf="problemEditedSuccessfully" style="color: green">Successful</span>
     </form>
 </div>

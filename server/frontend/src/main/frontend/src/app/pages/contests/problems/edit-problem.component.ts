@@ -53,10 +53,8 @@ export class EditProblemComponent {
         }
         if (!this.problem.memoryLimit) {
             this.validationResult.addError("memoryLimit", "Memory limit should be set");
-        } else {
-            if (this.problem.timeLimit <= 0) {
-                this.validationResult.addError("memoryLimit", "Memory limit should not be less than 1");
-            }
+        } else if (this.problem.memoryLimit <= 0) {
+            this.validationResult.addError("memoryLimit", "Memory limit should not be less than 1");
         }
         if (!this.problem.name || this.problem.name == "") {
             this.validationResult.addError("name", "Should not be empty");

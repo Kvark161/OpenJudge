@@ -3,28 +3,56 @@
     <div class="row"><p></p></div>
     <form>
         <div class="form-group row">
-            <label for="inputType">Choose input type</label>
-            <select
-                    id="inputType"
-                    class="form-control"
-                    [(ngModel)]="inputType"
-                    name="inputType"
-                    style="width: 150px">
-                <option selected>Polygon zip</option>
-            </select>
+            <label for="inputType" class="col-sm-2 col-form-label text-right">Input type: </label>
+            <div class="col-sm-4">
+                <select
+                        id="inputType"
+                        class="form-control"
+                        [(ngModel)]="inputType"
+                        name="inputType"
+                        style="width: 150px"
+                        (change)="inputTypeChanged()">
+                    <option selected>{{CUSTOM_TYPE}}</option>
+                    <option>{{POLYGON_ZIP_TYPE}}</option>
+                </select>
+            </div>
+        </div>
+        <div *ngIf="inputType=='Custom'" class="form-group row">
+            <label for="problemName" class="col-sm-2 col-form-label text-right">Problem name: </label>
+            <div class="col-sm-6">
+                <input type="text"
+                       id="problemName"
+                       class="form-control"
+                       [(ngModel)]="problemName"
+                       name="problemName"
+                       [class.is-invalid]="validationResult.errors.problemName"
+                       (input)="fieldChanged('problemName')">
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.problemName" class="text-danger">{{error}}</small>
+            </div>
         </div>
         <div *ngIf="inputType=='Polygon zip'" class="form-group row">
-            <label for="file">Input file</label>
-            <input type="file"
-                   id="file"
-                   class="form-control-file"
-                   (change)="fileChange($event)"
-                   name="file"
-                   style="width: 250px;">
+            <label for="file" class="col-sm-2 col-form-label text-right">Input file: </label>
+            <div class="col-sm-4">
+                <input type="file"
+                       id="file"
+                       class="form-control-file"
+                       (change)="fileChange($event)"
+                       name="file"
+                       style="width: 250px;"
+                       [class.is-invalid]="validationResult.errors.file">
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.file" class="text-danger">{{error}}</small>
+            </div>
         </div>
 
-        <span class="help-block">{{error}}</span>
-
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Add problems</button>
+        <span class="help-block">{{validationResult.errors.generalErrorPath}}</span>
+        <div class="row">
+            <div class="col-sm-6 text-center">
+                <button type="button" class="btn btn-primary" (click)="onSubmit()">Add problem</button>
+            </div>
+        </div>
     </form>
 </div>

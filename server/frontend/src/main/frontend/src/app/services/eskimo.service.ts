@@ -54,6 +54,10 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/problem/add?contestId=" + contestId;
     }
 
+    private getUrlAddProblemCustom(contestId: number) {
+        return this.getUrlContest(contestId) + "/problem/add/custom";
+    }
+
     private getUrlContestProblem(contestId: number, problemIndex: number) {
         return this.getUrlContest(contestId) + "/problem/" + problemIndex;
     }
@@ -146,6 +150,11 @@ export class EskimoService {
         let formData: FormData = new FormData();
         formData.append('file', file, file.name);
         return this.http.post(this.getUrlAddProblem(contestId), formData, this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    addProblemCustom(contestId: number, problemName: string) : Observable<void> {
+        return this.http.post(this.getUrlAddProblemCustom(contestId), {problemName: problemName}, this.optionsWithCredentials)
             .catch(this.handleError);
     }
 
