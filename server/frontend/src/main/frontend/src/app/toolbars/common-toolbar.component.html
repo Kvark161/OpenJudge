@@ -24,7 +24,7 @@
         </form>
         <ul *ngIf="currentUserInfo.username && currentUserInfo.username != ''" class="navbar-nav navbar-right">
             <li class="nav-item">
-                <p class="navbar-text">Logged in as {{currentUserInfo.username}} | </p>
+                <p class="navbar-text">{{currentUserInfo.username}} | </p>
             </li>
             <li class="nav-item">
                 <a class="nav-link" (click)="logOut()">Log-out</a>
