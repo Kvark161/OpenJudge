@@ -1,5 +1,6 @@
 package eskimo.backend.rest.annotations;
 
+import eskimo.backend.entity.enums.ContestStatus;
 import eskimo.backend.entity.enums.Role;
 
 import java.lang.annotation.ElementType;
@@ -13,5 +14,7 @@ public @interface AccessLevel {
     /**
      * Highest role that have access to controller method
      */
-    Role role();
+    Role role() default Role.ANONYMOUS;
+
+    ContestStatus contestStatus() default ContestStatus.ANY;
 }

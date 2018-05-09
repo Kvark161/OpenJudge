@@ -1,6 +1,7 @@
 package eskimo.backend.rest;
 
 import eskimo.backend.entity.Test;
+import eskimo.backend.entity.enums.ContestStatus;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.annotations.AccessLevel;
@@ -43,20 +44,20 @@ public class ProblemController {
     }
 
     @GetMapping("contest/{id}/problems")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public List<ProblemInfoResponse> getProblems(@PathVariable("id") Long contestId) {
         return problemService.getContestProblems(contestId);
     }
 
     @GetMapping("contest/{id}/problem/{index}")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public StatementsResponse getStatements(@PathVariable("id") Long contestId,
                                             @PathVariable("index") Long problemIndex) {
         return problemService.getStatements(contestId, problemIndex);
     }
 
     @GetMapping("contest/{id}/problem/{index}/pdf")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public ResponseEntity<byte[]> getStatementsPdf(@PathVariable("id") Long contestId,
                                                    @PathVariable("index") Integer problemIndex) {
         try {

@@ -1,11 +1,14 @@
 package eskimo.backend.rest.interceptor;
 
 import eskimo.backend.config.AppSettingsProvider;
+import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.UserSession;
+import eskimo.backend.entity.enums.ContestStatus;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
+import eskimo.backend.services.ContestService;
 import eskimo.backend.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -49,6 +53,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private AppSettingsProvider appSettingsProvider;
+
+    @Autowired
+    private ContestService contestService;
 
     @Autowired
     public AuthenticationInterceptor(UserService userService) {
@@ -86,12 +93,43 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
             boolean badUserRequest = user.getRole() == Role.USER && accessRole == Role.ADMIN;
             boolean badAnonymousRequest = user.getRole() == Role.ANONYMOUS
                     && (accessRole == Role.ADMIN || accessRole == Role.USER);
+            if (!checkContestStatus(request, user, methodAnnotation == null ? ContestStatus.ANY : methodAnnotation.contestStatus())) {
+                response.sendError(HttpStatus.FORBIDDEN.value());
+                return false;
+            }
             if (badUserRequest || badAnonymousRequest) {
                 response.sendError(HttpStatus.FORBIDDEN.value());
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean checkContestStatus(HttpServletRequest request, User user, ContestStatus accessContestStatus) {
+        if (user.getRole() == Role.ADMIN || accessContestStatus == ContestStatus.ANY) {
+            return true;
+        }
+        try {
+            String contestIdStr = request.getParameter("contestId");
+            Long contestId = Long.parseLong(contestIdStr);
+            Contest contest = contestService.getContestById(contestId);
+            Instant now = Instant.now();
+            switch (accessContestStatus) {
+                case NOT_STARTED:
+                    return !contest.isStarted(now);
+                case STARTED:
+                    return contest.isStarted(now);
+                case RUNNING:
+                    return contest.isRunning(now);
+                case FINISHED:
+                    return contest.isFinished(now);
+                default:
+                    logger.warn("Not implemented case for accessing to contest " + accessContestStatus.name());
+                    return false;
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
@@ -106,8 +144,8 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         }
         String token = cookies.get(ESKIMO_TOKEN_COOKIE_NAME);
         String userAgent = request.getHeader("User-Agent");
-        String ip = request.getRemoteAddr();
-        if (token == null || userAgent == null || ip == null) {
+        String ip = "0.0.0.0";
+        if (token == null || userAgent == null) {
             return null;
         }
         UserSession userSession = userService.getUserSession(user.getId(), token, userAgent, ip);

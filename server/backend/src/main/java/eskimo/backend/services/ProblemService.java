@@ -6,13 +6,13 @@ import eskimo.backend.containers.StatementContainer;
 import eskimo.backend.containers.TestContainer;
 import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.StatementsDao;
-import eskimo.backend.entity.Problem;
-import eskimo.backend.entity.Statement;
-import eskimo.backend.entity.Test;
+import eskimo.backend.entity.*;
 import eskimo.backend.entity.enums.GenerationStatus;
+import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
+import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
 import eskimo.backend.storage.*;
@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,23 +43,44 @@ public class ProblemService {
     private final FileUtils fileUtils;
     private final JudgeService judgeService;
     private final DashboardService dashboardService;
+    private final AuthenticationHolder authenticationHolder;
+    private final ContestService contestService;
 
     public ProblemService(
-                          ProblemDao problemDao,
-                          StatementsDao statementsDao,
-                          StorageService storageService,
-                          FileUtils fileUtils,
-                          JudgeService judgeService,
-                          DashboardService dashboardService) {
+            ProblemDao problemDao,
+            StatementsDao statementsDao,
+            StorageService storageService,
+            FileUtils fileUtils,
+            JudgeService judgeService,
+            DashboardService dashboardService, AuthenticationHolder authenticationHolder, ContestService contestService) {
         this.problemDao = problemDao;
         this.statementsDao = statementsDao;
         this.storageService = storageService;
         this.fileUtils = fileUtils;
         this.judgeService = judgeService;
         this.dashboardService = dashboardService;
+        this.authenticationHolder = authenticationHolder;
+        this.contestService = contestService;
+    }
+
+    private void checkAccess(Long contestId) {
+        Contest contest = contestService.getContestById(contestId);
+        checkAccess(contest);
+    }
+
+    private void checkAccess(Contest contest) {
+        User user = authenticationHolder.getUser();
+        if (user.getRole() == Role.ADMIN) {
+            return;
+        }
+        Instant now = Instant.now();
+        if (!contest.isStarted(now)) {
+            throw new RuntimeException("Contest is not started yet");
+        }
     }
 
     public List<ProblemInfoResponse> getContestProblems(Long contestId) {
+        checkAccess(contestId);
         List<Problem> contestProblems = problemDao.getContestProblems(contestId);
         Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
         return contestProblems.stream()

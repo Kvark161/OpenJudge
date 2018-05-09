@@ -45,11 +45,10 @@ public class SubmissionService {
             throw new RuntimeException("Contest doesn't exists");
         }
         if (!Role.ADMIN.equals(user.getRole())) {
-            if (contest.getStartTime() == null || contest.getFinishTime() == null ||
-                    contest.getStartTime().compareTo(submission.getSendingTime()) > 0) {
+            if (!contest.isStarted(submission.getSendingTime())) {
                 throw new RuntimeException("Contest is not started yet");
             }
-            if (contest.getFinishTime().compareTo(submission.getSendingTime()) <= 0) {
+            if (contest.isFinished(submission.getSendingTime())) {
                 throw new RuntimeException("Contest is over");
             }
             submission.setAddToDashboard(true);

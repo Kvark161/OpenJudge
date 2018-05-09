@@ -2,6 +2,7 @@ package eskimo.backend.rest;
 
 import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.User;
+import eskimo.backend.entity.enums.ContestStatus;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
@@ -34,19 +35,19 @@ public class SubmissionController {
     }
 
     @GetMapping("contest/{id}/submissions")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public List<Submission> getUserContestSubmissions(@PathVariable("id") Long contestId) {
         return submissionService.getUserContestSubmissions(authenticationHolder.getUser().getId(), contestId);
     }
 
     @PostMapping("contest/submit")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.RUNNING)
     public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) {
         submissionService.submit(submitProblemWebRequest);
     }
 
     @GetMapping("submission/{submissionId}")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public Submission getSubmission(@PathVariable Long submissionId) {
         User user = authenticationHolder.getUser();
         Submission submission = submissionService.getFullSubmission(submissionId);
@@ -57,7 +58,7 @@ public class SubmissionController {
     }
 
     @GetMapping("contest/{contestId}/submitParameters")
-    @AccessLevel(role = Role.USER)
+    @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public SubmitParametersResponse getSubmitParameters(@PathVariable Long contestId) {
         SubmitParametersResponse result = new SubmitParametersResponse();
         result.setProblems(problemService.getContestProblems(contestId));

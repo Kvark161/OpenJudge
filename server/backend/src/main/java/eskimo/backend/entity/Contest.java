@@ -38,4 +38,16 @@ public class Contest implements Serializable {
         return startTime.plusSeconds(duration * 60);
     }
 
+    public boolean isStarted(Instant now) {
+        return startTime.compareTo(now) <= 0;
+    }
+
+    public boolean isFinished(Instant now) {
+        return startTime.plusSeconds(duration * 60).compareTo(now) > 0;
+    }
+
+    public boolean isRunning(Instant now) {
+        return isStarted(now) && !isFinished(now);
+    }
+
 }

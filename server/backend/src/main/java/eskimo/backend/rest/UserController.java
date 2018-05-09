@@ -57,7 +57,7 @@ public class UserController {
         if (userAgent == null) {
             throw new IllegalArgumentException("can't login (missed header 'User-Agent')");
         }
-        String ip = request.getRemoteAddr();
+        String ip = "0.0.0.0";
         UserSession userSession = userService.addUserSession(actualUser.getId(), userAgent, ip);
         response.addCookie(new Cookie(ESKIMO_UID_COOKIE_NAME, actualUser.getId().toString()));
         response.addCookie(new Cookie(ESKIMO_TOKEN_COOKIE_NAME, userSession.getToken()));

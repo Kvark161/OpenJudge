@@ -21,7 +21,6 @@ export class EskimoService {
     private urlHost = 'http://localhost:8080/api/';
     private urlContests = this.urlHost + 'contests';
     private urlContestCreate = this.urlHost + 'contest/create';
-    private urlSubmit = this.urlHost + "contest/submit";
     private urlGetUsers = this.urlHost + "users";
     private urlCreateUser = this.urlHost + "user";
 
@@ -32,7 +31,7 @@ export class EskimoService {
     }
 
     private getUrlProblems(contestId: number) {
-        return this.getUrlContest(contestId) + "/problems";
+        return this.getUrlContest(contestId) + "/problems?contestId=" + contestId;
     }
 
     private getUrlServerTime() {
@@ -40,19 +39,19 @@ export class EskimoService {
     }
 
     private getUrlDashboard(contestId: number) {
-        return this.getUrlContest(contestId) + "/dashboard";
+        return this.getUrlContest(contestId) + "/dashboard?contestId=" + contestId;
     }
 
     private getUrlUserContestSubmissions(contestId: number) {
-        return this.getUrlContest(contestId) + "/submissions";
+        return this.getUrlContest(contestId) + "/submissions?contestId=" + contestId;
     }
 
-    private getUrlSubmission(submissionId: number) {
-        return this.urlHost + "submission/" + submissionId;
+    private getUrlSubmission(contestId: number, submissionId: number) {
+        return this.urlHost + "submission/" + submissionId + "?contestId=" + contestId;
     }
 
     private getUrlAddProblem(contestId: number) {
-        return this.getUrlContest(contestId) + "/problem/add";
+        return this.getUrlContest(contestId) + "/problem/add?contestId=" + contestId;
     }
 
     private getUrlContestProblem(contestId: number, problemIndex: number) {
@@ -60,19 +59,19 @@ export class EskimoService {
     }
 
     private getUrlHideProblem(contestId: number, problemIndex: number) {
-        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/hide";
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/hide?contestId=" + contestId;
     }
 
     private getUrlShowProblem(contestId: number, problemIndex: number) {
-        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/show";
+        return this.getUrlContest(contestId) + "/problem/" + problemIndex + "/show?contestId=" + contestId;
     }
 
     private getUrlStatements(contestId: number, problemIndex: number) {
-        return this.getUrlContestProblem(contestId, problemIndex);
+        return this.getUrlContestProblem(contestId, problemIndex) + "?contestId=" + contestId;
     }
 
     private getUrlStatementsPdf(contestId: number, problemIndex: number) {
-        return this.getUrlContestProblem(contestId, problemIndex) + "/pdf";
+        return this.getUrlContestProblem(contestId, problemIndex) + "/pdf?contestId=" + contestId;
     }
     
     private getUrlAdminProblems(contestId: number) {
@@ -84,7 +83,7 @@ export class EskimoService {
     }
 
     private getUrlSubmitParameters(contestId: number) {
-        return this.getUrlContest(contestId) + "/submitParameters";
+        return this.getUrlContest(contestId) + "/submitParameters?contestId=" + contestId;
     }
 
     private getUrlGetProblemForEdit(contestId: number, problemIndex: number) {
@@ -109,6 +108,10 @@ export class EskimoService {
 
     private getUrlGetChecker(contestId: number, problemIndex: number) {
         return this.getUrlContestProblem(contestId, problemIndex) + "/checker";
+    }
+
+    getSubmitUrl(contestId: number) {
+        return this.urlHost + "contest/submit?contestId=" + contestId;
     }
 
     private userMapper(jsonUser): User {
@@ -186,7 +189,7 @@ export class EskimoService {
     }
 
     submitProblem(contestId: number, problemIndex: number, sourceCode: string, selectedLanguage: number): Observable<any> {
-        return this.http.post(this.urlSubmit, {
+        return this.http.post(this.getSubmitUrl(contestId), {
                 contestId: contestId, problemIndex: problemIndex, sourceCode: sourceCode,
             languageId: selectedLanguage},
             this.optionsWithCredentials);
@@ -198,8 +201,8 @@ export class EskimoService {
             .catch(this.handleError);
     }
 
-    getSubmission(submissionId: number) {
-        return this.http.get(this.getUrlSubmission(submissionId), this.optionsWithCredentials)
+    getSubmission(contestId: number, submissionId: number) {
+        return this.http.get(this.getUrlSubmission(contestId, submissionId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
     }
