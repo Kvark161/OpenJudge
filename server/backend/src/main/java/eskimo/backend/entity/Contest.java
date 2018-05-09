@@ -31,6 +31,18 @@ public class Contest implements Serializable {
         return DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss").format(startTime.atZone(TimeZone.getDefault().toZoneId()));
     }
 
+    @JsonGetter("status")
+    public String getContestStatus() {
+        Instant now = Instant.now();
+        if (!isStarted(now)) {
+            return "Not started";
+        }
+        if (!isFinished(now)) {
+            return "Running";
+        }
+        return "Finished";
+    }
+
     public Instant getFinishTime() {
         if (startTime == null || duration == null) {
             return null;

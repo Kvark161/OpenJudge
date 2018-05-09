@@ -10,13 +10,17 @@
             <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
                 <a routerLink="/u/contest/{{contestId}}/problems" class="nav-link">Problems</a>
             </li>
-            <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
+            <li *ngIf="role != 'ANONYMOUS' && (role == 'ADMIN' || (contest.status == 'Running' || contest.status == 'Finished'))"
+                class="nav-item">
                 <a routerLink="/u/contest/{{contestId}}/submissions" class="nav-link">Submissions</a>
             </li>
-            <li *ngIf="role != 'ANONYMOUS'" class="nav-item">
+            <li *ngIf="role != 'ANONYMOUS' && (role == 'ADMIN' || contest.status == 'Running')" class="nav-item">
                 <a routerLink="/u/contest/{{contestId}}/submit" class="nav-link">Submit</a>
             </li>
-            <a routerLink="/p/contest/{{contestId}}/dashboard" class="nav-link">Dashboard</a>
+            <li *ngIf="(role == 'ADMIN' || (contest.status == 'Running' || contest.status == 'Finished'))"
+                class="nav-item">
+                <a routerLink="/p/contest/{{contestId}}/dashboard" class="nav-link">Dashboard</a>
+            </li>
         </ul>
         <form *ngIf="!currentUserInfo.username || currentUserInfo.username == ''" class="form-inline my-2 my-lg-0">
             <div class="form-group">

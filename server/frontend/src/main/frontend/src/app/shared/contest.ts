@@ -4,6 +4,7 @@ export class Contest {
     startTime: string;
     duration: number;
     scoringSystem: string;
+    status: string;
 
     constructor(id: number, name: string, startTime: string, duration: number) {
         this.id = id;
