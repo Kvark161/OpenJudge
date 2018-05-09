@@ -42,7 +42,7 @@ import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component
         ReactiveFormsModule,
         HttpModule,
         MatDialogModule,
-        RouterModule.forRoot(router),
+        RouterModule.forRoot(router, {useHash: true}),
         NgbModule.forRoot()
     ],
     declarations: [
