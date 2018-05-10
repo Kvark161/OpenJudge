@@ -7,6 +7,9 @@
             <li class="nav-item" *ngIf="currentUserInfo.role == 'ADMIN'">
                 <a routerLink="/a/management" class="nav-link">Management</a>
             </li>
+            <li class="nav-item" *ngIf="currentUserInfo.role == 'ADMIN'">
+                <a routerLink="/a/programming-languages" class="nav-link">Programming languages</a>
+            </li>
         </ul>
         <form *ngIf="!currentUserInfo.username || currentUserInfo.username == ''" class="form-inline my-2 my-lg-0">
             <div class="form-group">
@@ -21,7 +24,7 @@
         </form>
         <ul *ngIf="currentUserInfo.username && currentUserInfo.username != ''" class="navbar-nav navbar-right">
             <li class="nav-item">
-                <p class="navbar-text">Logged in as {{currentUserInfo.username}} | </p>
+                <p class="navbar-text">{{currentUserInfo.username}} | </p>
             </li>
             <li class="nav-item">
                 <a class="nav-link" (click)="logOut()">Log-out</a>

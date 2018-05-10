@@ -118,6 +118,10 @@ export class EskimoService {
         return this.urlHost + "contest/submit?contestId=" + contestId;
     }
 
+    getUrlProgrammingLanguages() {
+        return this.urlHost + "programming-languages";
+    }
+
     private userMapper(jsonUser): User {
       return User.copyOf(jsonUser);
     }
@@ -317,4 +321,10 @@ export class EskimoService {
         return Observable.throw(error.message || error);
     }
 
+    getProgrammingLanguages() {
+        return this.http.get(this.getUrlProgrammingLanguages(), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
+
+    }
 }
