@@ -5,6 +5,8 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.services.ContestService;
+import eskimo.backend.services.DashboardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -14,6 +16,9 @@ import java.util.TimeZone;
 @RestController
 @RequestMapping("api")
 public class ContestController {
+
+    @Autowired
+    private DashboardService dashboardService;
 
     private final ContestService contestService;
 
@@ -40,5 +45,12 @@ public class ContestController {
         contest.setStartTime(startTime);
         contest.setScoringSystem(ScoringSystem.KIROV);
         return contestService.createContest(contest);
+    }
+
+    @GetMapping("contest/{id}/rebuild-dashboard")
+    @AccessLevel(role = Role.ADMIN)
+    public String rebuildDashboard(@PathVariable("id") Long contestId) {
+        dashboardService.rebuild(contestId);
+        return "done";
     }
 }

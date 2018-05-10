@@ -12,8 +12,8 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.parsers.ProblemParserPolygonZip;
-import eskimo.backend.rest.request.AddProblemCustomRequest;
 import eskimo.backend.rest.holder.AuthenticationHolder;
+import eskimo.backend.rest.request.AddProblemCustomRequest;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
 import eskimo.backend.storage.*;
@@ -411,12 +411,12 @@ public class ProblemService {
 
     public void hideProblem(Long contestId, Long problemIndex) {
         problemDao.hideProblem(contestId, problemIndex);
-        dashboardService.rebuild();
+        dashboardService.rebuild(contestId);
     }
 
     public void showProblem(Long contestId, Long problemIndex) {
         problemDao.showProblem(contestId, problemIndex);
-        dashboardService.rebuild();
+        dashboardService.rebuild(contestId);
     }
 
     public Problem getProblem(long contestId, Long problemIndex) {
