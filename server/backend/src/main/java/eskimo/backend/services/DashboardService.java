@@ -44,11 +44,14 @@ public class DashboardService {
     final private Lock lock = new ReentrantLock();
 
     private final BlockingQueue<Submission> updateQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Long> rebuildQueue = new LinkedBlockingQueue<>();
     private final UpdateThread updateThread = new UpdateThread();
+    private final RebuildThread rebuildThread = new RebuildThread();
 
     @PostConstruct
     public void init() {
         updateThread.start();
+        rebuildThread.start();
     }
 
     public void addSubmission(Submission submission) {
@@ -75,20 +78,8 @@ public class DashboardService {
     }
 
     public void rebuild(long contestId) {
-        lock.lock();
-        try {
-            Dashboard dashboard = getDashboard(contestId);
-            Contest contest = contestService.getContestById(contestId);
-            dashboard.setTable(new ArrayList<>());
-            List<Submission> submissions = submissionService.getContestJudgedSubmissions(contestId);
-            for (Submission submission : submissions) {
-                updateDashboard(dashboard, contest, submission);
-            }
-            dashboard.sortTable();
-            dashboard.setLastUpdate(Instant.now());
-            dashboardDao.updateDashboard(dashboard);
-        } finally {
-            lock.unlock();
+        if (!rebuildQueue.contains(contestId)) {
+            rebuildQueue.add(contestId);
         }
     }
 
@@ -182,7 +173,35 @@ public class DashboardService {
                         lock.unlock();
                     }
                 } catch (Throwable e) {
-                    logger.error("in dashboard thread", e);
+                    logger.error("in dashboard update thread", e);
+                }
+            }
+        }
+    }
+
+    private class RebuildThread extends Thread {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Long contestId = rebuildQueue.take();
+                    lock.lock();
+                    try {
+                        Dashboard dashboard = getDashboard(contestId);
+                        Contest contest = contestService.getContestById(contestId);
+                        dashboard.setTable(new ArrayList<>());
+                        List<Submission> submissions = submissionService.getContestJudgedSubmissions(contestId);
+                        for (Submission submission : submissions) {
+                            updateDashboard(dashboard, contest, submission);
+                        }
+                        dashboard.sortTable();
+                        dashboard.setLastUpdate(Instant.now());
+                        dashboardDao.updateDashboard(dashboard);
+                    } finally {
+                        lock.unlock();
+                    }
+                } catch (Throwable e) {
+                    logger.error("in dashboard rebuild thread", e);
                 }
             }
         }

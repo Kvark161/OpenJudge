@@ -5,6 +5,7 @@ import eskimo.backend.entity.Contest;
 import eskimo.backend.storage.StorageOrder;
 import eskimo.backend.storage.StorageOrderCreateFolder;
 import eskimo.backend.storage.StorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,15 +15,15 @@ import java.util.List;
 @Service
 public class ContestService {
 
-    private final ContestDao contestDao;
-    private final StorageService storageService;
-    private final DashboardService dashboardService;
+    @Autowired
+    private ContestDao contestDao;
 
-    public ContestService(ContestDao contestDao, StorageService storageService, DashboardService dashboardService) {
-        this.contestDao = contestDao;
-        this.storageService = storageService;
-        this.dashboardService = dashboardService;
-    }
+    @Autowired
+    private StorageService storageService;
+
+    @Autowired
+    private DashboardService dashboardService;
+
 
     @Transactional
     public Contest createContest(Contest contest) {
