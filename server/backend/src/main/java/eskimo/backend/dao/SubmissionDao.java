@@ -72,6 +72,7 @@ public class SubmissionDao {
         params.put("number_tests", submission.getNumberTests());
         params.put("passed_tests", submission.getPassedTests());
         params.put("first_fail_test", submission.getFirstFailTest());
+        params.put("programming_language_id", submission.getProgrammingLanguageId());
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params));
         submission.setId(key.longValue());
     }
@@ -85,6 +86,7 @@ public class SubmissionDao {
                 "number_tests = ?, " +
                 "passed_tests = ?, " +
                 "first_fail_test = ?, " +
+                "programming_language_id = ?, " +
                 "message = ? " +
                 "WHERE id = ?";
 
@@ -95,6 +97,7 @@ public class SubmissionDao {
                 submission.getNumberTests(),
                 submission.getPassedTests(),
                 submission.getFirstFailTest(),
+                submission.getProgrammingLanguageId(),
                 submission.getMessage(),
                 submission.getId());
     }
@@ -188,6 +191,7 @@ public class SubmissionDao {
             submission.setUsedTime(resultSet.getLong("used_time"));
             submission.setUsedMemory(resultSet.getLong("used_memory"));
             submission.setProblemIndex(resultSet.getLong("contest_index"));
+            submission.setProgrammingLanguageId(resultSet.getLong("programming_language_id"));
             if (isFull) {
                 submission.setSourceCode(resultSet.getString("source_code"));
                 String resultData = resultSet.getString("result_data");

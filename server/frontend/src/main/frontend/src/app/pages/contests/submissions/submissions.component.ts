@@ -2,6 +2,8 @@ import {Component} from "@angular/core";
 import {EskimoService} from "../../../services/eskimo.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Submission} from "../../../shared/submission";
+import {CurrentUserInfo} from "../../../shared/current-user-info";
+import {UserService} from "../../../services/user.service";
 
 @Component({
     selector: 'app-submissions',
@@ -63,10 +65,16 @@ export class SubmissionsComponent {
 
     contestId: number;
     submissions: Submission[];
+    currentUserInfo: CurrentUserInfo;
 
-    constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService) {
+    constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService, private userService: UserService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
-        this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+        this.currentUserInfo = this.userService.currentUserInfo;
+        if (this.currentUserInfo.role == 'ADMIN') {
+            this.eskimoService.getContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+        } else {
+            this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+        }
     }
 
     getStatusColor(status: string) {
@@ -80,6 +88,12 @@ export class SubmissionsComponent {
             result += ' on test ' + (submission.firstFailTest);
         }
         return result;
+    }
+
+    rejudge(submissionId: number) {
+        this.eskimoService.rejudgeSubmission(submissionId).subscribe(res => {
+            window.location.reload();
+        })
     }
 
 }

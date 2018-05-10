@@ -46,6 +46,12 @@ public class SubmissionController {
         submissionService.submit(submitProblemWebRequest);
     }
 
+    @GetMapping("submission/{id}/rejudge")
+    @AccessLevel(role = Role.ADMIN)
+    public void rejudge(@PathVariable("id") Long submissionId) {
+        submissionService.rejudge(submissionId);
+    }
+
     @GetMapping("submission/{submissionId}")
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public Submission getSubmission(@PathVariable Long submissionId) {

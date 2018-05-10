@@ -30,7 +30,7 @@ public class InvokerService {
 
     public CompilationResult compile(Invoker invoker, CompilationParams params) {
         try {
-        return restTemplate.postForObject(invoker.getCompileUrl(), params, CompilationResult.class);
+            return restTemplate.postForObject(invoker.getCompileUrl(), params, CompilationResult.class);
         } catch (Exception e) {
             invoker.setReachable(false);
             logger.error("Invoker error while compiling: " + invoker.getUrl() + " id=" + invoker.getId() + " threadId=" + invoker.getThreadId(), e);

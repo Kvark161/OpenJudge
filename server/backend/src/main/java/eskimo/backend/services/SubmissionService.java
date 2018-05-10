@@ -9,6 +9,7 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.SubmitProblemWebRequest;
+import eskimo.invoker.entity.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +55,24 @@ public class SubmissionService {
             submission.setAddToDashboard(true);
         }
         submissionDao.insertSubmission(submission);
+        judgeService.judge(submission);
+    }
+
+    public void rejudge(long submissionId) {
+        Submission submission = submissionDao.getFullSubmission(submissionId);
+        if (submission == null) {
+            return;
+        }
+        submission.setStatus(Submission.Status.PENDING);
+        submission.setPassedTests(0);
+        submission.setFirstFailTest(0);
+        submission.setMessage("");
+        submission.setTestResults(new TestResult[0]);
+        submission.setDashboardStatus(Submission.DashboardStatus.UNACCOUNTED);
+        submission.setUsedTime(0);
+        submission.setUsedMemory(0);
+        submissionDao.updateSubmission(submission);
+        submissionDao.updateSubmissionResultData(submission);
         judgeService.judge(submission);
     }
 

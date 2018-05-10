@@ -50,6 +50,10 @@ export class EskimoService {
         return this.getUrlContest(contestId) + "/submissions?contestId=" + contestId;
     }
 
+    private getUrlContestSubmissions(contestId: number) {
+        return this.getUrlContest(contestId) + "/all-submissions?contestId=" + contestId;
+    }
+
     private getUrlSubmission(contestId: number, submissionId: number) {
         return this.urlHost + "submission/" + submissionId + "?contestId=" + contestId;
     }
@@ -128,6 +132,10 @@ export class EskimoService {
 
     getUrlRebuldDashboard(contestId: number) {
         return this.getUrlContest(contestId) + "/rebuild-dashboard?contestId=" + contestId;
+    }
+
+    getUrlRejudgeSubmission(submissionId: number) {
+        return this.urlHost + "submission/" + submissionId + "/rejudge";
     }
 
     private userMapper(jsonUser): User {
@@ -219,6 +227,12 @@ export class EskimoService {
                 contestId: contestId, problemIndex: problemIndex, sourceCode: sourceCode,
             languageId: selectedLanguage},
             this.optionsWithCredentials);
+    }
+
+    getContestSubmissions(contestId: number) {
+        return this.http.get(this.getUrlContestSubmissions(contestId), this.optionsWithCredentials)
+            .map(res => res.json())
+            .catch(this.handleError);
     }
 
     getUserContestSubmissions(contestId: number) {
@@ -342,6 +356,11 @@ export class EskimoService {
 
     rebuildDashboard(contestId: number) {
         return this.http.get(this.getUrlRebuldDashboard(contestId), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    rejudgeSubmission(submissionId: number) {
+        return this.http.get(this.getUrlRejudgeSubmission(submissionId), this.optionsWithCredentials)
             .catch(this.handleError);
     }
 }
