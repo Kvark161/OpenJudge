@@ -18,6 +18,7 @@
                 <tr>
                     <th>Username</th>
                     <th>Password</th>
+                    <th>Dashboard name</th>
                     <th>Admin</th>
                     <th>Blocked</th>
                     <th></th>
@@ -42,6 +43,13 @@
                         <span *ngIf="user.passwordVisible">{{user.password}}</span>
                         <span *ngIf="!user.passwordVisible">&bull;&bull;&bull;&bull;&bull;&bull;</span>
                     </td>
+
+                    <td *ngIf="editingIndex == i">
+                        <input type="text" class="form-control" [class.is-invalid]="validationResult.errors.name != null"
+                               [(ngModel)]="formUser.name" name="dashboardName" (input)="fieldChanged('name')">
+                        <span type="text" class="invalid-feedback">{{validationResult.errors.name}}</span>
+                    </td>
+                    <td *ngIf="editingIndex != i">{{user.name}}</td>
 
                     <td *ngIf="editingIndex == i">
                         <input class="form-check-input" type="checkbox" id="userRole" name="userRole"

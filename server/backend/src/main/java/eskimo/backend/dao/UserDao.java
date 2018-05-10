@@ -43,6 +43,7 @@ public class UserDao {
                 .withTableName("users")
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
+        params.put("login", user.getUsername());
         params.put("name", user.getUsername());
         params.put("password", user.getPassword());
         params.put("locale", user.getLocale().getLanguage());
@@ -54,7 +55,7 @@ public class UserDao {
     @Transactional
     public List<User> addUsers(List<User> users) {
         String sql = "INSERT INTO users " +
-                "(name, password, role, locale, is_blocked) VALUES (?, ?, ?, ?, ?)";
+                "(login, name, password, role, locale, is_blocked) VALUES (?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
@@ -62,10 +63,11 @@ public class UserDao {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 User user = users.get(i);
                 ps.setString(1, user.getUsername());
-                ps.setString(2, user.getPassword());
-                ps.setString(3, user.getRole().name());
-                ps.setString(4, user.getLocale().getLanguage());
-                ps.setBoolean(5, user.isBlocked());
+                ps.setString(2, user.getUsername());
+                ps.setString(3, user.getPassword());
+                ps.setString(4, user.getRole().name());
+                ps.setString(5, user.getLocale().getLanguage());
+                ps.setBoolean(6, user.isBlocked());
             }
 
             @Override
@@ -73,38 +75,39 @@ public class UserDao {
                 return users.size();
             }
         });
-        return getUsersByNames(users.stream().map(User::getUsername).collect(Collectors.toList()));
+        return getUsersByLogins(users.stream().map(User::getUsername).collect(Collectors.toList()));
     }
 
     @Transactional
-    public List<User> getUsersByNames(List<String> usernames) {
-        String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u " +
-                "WHERE name in (:names)";
+    public List<User> getUsersByLogins(List<String> logins) {
+        String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u " +
+                "WHERE login in (:logins)";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("names", usernames);
+        parameters.addValue("logins", logins);
         return namedParameterJdbcTemplate.query(sql, parameters, new UserRowMapper());
     }
 
     public void editUser(User user) {
         String sql = "UPDATE users SET " +
+                "login = ?, " +
                 "name = ?, " +
                 "password = ?, " +
                 "role = ?, " +
                 "is_blocked = ? " +
                 "WHERE id = ?";
-        jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRole().name(), user.isBlocked(), user.getId());
+        jdbcTemplate.update(sql, user.getUsername(), user.getName(), user.getPassword(), user.getRole().name(), user.isBlocked(), user.getId());
     }
 
     @Transactional
     public List<User> getAllUsers() {
-        String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u";
+        String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u";
         return jdbcTemplate.query(sql, new Object[]{}, new UserRowMapper());
     }
 
     @Transactional
     public User getUserById(Long id) {
         try {
-            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.id = ?";
+            String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.id = ?";
             return jdbcTemplate.queryForObject(sql, new Object[]{id}, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
             logger.info("can not get user by id=" + id, e);
@@ -114,28 +117,28 @@ public class UserDao {
 
     public Long getNextUsernameNumber() {
         String prefix = "user";
-        String sql = "SELECT name from users WHERE name LIKE '" + prefix + "%'";
-        List<String> names = jdbcTemplate.queryForList(sql, String.class);
-        return names.stream()
-                .map(name -> name.substring(prefix.length()))
+        String sql = "SELECT login from users WHERE login LIKE '" + prefix + "%'";
+        List<String> logins = jdbcTemplate.queryForList(sql, String.class);
+        return logins.stream()
+                .map(login -> login.substring(prefix.length()))
                 .filter(s -> !s.isEmpty())
                 .map(Long::parseLong)
                 .max(Long::compareTo)
                 .orElse(0L) + 1;
     }
 
-    public boolean userExists(String name) {
-        String sql = "SELECT users.id FROM users WHERE users.name = ?";
-        return !jdbcTemplate.query(sql, new Object[]{name}, (rs, rowNum) -> null).isEmpty();
+    public boolean userExists(String login) {
+        String sql = "SELECT users.id FROM users WHERE users.login = ?";
+        return !jdbcTemplate.query(sql, new Object[]{login}, (rs, rowNum) -> null).isEmpty();
     }
 
     @Transactional
-    public User getUserByName(String name) {
+    public User getUserByLogin(String login) {
         try {
-            String sql = "SELECT u.id, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.name = ?";
-            return jdbcTemplate.queryForObject(sql, new Object[]{name}, new UserRowMapper());
+            String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u WHERE u.login = ?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{login}, new UserRowMapper());
         } catch (EmptyResultDataAccessException e) {
-            logger.info("can not get user by name=" + name, e);
+            logger.info("can not get user by login=" + login, e);
             return null;
         }
     }
@@ -155,7 +158,8 @@ public class UserDao {
         public User mapRow(ResultSet resultSet, int i) throws SQLException {
             User user = new User();
             user.setId(resultSet.getLong("id"));
-            user.setUsername(resultSet.getString("name"));
+            user.setName(resultSet.getString("name"));
+            user.setUsername(resultSet.getString("login"));
             user.setPassword(resultSet.getString("password"));
             user.setLocale(new Locale(resultSet.getString("locale")));
             user.setRole(Role.valueOf(resultSet.getString("role")));

@@ -70,7 +70,6 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         AccessLevel methodAnnotation = handlerMethod.getMethodAnnotation(AccessLevel.class);
         Role accessRole = methodAnnotation == null ? Role.ANONYMOUS : methodAnnotation.role();
-        String servletPath = request.getServletPath();
         if (accessRole == Role.INVOKER) {
             return authenticateInvoker(request, response);
         } else {

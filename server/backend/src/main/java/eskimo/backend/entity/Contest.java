@@ -55,7 +55,7 @@ public class Contest implements Serializable {
     }
 
     public boolean isFinished(Instant now) {
-        return startTime.plusSeconds(duration * 60).compareTo(now) > 0;
+        return startTime.plusSeconds(duration * 60).compareTo(now) < 0;
     }
 
     public boolean isRunning(Instant now) {

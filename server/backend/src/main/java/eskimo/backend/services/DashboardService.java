@@ -69,7 +69,7 @@ public class DashboardService {
     public Dashboard getFullDashboard(long contestId) {
         Dashboard dashboard = getDashboard(contestId);
         for (DashboardRow dashboardRow : dashboard.getTable()) {
-            dashboardRow.setUsername(userService.getUserById(dashboardRow.getUserId()).getUsername());
+            dashboardRow.setName(userService.getUserById(dashboardRow.getUserId()).getName());
         }
         return dashboard;
     }

@@ -20,7 +20,7 @@
             <tbody>
             <tr *ngFor="let row of dashboard.table; let i = index">
                 <td scope="row" width="40px" style="padding: 3px; vertical-align: middle">{{i + 1}}</td>
-                <td width="100%" style="padding: 3px; text-align: left; vertical-align: middle">{{row.username}}</td>
+                <td width="100%" style="padding: 3px; text-align: left; vertical-align: middle">{{row.name}}</td>
                 <td align="center" width="30px" style="padding: 3px; vertical-align: middle">{{row.score}}</td>
                 <td align="center" width="30px" style="padding: 3px; vertical-align: middle"
                     *ngIf="contest.scoringSystem == 'ACM'">{{row.penalty}}

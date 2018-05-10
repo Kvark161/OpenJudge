@@ -186,7 +186,7 @@ public class UserService {
         if (name == null) {
             throw new IllegalArgumentException("username should not be empty");
         }
-        return userDao.getUserByName(name);
+        return userDao.getUserByLogin(name);
     }
 
     public UserSession addUserSession(Long userId, String userAgent, String ip) {

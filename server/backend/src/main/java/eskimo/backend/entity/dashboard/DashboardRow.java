@@ -11,7 +11,7 @@ import java.util.Map;
 public class DashboardRow {
 
     private long userId;
-    private String username;
+    private String name;
     private long score;
     private long penalty;
     private Map<Long, ProblemResult> problemResults = new HashMap<>();

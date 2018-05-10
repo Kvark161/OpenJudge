@@ -25,7 +25,11 @@ public class Utils {
      * Generates password from latin letters and digits
      */
     public static String generatePassword() {
-        int passwordLength = new Random().nextInt() % (MAX_PASSWORD_LENGTH - MIN_PASSWORD_LENGTH + 1) + MIN_PASSWORD_LENGTH;
+        int passwordLength = new Random().nextInt();
+        if (passwordLength < 0) {
+            passwordLength = -passwordLength;
+        }
+        passwordLength  = passwordLength % (MAX_PASSWORD_LENGTH - MIN_PASSWORD_LENGTH + 1) + MIN_PASSWORD_LENGTH;
         Random charRandom = new Random();
         return IntStream.range(0, passwordLength)
                 .boxed()

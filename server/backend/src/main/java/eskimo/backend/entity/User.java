@@ -11,7 +11,8 @@ import java.util.Locale;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private Long id;
-    private String username;
+    private String name;//real name
+    private String username;//login
     private String password;
     private Locale locale;
     private Role role;

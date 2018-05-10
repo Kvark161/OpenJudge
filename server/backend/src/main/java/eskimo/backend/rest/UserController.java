@@ -8,6 +8,8 @@ import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.response.UpdateResponse;
 import eskimo.backend.rest.response.UserInfoResponse;
 import eskimo.backend.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -22,7 +24,7 @@ import static eskimo.backend.rest.interceptor.AuthenticationInterceptor.ESKIMO_U
 @RestController
 @RequestMapping("api")
 public class UserController {
-
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final AuthenticationHolder authenticationHolder;
 
@@ -45,6 +47,7 @@ public class UserController {
     public boolean login(@RequestBody User user, HttpServletRequest request, HttpServletResponse response) {
         User actualUser = userService.getUserByName(user.getUsername());
         if (actualUser == null) {
+            logger.error("User is null in login controller method");
             return false;
         }
         if (!actualUser.getPassword().equals(user.getPassword())) {

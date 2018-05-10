@@ -86,6 +86,10 @@ export class ManagementComponent {
             this.validationResult
                 .addError("password", "Password should contain only latin letters and digits");
         }
+        let name = this.formUser.name;
+        if (!name || name == "" || !name.replace(/\s/g, '').length) {
+            this.validationResult.addError("name", "Name should not be empty");
+        }
     }
 
     changePasswordVisibility(user: User, val: boolean) {
