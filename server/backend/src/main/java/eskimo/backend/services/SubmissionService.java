@@ -97,4 +97,9 @@ public class SubmissionService {
     public List<Submission> getContestSubmissions(Long contestId) {
         return submissionDao.getContestSubmissions(contestId);
     }
+
+    public List<Submission> getContestJudgedSubmissions(long contestId) {
+        Contest contest = contestService.getContestById(contestId);
+        return submissionDao.getContestJudgedSubmissions(contestId, contest.getStartTime(), contest.getFinishTime());
+    }
 }

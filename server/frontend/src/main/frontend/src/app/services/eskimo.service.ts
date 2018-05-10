@@ -126,6 +126,10 @@ export class EskimoService {
         return this.urlHost + "programming-languages";
     }
 
+    getUrlRebuldDashboard(contestId: number) {
+        return this.getUrlContest(contestId) + "/rebuild-dashboard?contestId=" + contestId;
+    }
+
     private userMapper(jsonUser): User {
       return User.copyOf(jsonUser);
     }
@@ -334,6 +338,10 @@ export class EskimoService {
         return this.http.get(this.getUrlProgrammingLanguages(), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);
+    }
 
+    rebuildDashboard(contestId: number) {
+        return this.http.get(this.getUrlRebuldDashboard(contestId), this.optionsWithCredentials)
+            .catch(this.handleError);
     }
 }

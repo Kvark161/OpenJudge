@@ -7,6 +7,8 @@ import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.services.ContestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eskimo.backend.services.DashboardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -17,6 +19,9 @@ import java.util.TimeZone;
 @RequestMapping("api")
 public class ContestController {
     private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
+
+    @Autowired
+    private DashboardService dashboardService;
 
     private final ContestService contestService;
 
@@ -55,4 +60,11 @@ public class ContestController {
         contestService.editContest(contest);
     }
 
+
+    @GetMapping("contest/{id}/rebuild-dashboard")
+    @AccessLevel(role = Role.ADMIN)
+    public String rebuildDashboard(@PathVariable("id") Long contestId) {
+        dashboardService.rebuild(contestId);
+        return "done";
+    }
 }

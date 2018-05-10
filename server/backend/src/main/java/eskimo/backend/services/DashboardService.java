@@ -41,7 +41,7 @@ public class DashboardService {
     @Autowired
     private UserService userService;
 
-    private Lock lock = new ReentrantLock();
+    final private Lock lock = new ReentrantLock();
 
     private final BlockingQueue<Submission> updateQueue = new LinkedBlockingQueue<>();
     private final UpdateThread updateThread = new UpdateThread();
@@ -74,8 +74,22 @@ public class DashboardService {
         return dashboard;
     }
 
-    public void rebuild() {
-        //todo implement
+    public void rebuild(long contestId) {
+        lock.lock();
+        try {
+            Dashboard dashboard = getDashboard(contestId);
+            Contest contest = contestService.getContestById(contestId);
+            dashboard.setTable(new ArrayList<>());
+            List<Submission> submissions = submissionService.getContestJudgedSubmissions(contestId);
+            for (Submission submission : submissions) {
+                updateDashboard(dashboard, contest, submission);
+            }
+            dashboard.sortTable();
+            dashboard.setLastUpdate(Instant.now());
+            dashboardDao.updateDashboard(dashboard);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void updateDashboard(Dashboard dashboard, Contest contest, Submission submission) {
@@ -151,23 +165,22 @@ public class DashboardService {
         }
     }
 
-
     private class UpdateThread extends Thread {
         @Override
         public void run() {
             while (true) {
                 try {
                     Submission submission = updateQueue.take();
-                    Contest contest = contestService.getContestById(submission.getContestId());
-                    Dashboard dashboard = getDashboard(submission.getContestId());
-                    updateDashboard(dashboard, contest, submission);
-                    dashboard.getTable().sort((a, b) -> {
-                        if (a.getScore() != b.getScore()) {
-                            return Long.compare(b.getScore(), a.getScore());
-                        }
-                        return Long.compare(a.getPenalty(), b.getPenalty());
-                    });
-                    dashboardDao.updateDashboard(dashboard);
+                    lock.lock();
+                    try {
+                        Contest contest = contestService.getContestById(submission.getContestId());
+                        Dashboard dashboard = getDashboard(submission.getContestId());
+                        updateDashboard(dashboard, contest, submission);
+                        dashboard.sortTable();
+                        dashboardDao.updateDashboard(dashboard);
+                    } finally {
+                        lock.unlock();
+                    }
                 } catch (Throwable e) {
                     logger.error("in dashboard thread", e);
                 }

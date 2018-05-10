@@ -28,11 +28,11 @@ public class Dashboard {
     }
 
     public void sortTable() {
-        table.sort((r1, r2) -> {
-            if (r1.getScore() != r2.getScore()) {
-                return Long.compare(r2.getScore(), r1.getScore());
+        table.sort((a, b) -> {
+            if (a.getScore() != b.getScore()) {
+                return Long.compare(b.getScore(), a.getScore());
             }
-            return Long.compare(r1.getPenalty(), r2.getPenalty());
+            return Long.compare(a.getPenalty(), b.getPenalty());
         });
     }
 }

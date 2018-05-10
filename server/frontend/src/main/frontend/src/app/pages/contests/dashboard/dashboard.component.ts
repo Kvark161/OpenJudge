@@ -3,6 +3,8 @@ import {EskimoService} from "../../../services/eskimo.service";
 import {Contest} from "../../../shared/contest";
 import {ActivatedRoute} from "@angular/router";
 import {Problem} from "../../../shared/problem";
+import {UserService} from "../../../services/user.service";
+import {CurrentUserInfo} from "../../../shared/current-user-info";
 
 @Component({
     selector: 'app-contest',
@@ -13,8 +15,9 @@ export class DashboardComponent {
     contest: Contest;
     dashboard;
     problems: Problem[];
+    currentUserInfo: CurrentUserInfo;
 
-    constructor(private route: ActivatedRoute, private eskimoService: EskimoService) {
+    constructor(private route: ActivatedRoute, private eskimoService: EskimoService, private userService: UserService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
         eskimoService.getContest(this.contestId).subscribe(contest => this.contest = contest);
         eskimoService.getDashboard(this.contestId).subscribe(
@@ -24,7 +27,8 @@ export class DashboardComponent {
             problems => this.problems = problems.sort((p1, p2) => {
                 return p1.index < p2.index ? -1 : Number(p1.index > p2.index);
             })
-        )
+        );
+        this.currentUserInfo = this.userService.currentUserInfo;
     }
 
     adZeros(num) {
@@ -49,5 +53,11 @@ export class DashboardComponent {
             result += lastTime;
         }
         return result;
+    }
+
+    rebuildDashboard() {
+        this.eskimoService.rebuildDashboard(this.contestId).subscribe(res => {
+            window.location.reload();
+        });
     }
 }

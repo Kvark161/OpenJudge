@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 
 @Repository
@@ -143,6 +144,20 @@ public class SubmissionDao {
                 " JOIN problems as problems ON submissions.problem_id = problems.id " +
                 " WHERE submissions.contest_id = ? ORDER BY sending_date_time DESC";
         return jdbcTemplate.query(sql, simpleMapper, contestId);
+    }
+
+    public List<Submission> getContestJudgedSubmissions(long contestId, Instant startTime, Instant finishTime) {
+        String sql = "SELECT submissions.*, users.name, problems.contest_index AS username FROM submissions " +
+                " JOIN users ON submissions.user_id = users.id " +
+                " JOIN problems as problems ON submissions.problem_id = problems.id " +
+                " WHERE submissions.contest_id = ? and " +
+                "       submissions.SENDING_DATE_TIME >= ? and " +
+                "       SUBMISSIONS.SENDING_DATE_TIME < ? and " +
+                "       SUBMISSIONS.STATUS not in ('SUBMITTED', 'PENDING', 'COMPILING', 'RUNNING') and " +
+                "       USERS.ROLE != 'ADMIN' and " +
+                "       USERS.IS_BLOCKED = false " +
+                " ORDER BY sending_date_time";
+        return jdbcTemplate.query(sql, simpleMapper, contestId, Timestamp.from(startTime), Timestamp.from(finishTime));
     }
 
     private static class SubmissionRowMapper implements RowMapper<Submission> {
