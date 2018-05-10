@@ -65,7 +65,9 @@ public class JudgeSubmissionJob extends JudgeJob {
             compileJob.execute(invoker);
             compilationResult = compileJob.getCompilationResult();
             if (compilationResult == null) {
-                updateVerdict(INTERNAL_ERROR);
+                if (invoker.isReachable()) {
+                    updateVerdict(INTERNAL_ERROR);
+                }
                 return;
             }
             if (CompilationVerdict.SUCCESS.equals(compilationResult.getVerdict())) {
@@ -76,12 +78,15 @@ public class JudgeSubmissionJob extends JudgeJob {
                 return;
             }
             test();
-            resume();
-            submissionService.updateSubmission(submission);
-            submissionService.updateSubmissionResultData(submission);
+            if (invoker.isReachable()) {
+                resume();
+                submissionService.updateSubmission(submission);
+                submissionService.updateSubmissionResultData(submission);
+            }
         } catch (Throwable e) {
             submission.setStatus(Submission.Status.INTERNAL_ERROR);
             submissionService.updateSubmission(submission);
+            logger.error("Exception during test submissionId" + submission.getId(), e);
             throw e;
         } finally {
             if (submission.isAddToDashboard()) {

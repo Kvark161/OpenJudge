@@ -12,6 +12,7 @@
             <th>Status</th>
             <th>Time</th>
             <th>Memory</th>
+            <th *ngIf="currentUserInfo.role == 'ADMIN'">Rejudge</th>
         </tr>
         </thead>
         <tbody>
@@ -29,6 +30,14 @@
             </td>
             <td align="center" width="100px">{{submission.usedTime}} ms</td>
             <td align="center" width="100px">{{submission.usedMemory}} Kb</td>
+            <td *ngIf="currentUserInfo.role == 'ADMIN'"
+                width="50px">
+                <button type="button"
+                        class="btn btn-primary float-right mt-1 mr-1"
+                        (click)="rejudge(submission.id)">
+                    rejudge
+                </button>
+            </td>
         </tr>
         </tbody>
     </table>

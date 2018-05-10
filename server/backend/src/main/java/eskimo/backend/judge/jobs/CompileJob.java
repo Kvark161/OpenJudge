@@ -71,6 +71,9 @@ public class CompileJob extends JudgeJob {
         try {
             CompilationParams compilationParams = fillCompilationParams();
             compilationResult = invokerService.compile(invoker, compilationParams);
+            if (compilationResult == null) {
+                return;
+            }
             callback(compilationResult);
         } catch (IOException e) {
             logger.error("Cannot read file " + sourceFile, e);
