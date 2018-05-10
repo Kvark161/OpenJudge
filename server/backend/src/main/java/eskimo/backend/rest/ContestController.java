@@ -5,6 +5,8 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.services.ContestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -14,6 +16,7 @@ import java.util.TimeZone;
 @RestController
 @RequestMapping("api")
 public class ContestController {
+    private static final Logger logger = LoggerFactory.getLogger(ContestController.class);
 
     private final ContestService contestService;
 
@@ -41,4 +44,15 @@ public class ContestController {
         contest.setScoringSystem(ScoringSystem.KIROV);
         return contestService.createContest(contest);
     }
+
+    @PostMapping("contest/{id}/edit")
+    @AccessLevel(role = Role.ADMIN)
+    public void editContest(@PathVariable("id") Long contestId, @RequestBody Contest contest) {
+        if (!contestId.equals(contest.getId())) {
+            logger.error("Contest id in path ({}) doesn't match id in request body ({})", contestId, contest.getId());
+            return;
+        }
+        contestService.editContest(contest);
+    }
+
 }

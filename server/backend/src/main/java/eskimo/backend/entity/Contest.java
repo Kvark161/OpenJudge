@@ -1,6 +1,7 @@
 package eskimo.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import eskimo.backend.entity.enums.ScoringSystem;
 import lombok.Getter;
@@ -11,8 +12,8 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
-@Getter
-@Setter
+@Getter @Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contest implements Serializable {
 
     private Long id;

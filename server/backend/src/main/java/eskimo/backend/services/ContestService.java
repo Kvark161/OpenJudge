@@ -14,12 +14,14 @@ import java.util.List;
 @Service
 public class ContestService {
 
-    private ContestDao contestDao;
-    private StorageService storageService;
+    private final ContestDao contestDao;
+    private final StorageService storageService;
+    private final DashboardService dashboardService;
 
-    public ContestService(ContestDao contestDao, StorageService storageService) {
+    public ContestService(ContestDao contestDao, StorageService storageService, DashboardService dashboardService) {
         this.contestDao = contestDao;
         this.storageService = storageService;
+        this.dashboardService = dashboardService;
     }
 
     @Transactional
@@ -30,6 +32,17 @@ public class ContestService {
         List<StorageOrder> storageOrders = getEmptyContestOrders(contest);
         storageService.executeOrders(storageOrders);
         return contest;
+    }
+
+    @Transactional
+    public void editContest(Contest contest) {
+        Contest oldContest = contestDao.getContestInfo(contest.getId());
+        contestDao.editContest(contest);
+        if (!oldContest.getStartTime().equals(contest.getStartTime())
+                || !oldContest.getDuration().equals(contest.getDuration())
+                || !oldContest.getScoringSystem().equals(contest.getScoringSystem())) {
+            dashboardService.rebuild();
+        }
     }
 
     private List<StorageOrder> getEmptyContestOrders(Contest contest) {

@@ -3,13 +3,13 @@
     <div class="row"><p></p></div>
     <br>
     <form>
-        <div class="form-group" [class.has-danger]="errorName != null">
+        <div class="form-group" [class.has-danger]="validationResult.errors.name != null">
             <label for="name">Name</label>
-            <input type="text" id="name" class="form-control" [class.is-invalid]="errorName != null"
-                   [(ngModel)]="contest.name" name="contestName" required>
-            <div type="text" class="invalid-feedback">{{errorName}}</div>
+            <input type="text" id="name" class="form-control" [class.is-invalid]="validationResult.errors.name"
+                   [(ngModel)]="contest.name" name="contestName" style="width: 500px" required>
+            <div type="text" class="invalid-feedback">{{validationResult.errors.name}}</div>
         </div>
-        <div class="form-group" [class.has-danger]="errorDateTime != null">
+        <div class="form-group" [class.has-danger]="validationResult.errors.startDate">
             <label for="name">Start date and time</label>
             <div id="startDate" class="input-group" style="width: 180px;">
                 <input
@@ -19,7 +19,7 @@
                         [(ngModel)]="startDate"
                         ngbDatepicker
                         #d="ngbDatepicker"
-                        [class.is-invalid]="errorDateTime != null">
+                        [class.is-invalid]="validationResult.errors.startTime">
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
                         <fa [name]="'table'"></fa>
@@ -28,25 +28,38 @@
                 <ngb-timepicker
                         name="startTime"
                         [(ngModel)]="startTime"
-                        [class.is-invalid]="errorDateTime != null"
+                        [class.is-invalid]="validationResult.errors.startTime"
                         [spinners]="false"
                 ></ngb-timepicker>
-                <div type="text" class="invalid-feedback">{{errorDateTime}}</div>
+                <div type="text" class="invalid-feedback">{{validationResult.errors.startTime}}</div>
             </div>
         </div>
-        <div class="form-group" style="width: 150px" [class.has-danger]="errorDuration != null">
+        <div class="form-group" style="width: 150px" [class.has-danger]="validationResult.errors.duration">
             <label for="duration">Duration in minutes</label>
             <input
                     type="number"
                     id="duration"
                     class="form-control"
-                    [class.is-invalid]="errorDuration != null"
+                    [class.is-invalid]="validationResult.errors.duration"
                     [(ngModel)]="contest.duration"
                     name="duration"
                     required>
-            <div type="text" class="invalid-feedback">{{errorDuration}}</div>
+            <div type="text" class="invalid-feedback">{{validationResult.errors.duration}}</div>
         </div>
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Create contest</button>
+        <div class="form-group" style="width: 150px" [class.has-danger]="validationResult.errors.scoringSystem">
+            <label for="scoring">Scoring system</label>
+            <select id="scoring" [(ngModel)]="contest.scoringSystem" name="scoring"
+                    [class.is-invalid]="validationResult.errors.scoringSystem">
+                <option [ngValue]="null" [selected]="true">Select scoring...</option>
+                <option *ngFor="let ss of scoringSystems">{{ss}}</option>
+            </select>
+            <small class="text-danger">{{validationResult.errors.scoringSystem}}</small>
+        </div>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">
+            <span *ngIf="!editMode">Create</span>
+            <span *ngIf="editMode">Edit</span>
+            contest
+        </button>
     </form>
 
 </div>

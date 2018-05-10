@@ -9,7 +9,7 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class ContestComponent {
     contestId: number;
-    contest: Contest = new Contest(null, null, null, null);
+    contest: Contest = new Contest();
 
     constructor(private route: ActivatedRoute, private eskimoService: EskimoService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');

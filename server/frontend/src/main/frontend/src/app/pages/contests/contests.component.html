@@ -15,6 +15,7 @@
                 <th>Name</th>
                 <th>Start</th>
                 <th>Duration</th>
+                <th *ngIf="role == 'ADMIN'"></th>
             </tr>
             </thead>
             <tbody>
@@ -23,6 +24,12 @@
                 <td><a routerLink="/contest/{{contest.id}}">{{contest.name}}</a></td>
                 <td>{{contest.startTime}}</td>
                 <td>{{contest.duration}}</td>
+                <td *ngIf="role == 'ADMIN'">
+                    <button type="button" class="btn btn-primary" title="Edit contest"
+                            routerLink="/a/contest/{{contest.id}}/edit">
+                        <fa [name]="'pencil'"></fa>
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>

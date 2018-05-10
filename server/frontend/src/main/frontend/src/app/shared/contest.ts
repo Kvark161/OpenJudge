@@ -3,14 +3,7 @@ export class Contest {
     name: string;
     startTime: string;
     duration: number;
-    scoringSystem: string;
+    scoringSystem: string = 'ACM';
     status: string;
-
-    constructor(id: number, name: string, startTime: string, duration: number) {
-        this.id = id;
-        this.name = name;
-        this.startTime = startTime;
-        this.duration = duration;
-    }
 
 }

@@ -31,5 +31,6 @@ export const router: Routes = [
     {path: 'u/contest/:contestId/problem/:problemIndex', canActivate: [UserService], component: StatementsComponent},
     {path: 'a/contest/:contestId/problem/:problemIndex/edit', canActivate: [UserService], component: EditProblemComponent},
     {path: 'a/contest/:contestId/problem/:problemIndex/edit_tests', canActivate: [UserService], component: EditTestsComponent},
-    {path: 'p/contest/:contestId/dashboard', canActivate: [UserService], component: DashboardComponent}
+    {path: 'p/contest/:contestId/dashboard', canActivate: [UserService], component: DashboardComponent},
+    {path: 'a/contest/:contestId/edit', canActivate: [UserService], component: NewContestComponent}
 ];

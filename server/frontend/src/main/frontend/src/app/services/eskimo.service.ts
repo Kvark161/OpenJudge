@@ -30,6 +30,10 @@ export class EskimoService {
         return this.urlHost + "contest/" + contestId;
     }
 
+    private getUrlEditContest(contestId: number) {
+        return this.getUrlContest(contestId) + "/edit";
+    }
+
     private getUrlProblems(contestId: number) {
         return this.getUrlContest(contestId) + "/problems?contestId=" + contestId;
     }
@@ -147,6 +151,11 @@ export class EskimoService {
     createContest(contest: Contest): Observable<Contest> {
         return this.http.post(this.urlContestCreate, contest, this.optionsWithCredentials)
             .map(res => res.json())
+            .catch(this.handleError);
+    }
+
+    editContest(contest: Contest): Observable<Contest> {
+        return this.http.post(this.getUrlEditContest(contest.id), contest, this.optionsWithCredentials)
             .catch(this.handleError);
     }
 

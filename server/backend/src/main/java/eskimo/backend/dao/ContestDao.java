@@ -46,7 +46,7 @@ public class ContestDao {
         params.put("name", contest.getName());
         params.put("start_time", Timestamp.from(contest.getStartTime()));
         params.put("duration_in_minutes", contest.getDuration());
-        params.put("scoring_system", contest.getScoringSystem());
+        params.put("scoring_system", contest.getScoringSystem().name());
         return jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
     }
 
@@ -63,6 +63,21 @@ public class ContestDao {
     public boolean contestExists(long id) {
         String sql = "SELECT count(*) FROM contests WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, Integer.class) > 0;
+    }
+
+    public void editContest(Contest contest) {
+        String sql = "UPDATE contests SET " +
+                "name = ?, " +
+                "start_time = ?, " +
+                "duration_in_minutes = ?, " +
+                "scoring_system = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(sql,
+                contest.getName(),
+                Timestamp.from(contest.getStartTime()),
+                contest.getDuration(),
+                contest.getScoringSystem().name(),
+                contest.getId());
     }
 
     private static class ContestRowMapper implements RowMapper<Contest> {

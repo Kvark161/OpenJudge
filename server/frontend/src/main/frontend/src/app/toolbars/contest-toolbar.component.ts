@@ -17,7 +17,7 @@ export class ContestToolbarComponent implements OnInit {
 
     usernameInput: string = "";
     password: string = "";
-    contest: Contest = new Contest(null, null, null, null);
+    contest: Contest = new Contest();
 
     constructor(private userService: UserService, private eskimoService: EskimoService) {
         this.role = userService.currentUserInfo.role;
