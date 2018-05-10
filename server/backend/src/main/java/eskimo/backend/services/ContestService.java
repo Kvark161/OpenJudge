@@ -41,7 +41,7 @@ public class ContestService {
         if (!oldContest.getStartTime().equals(contest.getStartTime())
                 || !oldContest.getDuration().equals(contest.getDuration())
                 || !oldContest.getScoringSystem().equals(contest.getScoringSystem())) {
-            dashboardService.rebuild();
+            dashboardService.rebuild(contest.getId());
         }
     }
 
