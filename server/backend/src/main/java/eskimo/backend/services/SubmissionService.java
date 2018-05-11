@@ -131,8 +131,16 @@ public class SubmissionService {
         return submissionDao.getUserProblemSubmissions(userId, problemId);
     }
 
-    public List<Submission> getUserContestSubmissions(Long userId, Long contestId) {
-        return submissionDao.getUserContestSubmissions(userId, contestId);
+    public List<SubmissionResponse> getUserContestSubmissions(Long userId, Long contestId) {
+        List<Submission> submissions = submissionDao.getUserContestSubmissions(userId, contestId);
+
+        User user = userDao.getUserById(userId);
+
+        Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
+
+        return submissions.stream()
+                .map(s -> new SubmissionResponse(s, user.getName(), problemNames.get(s.getProblemId())))
+                .collect(toList());
     }
 
     public List<SubmissionResponse> getContestSubmissions(Long contestId) {

@@ -5,9 +5,9 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.services.ContestService;
+import eskimo.backend.services.DashboardService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eskimo.backend.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +57,8 @@ public class ContestController {
             logger.error("Contest id in path ({}) doesn't match id in request body ({})", contestId, contest.getId());
             return;
         }
+        Instant startTime = contest.getStartTime().minusMillis(TimeZone.getDefault().getRawOffset());
+        contest.setStartTime(startTime);
         contestService.editContest(contest);
     }
 

@@ -74,7 +74,7 @@ export class SubmissionsComponent {
         if (this.currentUserInfo.role == 'ADMIN') {
             this.eskimoService.getContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
         } else {
-            //this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+            this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
         }
     }
 

@@ -120,8 +120,9 @@
         <div class="row">
             <div class="col-sm-12 text-center">
                 <button type="button" class="btn btn-primary" (click)="onSubmit()">Save problem</button>
+                <span *ngIf="problemEditedSuccessfully" style="color: green">Successful</span>
             </div>
+
         </div>
-        <span *ngIf="problemEditedSuccessfully" style="color: green">Successful</span>
     </form>
 </div>

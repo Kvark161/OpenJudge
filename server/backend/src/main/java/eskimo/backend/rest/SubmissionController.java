@@ -37,7 +37,7 @@ public class SubmissionController {
 
     @GetMapping("contest/{id}/submissions")
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
-    public List<Submission> getUserContestSubmissions(@PathVariable("id") Long contestId) {
+    public List<SubmissionResponse> getUserContestSubmissions(@PathVariable("id") Long contestId) {
         return submissionService.getUserContestSubmissions(authenticationHolder.getUser().getId(), contestId);
     }
 

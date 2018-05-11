@@ -18,7 +18,7 @@
         <tbody>
         <tr *ngFor="let submission of submissions">
             <td align="center">
-                <span class="submissionLink" routerLink="/u/contest/{{contestId}}/submission/{{submission.id}}">
+                <span class="submissionLink" routerLink="/u/contest/{{contestId}}/submission/{{submission.submissionId}}">
                     {{submission.submissionId}}
                 </span>
             </td>
@@ -32,7 +32,7 @@
             <td>{{submission.usedMemory}} Kb</td>
             <td *ngIf="currentUserInfo.role == 'ADMIN'" style="padding: 3px">
                 <button type="button" class="btn btn-primary mt-1 mr-1"
-                        (click)="rejudge(submission.id)">
+                        (click)="rejudge(submission.submissionId)">
                     Rejudge
                 </button>
             </td>

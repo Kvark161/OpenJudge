@@ -20,13 +20,12 @@ export class StatementsComponent {
         this.problemIndex = +this.route.snapshot.paramMap.get('problemIndex');
         eskimoService.getStatements(this.contestId, this.problemIndex)
             .subscribe(statements => {
+                this.statements = statements;
                 if (!statements.error || statements.error == '') {
                     let optimized = Utils.getMemoryInOptimalUnits(statements.memoryLimit);
                     this.statements.memoryLimit = optimized.count;
                     this.memoryUnits = optimized.units;
                 }
-                this.statements = statements;
-
             });
     }
 
