@@ -1,6 +1,8 @@
 package eskimo.backend.services;
 
+import eskimo.backend.dao.ProblemDao;
 import eskimo.backend.dao.SubmissionDao;
+import eskimo.backend.dao.UserDao;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
@@ -9,18 +11,28 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.judge.JudgeService;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.SubmitProblemWebRequest;
+import eskimo.backend.rest.response.SubmissionResponse;
 import eskimo.invoker.entity.TestResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class SubmissionService {
 
     @Autowired
     private SubmissionDao submissionDao;
+
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private ProblemDao problemDao;
 
     @Autowired
     private JudgeService judgeService;
@@ -34,8 +46,18 @@ public class SubmissionService {
     @Autowired
     private ProblemService problemService;
 
-    public List<Submission> getAllSubmissions() {
-        return submissionDao.getSubmissions();
+    public List<SubmissionResponse> getAllSubmissions() {
+        List<Submission> submissions = submissionDao.getSubmissions();
+
+        List<Long> userIds = submissions.stream().map(Submission::getUserId).collect(toList());
+        Map<Long, User> usersByIds = userDao.getUsersByIds(userIds);
+
+        List<Long> problemIds = submissions.stream().map(Submission::getProblemId).collect(toList());
+        Map<Long, String> problemNames = problemDao.getProblemNames(problemIds);
+
+        return submissions.stream()
+                .map(s -> new SubmissionResponse(s, usersByIds.get(s.getUserId()).getName(), problemNames.get(s.getProblemId())))
+                .collect(toList());
     }
 
     public void submit(SubmitProblemWebRequest submitProblemWebRequest) {
@@ -113,8 +135,17 @@ public class SubmissionService {
         return submissionDao.getUserContestSubmissions(userId, contestId);
     }
 
-    public List<Submission> getContestSubmissions(Long contestId) {
-        return submissionDao.getContestSubmissions(contestId);
+    public List<SubmissionResponse> getContestSubmissions(Long contestId) {
+        List<Submission> submissions = submissionDao.getContestSubmissions(contestId);
+
+        List<Long> userIds = submissions.stream().map(Submission::getUserId).collect(toList());
+        Map<Long, User> usersByIds = userDao.getUsersByIds(userIds);
+
+        Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
+
+        return submissions.stream()
+                .map(s -> new SubmissionResponse(s, usersByIds.get(s.getUserId()).getName(), problemNames.get(s.getProblemId())))
+                .collect(toList());
     }
 
     public List<Submission> getContestJudgedSubmissions(long contestId) {

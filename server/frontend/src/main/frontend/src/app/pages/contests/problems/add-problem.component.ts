@@ -59,6 +59,7 @@ export class AddProblemComponent {
     }
 
     private validateCustomAdd() {
+        this.validationResult = ValidationResult.getEmpty();
         if (this.problemName == null || this.problemName == "") {
             this.validationResult.addError("problemName", "Should not be empty");
         } else if (this.problemName.length > 128) {

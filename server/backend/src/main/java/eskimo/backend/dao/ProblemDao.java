@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +24,12 @@ public class ProblemDao {
     private static final ProblemRowMapper ROW_MAPPER = new ProblemRowMapper();
 
     private JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
-    public ProblemDao(JdbcTemplate jdbcTemplate) {
+    public ProblemDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     public Long insertProblem(Problem problem) {
@@ -60,6 +63,23 @@ public class ProblemDao {
                 "WHERE c.id = ?";
         Map<Long, String> problemNameById = new HashMap<>();
         jdbcTemplate.query(sql, new Object[]{contestId}, row -> {
+            long problemId = row.getLong("problem_id");
+            String problemName = row.getString("name");
+            problemNameById.put(problemId, problemName);
+        });
+        return problemNameById;
+    }
+
+    @Transactional
+    public Map<Long, String> getProblemNames(List<Long> problemIds) {
+        String sql = "SELECT s.problem_id, s.name FROM contests as c " +
+                "JOIN problems as p on c.id = p.contest_id " +
+                "JOIN statements as s on p.id = s.problem_id " +
+                "WHERE c.id in (:ids)";
+        Map<Long, String> problemNameById = new HashMap<>();
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", problemIds);
+        namedParameterJdbcTemplate.query(sql, parameters, row -> {
             long problemId = row.getLong("problem_id");
             String problemName = row.getString("name");
             problemNameById.put(problemId, problemName);

@@ -1,7 +1,8 @@
 import {Component} from "@angular/core";
-import {StatementsResponse} from "../../../shared/statements.response";
+import {StatementsResponse} from "../../../shared/responses/statements.response";
 import {EskimoService} from "../../../services/eskimo.service";
 import {ActivatedRoute} from "@angular/router";
+import {Utils} from "../../../utils/utils";
 
 @Component({
     selector: 'app-statements',
@@ -20,15 +21,9 @@ export class StatementsComponent {
         eskimoService.getStatements(this.contestId, this.problemIndex)
             .subscribe(statements => {
                 if (!statements.error || statements.error == '') {
-                    if (statements.memoryLimit < 1024) {
-                        this.memoryUnits = "bytes";
-                    } else if (statements.memoryLimit < 1024*1024) {
-                        statements.memoryLimit /= 1024;
-                        this.memoryUnits = "kilobytes";
-                    } else {
-                        statements.memoryLimit /= 1024 * 1024;
-                        this.memoryUnits = "megabytes";
-                    }
+                    let optimized = Utils.getMemoryInOptimalUnits(statements.memoryLimit);
+                    this.statements.memoryLimit = optimized.count;
+                    this.memoryUnits = optimized.units;
                 }
                 this.statements = statements;
 

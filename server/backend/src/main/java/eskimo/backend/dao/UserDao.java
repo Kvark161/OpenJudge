@@ -22,7 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 @Repository
 public class UserDao {
@@ -102,6 +105,16 @@ public class UserDao {
     public List<User> getAllUsers() {
         String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u";
         return jdbcTemplate.query(sql, new Object[]{}, new UserRowMapper());
+    }
+
+    @Transactional
+    public Map<Long, User> getUsersByIds(List<Long> ids) {
+        String sql = "SELECT u.id, u.login, u.name, u.password, u.locale, u.role, u.is_blocked FROM users AS u " +
+                "WHERE id in (:ids)";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("ids", ids);
+        return namedParameterJdbcTemplate.query(sql, parameters, new UserRowMapper()).stream()
+                .collect(toMap(User::getId, Function.identity()));
     }
 
     @Transactional

@@ -5,37 +5,35 @@
            style="text-align: center;">
         <thead>
         <tr>
-            <th>#</th>
-            <th>Sent time</th>
-            <th align="center">User</th>
+            <th style="width: 30px">#</th>
+            <th style="width: 165px">Sent time</th>
+            <th>User</th>
             <th>Problem</th>
-            <th>Status</th>
-            <th>Time</th>
-            <th>Memory</th>
-            <th *ngIf="currentUserInfo.role == 'ADMIN'">Rejudge</th>
+            <th style="width: 140px">Status</th>
+            <th style="width: 100px">Time</th>
+            <th style="width: 100px">Memory</th>
+            <th *ngIf="currentUserInfo.role == 'ADMIN'"  style="width: 85px">Rejudge</th>
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let submission of submissions">
             <td align="center">
                 <span class="submissionLink" routerLink="/u/contest/{{contestId}}/submission/{{submission.id}}">
-                    {{submission.id}}
+                    {{submission.submissionId}}
                 </span>
             </td>
-            <td align="center" width="179px">{{submission.sendingTime}}</td>
-            <td align="center">{{submission.username}}</td>
-            <td width="50px" align="center">{{submission.problemIndex}}</td>
-            <td align="center" width="260px" [style.color]="getStatusColor(submission.status)">
-                {{getStatusShowName(submission)}}
+            <td><small>{{submission.sendingTime}}</small></td>
+            <td>{{submission.userName}}</td>
+            <td>{{submission.problemName}}</td>
+            <td [style.color]="getStatusColor(submission.status)" >
+                <small style="font-weight: bolder">{{getStatusShowName(submission)}}</small>
             </td>
-            <td align="center" width="100px">{{submission.usedTime}} ms</td>
-            <td align="center" width="100px">{{submission.usedMemory}} Kb</td>
-            <td *ngIf="currentUserInfo.role == 'ADMIN'"
-                width="50px">
-                <button type="button"
-                        class="btn btn-primary float-right mt-1 mr-1"
+            <td>{{submission.usedTime}} ms</td>
+            <td>{{submission.usedMemory}} Kb</td>
+            <td *ngIf="currentUserInfo.role == 'ADMIN'" style="padding: 3px">
+                <button type="button" class="btn btn-primary mt-1 mr-1"
                         (click)="rejudge(submission.id)">
-                    rejudge
+                    Rejudge
                 </button>
             </td>
         </tr>

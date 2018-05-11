@@ -1,4 +1,4 @@
-import {ValidationResult} from "./validation-response";
+import {ValidationResult} from "../validation-response";
 
 export class CreatingResponse{
     validationResult: ValidationResult;

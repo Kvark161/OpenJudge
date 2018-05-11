@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Submission} from "../../../shared/submission";
 import {CurrentUserInfo} from "../../../shared/current-user-info";
 import {UserService} from "../../../services/user.service";
+import {SubmissionResponse} from "../../../shared/responses/submission-response";
 
 @Component({
     selector: 'app-submissions',
@@ -64,7 +65,7 @@ export class SubmissionsComponent {
     };
 
     contestId: number;
-    submissions: Submission[];
+    submissions: SubmissionResponse[];
     currentUserInfo: CurrentUserInfo;
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService, private userService: UserService) {
@@ -73,7 +74,7 @@ export class SubmissionsComponent {
         if (this.currentUserInfo.role == 'ADMIN') {
             this.eskimoService.getContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
         } else {
-            this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
+            //this.eskimoService.getUserContestSubmissions(this.contestId).subscribe(submissions => this.submissions = submissions);
         }
     }
 

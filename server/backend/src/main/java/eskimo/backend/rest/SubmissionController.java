@@ -7,6 +7,7 @@ import eskimo.backend.entity.enums.Role;
 import eskimo.backend.rest.annotations.AccessLevel;
 import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.SubmitProblemWebRequest;
+import eskimo.backend.rest.response.SubmissionResponse;
 import eskimo.backend.rest.response.SubmitParametersResponse;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.ProgrammingLanguageService;
@@ -74,13 +75,13 @@ public class SubmissionController {
 
     @GetMapping("contest/{id}/all-submissions")
     @AccessLevel(role = Role.ADMIN)
-    public List<Submission> getContestSubmissions(@PathVariable("id") Long contestId) {
+    public List<SubmissionResponse> getContestSubmissions(@PathVariable("id") Long contestId) {
         return submissionService.getContestSubmissions(contestId);
     }
 
     @GetMapping("all-submissions")
     @AccessLevel(role = Role.ADMIN)
-    public List<Submission> getAllSubmissions() {
+    public List<SubmissionResponse> getAllSubmissions() {
         return submissionService.getAllSubmissions();
     }
 }

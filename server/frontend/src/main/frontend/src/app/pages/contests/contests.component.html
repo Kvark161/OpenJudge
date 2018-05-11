@@ -8,7 +8,7 @@
     </div>
     <div class="row"><p></p></div>
     <div class="row">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" style="text-align: center">
             <thead>
             <tr>
                 <th>#</th>
@@ -20,11 +20,11 @@
             </thead>
             <tbody>
             <tr *ngFor="let contest of contests">
-                <th scope="row">{{contest.id}}</th>
+                <th scope="row" style="width: 30px">{{contest.id}}</th>
                 <td><a routerLink="/contest/{{contest.id}}">{{contest.name}}</a></td>
-                <td>{{contest.startTime}}</td>
-                <td>{{contest.duration}}</td>
-                <td *ngIf="role == 'ADMIN'">
+                <td style="width: 180px">{{contest.startTime}}</td>
+                <td style="width: 100px; text-align: center">{{contest.duration}}</td>
+                <td *ngIf="role == 'ADMIN'" style="padding: 3px; width: 45px">
                     <button type="button" class="btn btn-primary" title="Edit contest"
                             routerLink="/a/contest/{{contest.id}}/edit">
                         <fa [name]="'pencil'"></fa>

@@ -21,4 +21,16 @@ export class Utils {
             vr.addError("interpreterPath", "Can't be larger than " + maxLength + " symbols");
         }
     }
+
+    public static getMemoryInOptimalUnits(bytes: number) {
+        let ans = {count: 0, units: ""};
+        if (bytes < 1024) {
+            ans = {count: bytes, units: "b"};
+        } else if (bytes < 1024*1024) {
+            ans = {count: bytes / 1024, units: "Kb"};
+        } else {
+            ans = {count: bytes / 1024 /1024, units: "Mb"};
+        }
+        return ans;
+    }
 }

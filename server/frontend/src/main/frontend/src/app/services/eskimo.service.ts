@@ -7,13 +7,14 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/catch";
 import "rxjs/add/observable/throw";
 import {Problem} from "../shared/problem";
-import {StatementsResponse} from "../shared/statements.response";
+import {StatementsResponse} from "../shared/responses/statements.response";
 import {ValidationResult} from "../shared/validation-response";
 import {EditProblemRequest} from "../shared/requests/edit-problem.request";
 import {User} from "../shared/user";
-import {CreatingResponse} from "../shared/creating-response";
+import {CreatingResponse} from "../shared/responses/creating-response";
 import {Test} from "../shared/test";
 import {ProgrammingLanguage} from "../shared/programming-language";
+import {SubmissionResponse} from "../shared/responses/submission-response";
 
 
 @Injectable()
@@ -235,7 +236,7 @@ export class EskimoService {
             this.optionsWithCredentials);
     }
 
-    getContestSubmissions(contestId: number) {
+    getContestSubmissions(contestId: number): Observable<SubmissionResponse[]> {
         return this.http.get(this.getUrlContestSubmissions(contestId), this.optionsWithCredentials)
             .map(res => res.json())
             .catch(this.handleError);

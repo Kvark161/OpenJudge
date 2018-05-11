@@ -5,6 +5,7 @@ import {Problem} from "../../../shared/problem";
 import {UserService} from "../../../services/user.service";
 import {InformationModalComponent} from "../../modal_dialogs/information-modal.component";
 import {MatDialog} from "@angular/material";
+import {Utils} from "../../../utils/utils";
 
 @Component({
     selector: 'app-submit',
@@ -15,15 +16,31 @@ export class ProblemsComponent {
     role: string;
     contestId: number;
     problems: Problem[];
+    memoryUnits: string[] = [];
 
     constructor(private route: ActivatedRoute, private router: Router, private eskimoService: EskimoService,
                 private userService: UserService, private dialog: MatDialog) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.role = this.userService.currentUserInfo.role;
         if (this.role == 'ADMIN') {
-            this.eskimoService.getAdminProblems(this.contestId).subscribe(problems => this.problems = problems);
+            this.eskimoService.getAdminProblems(this.contestId).subscribe(problems => {
+                this.problems = problems;
+                this.optimizeProblemsMemoryUnits();
+            });
         } else {
-            this.eskimoService.getProblems(this.contestId).subscribe(problems => this.problems = problems);
+            this.eskimoService.getProblems(this.contestId).subscribe(problems => {
+                this.problems = problems;
+                this.optimizeProblemsMemoryUnits();
+            });
+        }
+    }
+
+    private optimizeProblemsMemoryUnits() {
+        for (let i = 0; i < this.problems.length; ++i) {
+            let problem = this.problems[i];
+            let optimized = Utils.getMemoryInOptimalUnits(problem.memoryLimit);
+            problem.memoryLimit = optimized.count;
+            this.memoryUnits[i] = optimized.units;
         }
     }
 
