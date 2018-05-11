@@ -1,0 +1,145 @@
+<common-toolbar></common-toolbar>
+<div class="container">
+    <div class="row"><p></p></div>
+    <div style="text-align: center; font-size: x-large; color: black;">
+        Editing programming language
+    </div>
+    <div class="row"><p></p></div>
+    <form *ngIf="language">
+        <div class="form-group row">
+            <label for="name" class="col-sm-3 col-form-label text-right">Name:</label>
+            <div class="col-sm-6">
+                <input id="name" class="form-control" type="text"
+                       [(ngModel)]="language.name" name="name"
+                       [class.is-invalid]="validationResult.errors.name"
+                       (input)="fieldChanged('name')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.name" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="description" class="col-sm-3 col-form-label text-right">Description:</label>
+            <div class="col-sm-6">
+                <input id="description" class="form-control" type="text"
+                       [(ngModel)]="language.description" name="description"
+                       [class.is-invalid]="validationResult.errors.description"
+                       (input)="fieldChanged('description')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.description" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="compilerPath" class="col-sm-3 col-form-label text-right">Compiler path:</label>
+            <div class="col-sm-6">
+                <input id="compilerPath" class="form-control" type="text"
+                       [(ngModel)]="language.compilerPath" name="compilerPath"
+                       [class.is-invalid]="validationResult.errors.compilerPath"
+                       (input)="fieldChanged('compilerPath')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.compilerPath" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+
+        <div class="row">
+            <label class="col-sm-3  col-form-label text-right" for="isCompiled">Is language compiled:</label>
+            <div class="col-sm-6">
+            <input type="checkbox" id="isCompiled" name="isCompiled" [(ngModel)]="language.isCompiled" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="interpreterPath" class="col-sm-3 col-form-label text-right">Interpreter path:</label>
+            <div class="col-sm-6">
+                <input id="interpreterPath" class="form-control" type="text"
+                       [(ngModel)]="language.interpreterPath" name="interpreterPath"
+                       [class.is-invalid]="validationResult.errors.interpreterPath"
+                       (input)="fieldChanged('interpreterPath')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.interpreterPath" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="extension" class="col-sm-3 col-form-label text-right">Extension:</label>
+            <div class="col-sm-6">
+                <input id="extension" class="form-control" type="text"
+                       [(ngModel)]="language.extension" name="extension"
+                       [class.is-invalid]="validationResult.errors.extension"
+                       (input)="fieldChanged('extension')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.extension" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="binaryExtension" class="col-sm-3 col-form-label text-right">Binary extension:</label>
+            <div class="col-sm-6">
+                <input id="binaryExtension" class="form-control" type="text"
+                       [(ngModel)]="language.binaryExtension" name="binaryExtension"
+                       [class.is-invalid]="validationResult.errors.binaryExtension"
+                       (input)="fieldChanged('binaryExtension')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.binaryExtension" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="compileCommand" class="col-sm-3 col-form-label text-right">Compile command:</label>
+            <div class="col-sm-6">
+                <input id="compileCommand" class="form-control" type="text"
+                       [(ngModel)]="language.compileCommand" name="compileCommand"
+                       [class.is-invalid]="validationResult.errors.compileCommand"
+                       (input)="fieldChanged('compileCommand')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.compileCommand" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="runCommand" class="col-sm-3 col-form-label text-right">Run command:</label>
+            <div class="col-sm-6">
+                <input id="runCommand" class="form-control" type="text"
+                       [(ngModel)]="language.runCommand" name="runCommand"
+                       [class.is-invalid]="validationResult.errors.runCommand"
+                       (input)="fieldChanged('runCommand')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.runCommand" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="compilationMemoryLimit" class="col-sm-3 col-form-label text-right">Compilation memory limit (in bytes):</label>
+            <div class="col-sm-6">
+                <input id="compilationMemoryLimit" class="form-control" type="number" min="1"
+                       [(ngModel)]="language.compilationMemoryLimit" name="compilationMemoryLimit"
+                       [class.is-invalid]="validationResult.errors.compilationMemoryLimit"
+                       (input)="fieldChanged('compilationMemoryLimit')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.compilationMemoryLimit" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="compilationTimeLimit" class="col-sm-3 col-form-label text-right">Compilation time limit (in milliseconds):</label>
+            <div class="col-sm-6">
+                <input id="compilationTimeLimit" class="form-control" type="number" min="1"
+                       [(ngModel)]="language.compilationTimeLimit" name="compilationTimeLimit"
+                       [class.is-invalid]="validationResult.errors.compilationTimeLimit"
+                       (input)="fieldChanged('compilationTimeLimit')"/>
+            </div>
+            <div type="text" class="col-sm-3">
+                <small *ngFor="let error of validationResult.errors.compilationTimeLimit" class="text-danger">{{error}} </small>
+            </div>
+        </div>
+
+        <span class="help-block">{{validationResult.errors[generalErrorPath]}}</span>
+        <div class="row">
+            <div class="col-sm-12 text-center">
+                <button type="button" class="btn btn-primary" (click)="onSubmit()">Save language</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -15,12 +15,15 @@ import {ManagementComponent} from "./pages/management/management.component";
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component";
 import {ProgrammingLanguagesComponent} from "./pages/programming-languages/programming-languages.component";
+import {EditProgrammingLanguage} from "./pages/programming-languages/edit-programming-language";
 
 export const router: Routes = [
     {path: '', canActivate: [UserService], component: HomeComponent},
     {path: 'contests', canActivate: [UserService], component: ContestsComponent},
     {path: 'a/management', canActivate: [UserService], component: ManagementComponent},
     {path: 'a/programming-languages', canActivate: [UserService], component: ProgrammingLanguagesComponent},
+    {path: 'a/language/add', canActivate: [UserService], component: EditProgrammingLanguage},
+    {path: 'a/language/:langId/edit', canActivate: [UserService], component: EditProgrammingLanguage},
     {path: 'a/contests/new', canActivate: [UserService], component: NewContestComponent},
     {path: 'contest/:contestId', canActivate: [UserService], component: ContestComponent},
     {path: 'u/contest/:contestId/submit', canActivate: [UserService], component: SubmitComponent},

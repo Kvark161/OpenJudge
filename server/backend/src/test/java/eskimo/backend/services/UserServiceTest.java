@@ -167,6 +167,7 @@ public class UserServiceTest extends BaseTest {
         User expectedUser = new User();
         expectedUser.setId(id);
         expectedUser.setUsername(userToAdd.getUsername());
+        expectedUser.setName(expectedUser.getUsername());
         expectedUser.setPassword(userToAdd.getPassword());
         expectedUser.setLocale(Locale.ENGLISH);
         expectedUser.setRole(Role.USER);
@@ -188,6 +189,7 @@ public class UserServiceTest extends BaseTest {
         User expectedUser = new User();
         expectedUser.setId(id);
         expectedUser.setUsername(userToAdd.getUsername());
+        expectedUser.setName(expectedUser.getUsername());
         expectedUser.setPassword(userToAdd.getPassword());
         expectedUser.setLocale(Locale.ENGLISH);
         expectedUser.setRole(Role.ADMIN);
@@ -281,6 +283,7 @@ public class UserServiceTest extends BaseTest {
         UpdateResponse<User> userChangingResponse = userService.addUser(getValidUser());
         User userToEdit = userChangingResponse.getChangedObject();
         userToEdit.setUsername("anyOtherUsername");
+        userToEdit.setName("Петя Петров");
         userToEdit.setPassword("otherPassword");
         userToEdit.setRole(Role.ADMIN);
         userToEdit.setBlocked(true);

@@ -31,6 +31,7 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {DashboardComponent} from "./pages/contests/dashboard/dashboard.component";
 import {EditTestsComponent} from "./pages/contests/problems/edit-tests.component";
 import {ProgrammingLanguagesComponent} from "./pages/programming-languages/programming-languages.component";
+import {EditProgrammingLanguage} from "./pages/programming-languages/edit-programming-language";
 
 @NgModule({
     imports: [
@@ -58,6 +59,7 @@ import {ProgrammingLanguagesComponent} from "./pages/programming-languages/progr
         SubmissionComponent,
         ProblemsComponent,
         ProgrammingLanguagesComponent,
+        EditProgrammingLanguage,
         AddProblemComponent,
         StatementsComponent,
         InformationModalComponent,

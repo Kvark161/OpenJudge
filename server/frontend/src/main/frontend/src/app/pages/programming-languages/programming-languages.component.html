@@ -1,6 +1,13 @@
 <common-toolbar></common-toolbar>
 <div class="container">
     <div class="row"><p></p></div>
+    <div style="text-align: center; font-size: x-large; color: black;">
+        Programming languages
+        <button type="button" class="btn btn-primary btn-sm" title="Add programming language"
+                routerLink="/a/language/add">
+            <fa [name]="'plus'"></fa>
+        </button>
+    </div>
     <div class="row"><p></p></div>
     <div class="row">
         <table class="table border">
@@ -17,6 +24,7 @@
                 <th>Run command</th>
                 <th>Compilation time limit</th>
                 <th>Compilation memory limit</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -32,6 +40,12 @@
                 <td>{{lang.runCommand}}</td>
                 <td>{{lang.compilationTimeLimit}}</td>
                 <td>{{lang.compilationMemoryLimit}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary" title="Edit programming language"
+                            routerLink="/a/language/{{lang.id}}/edit">
+                        <fa [name]="'pencil'"></fa>
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>

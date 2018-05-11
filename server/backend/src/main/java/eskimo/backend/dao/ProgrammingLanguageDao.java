@@ -31,16 +31,6 @@ public class ProgrammingLanguageDao {
         return jdbcTemplate.query(sql, new ProgrammingLanguageRowMapper());
     }
 
-    public void insertProgrammingLanguage(ProgrammingLanguage programmingLanguage) {
-        SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("programming_languages")
-                .usingGeneratedKeyColumns("id");
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", programmingLanguage.getName());
-        params.put("description", programmingLanguage.getDescription());
-        jdbcInsert.execute(new MapSqlParameterSource(params));
-    }
-
     public ProgrammingLanguage getProgrammingLanguage(Long id) {
         String sql = "SELECT * FROM programming_languages WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, new ProgrammingLanguageRowMapper());
@@ -57,18 +47,47 @@ public class ProgrammingLanguageDao {
                 .usingGeneratedKeyColumns("id");
         Map<String, Object> params = new HashMap<>();
         params.put("name", language.getName());
-        params.put("DESCRIPTION", language.getDescription());
-        params.put("COMPILER_PATH", language.getCompilerPath());
-        params.put("IS_COMPILED", language.isCompiled());
-        params.put("INTERPRETER_PATH", language.getInterpreterPath());
-        params.put("EXTENSION", language.getExtension());
-        params.put("BINARY_EXTENSION", language.getBinaryExtension());
-        params.put("COMPILE_COMMAND", Commandline.toString(language.getCompileCommand().toArray(new String[0])));
-        params.put("RUN_COMMAND", Commandline.toString(language.getRunCommand().toArray(new String[0])));
-        params.put("TIME_LIMIT", language.getCompilationTimeLimit());
-        params.put("MEMORY_LIMIT", language.getCompilationMemoryLimit());
+        params.put("description", language.getDescription());
+        params.put("compiler_path", language.getCompilerPath());
+        params.put("is_compiled", language.isCompiled());
+        params.put("interpreter_path", language.getInterpreterPath());
+        params.put("extension", language.getExtension());
+        params.put("binary_extension", language.getBinaryExtension());
+        params.put("compile_command", Commandline.toString(language.getCompileCommand().toArray(new String[0])));
+        params.put("run_command", Commandline.toString(language.getRunCommand().toArray(new String[0])));
+        params.put("time_limit", language.getCompilationTimeLimit());
+        params.put("memory_limit", language.getCompilationMemoryLimit());
         Long id = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(params)).longValue();
         return getProgrammingLanguage(id);
+    }
+
+    public void edit(ProgrammingLanguage programmingLanguage) {
+        String sql = "UPDATE programming_languages SET " +
+                "name = ?, " +
+                "description = ?, " +
+                "compiler_path = ?, " +
+                "is_compiled = ?, " +
+                "interpreter_path = ?, " +
+                "extension = ?, " +
+                "binary_extension = ?, " +
+                "compile_command = ?, " +
+                "run_command = ?, " +
+                "time_limit = ?, " +
+                "memory_limit = ? " +
+                "WHERE id = ?";
+        jdbcTemplate.update(sql,
+                programmingLanguage.getName(),
+                programmingLanguage.getDescription(),
+                programmingLanguage.getCompilerPath(),
+                programmingLanguage.isCompiled(),
+                programmingLanguage.getInterpreterPath(),
+                programmingLanguage.getExtension(),
+                programmingLanguage.getBinaryExtension(),
+                Commandline.toString(programmingLanguage.getCompileCommand().toArray(new String[0])),
+                Commandline.toString(programmingLanguage.getRunCommand().toArray(new String[0])),
+                programmingLanguage.getCompilationTimeLimit(),
+                programmingLanguage.getCompilationMemoryLimit(),
+                programmingLanguage.getId());
     }
 
     private static class ProgrammingLanguageRowMapper implements RowMapper<ProgrammingLanguage> {

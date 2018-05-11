@@ -3,6 +3,7 @@ package eskimo.backend;
 import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
 import org.apache.commons.io.FileUtils;
@@ -18,6 +19,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -47,6 +49,9 @@ public class BaseTest {
     public Contest createContest() {
         Contest contest = new Contest();
         contest.setName("test-contest");
+        contest.setStartTime(Instant.now());
+        contest.setDuration(300);
+        contest.setScoringSystem(ScoringSystem.ACM);
         return contestService.createContest(contest);
     }
 

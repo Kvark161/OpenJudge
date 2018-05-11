@@ -23,7 +23,11 @@ public class ProgrammingLanguageService {
     }
 
     public void insertProgrammingLanguage(ProgrammingLanguage programmingLanguage) {
-        programmingLanguageDao.insertProgrammingLanguage(programmingLanguage);
+        programmingLanguageDao.insert(programmingLanguage);
+    }
+
+    public void editProgrammingLanguage(ProgrammingLanguage programmingLanguage) {
+        programmingLanguageDao.edit(programmingLanguage);
     }
 
     public ProgrammingLanguage getProgrammingLanguage(Long id) {

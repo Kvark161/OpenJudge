@@ -13,6 +13,7 @@ import {EditProblemRequest} from "../shared/requests/edit-problem.request";
 import {User} from "../shared/user";
 import {CreatingResponse} from "../shared/creating-response";
 import {Test} from "../shared/test";
+import {ProgrammingLanguage} from "../shared/programming-language";
 
 
 @Injectable()
@@ -23,6 +24,7 @@ export class EskimoService {
     private urlContestCreate = this.urlHost + 'contest/create';
     private urlGetUsers = this.urlHost + "users";
     private urlCreateUser = this.urlHost + "user";
+    private urlAddLanguage = this.urlHost + "programming-language";
 
     private optionsWithCredentials = new RequestOptions({withCredentials: true});
 
@@ -136,6 +138,10 @@ export class EskimoService {
 
     getUrlRejudgeSubmission(submissionId: number) {
         return this.urlHost + "submission/" + submissionId + "/rejudge";
+    }
+
+    getUrlProgrammingLanguage(langId: number) {
+        return this.urlHost + "programming-language/" + langId;
     }
 
     private userMapper(jsonUser): User {
@@ -361,6 +367,22 @@ export class EskimoService {
 
     rejudgeSubmission(submissionId: number) {
         return this.http.get(this.getUrlRejudgeSubmission(submissionId), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    getProgrammingLanguage(langId: number): Observable<ProgrammingLanguage> {
+        return this.http.get(this.getUrlProgrammingLanguage(langId), this.optionsWithCredentials)
+            .map(res => ProgrammingLanguage.fromServer(res.json()))
+            .catch(this.handleError);
+    }
+
+    addProgrammingLanguage(language: ProgrammingLanguage) {
+        return this.http.post(this.urlAddLanguage, language.toServer(), this.optionsWithCredentials)
+            .catch(this.handleError);
+    }
+
+    editProgrammingLanguage(language: ProgrammingLanguage) {
+        return this.http.post(this.getUrlProgrammingLanguage(language.id), language.toServer(), this.optionsWithCredentials)
             .catch(this.handleError);
     }
 }

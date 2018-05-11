@@ -1,6 +1,7 @@
 package eskimo.backend.dao;
 
 import eskimo.backend.BaseTest;
+import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,23 +33,27 @@ public class SubmissionDaoTest extends BaseTest {
 
     @Test
     public void test_GetSubmissionById() {
-        Submission submission = getFullSubmission();
+        Problem problem = createProblem();
+        Submission submission = getFullSubmission(problem.getId());
         submissionDao.insertSubmission(submission);
         Submission submissionById = submissionDao.getSubmission(submission.getId());
         assertThat(submissionById.getId(), is(submission.getId()));
     }
 
-
-
     private Submission getFullSubmission() {
+        return getFullSubmission(1L);
+    }
+
+    private Submission getFullSubmission(long problemId) {
         Submission submission = new Submission();
         submission.setUserId(1L);
         submission.setUsername("username1");
         submission.setContestId(1);
-        submission.setProblemId(1);
+        submission.setProblemId(problemId);
         submission.setSourceCode("This is a source code");
         submission.setStatus(Submission.Status.SUBMITTED);
         submission.setSendingTime(Instant.now());
+        submission.setProgrammingLanguageId(1L);
         return submission;
     }
 

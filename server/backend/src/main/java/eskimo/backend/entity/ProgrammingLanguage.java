@@ -1,5 +1,6 @@
 package eskimo.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ public class ProgrammingLanguage implements Serializable {
     private String name;
     private String description;
     private String compilerPath;
+    @JsonProperty("isCompiled")
     private boolean isCompiled;
     private String interpreterPath;
     private String extension;
