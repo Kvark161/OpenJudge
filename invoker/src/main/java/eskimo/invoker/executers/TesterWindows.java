@@ -179,7 +179,8 @@ public class TesterWindows implements Tester {
 
     private TestResult prepareTestResult() throws IOException {
         TestResult result = new TestResult();
-        if (outputFile.exists()) {
+        boolean itIsAnswerGeneration = testParams.isCheckerDisabled();
+        if (outputFile.exists() && itIsAnswerGeneration) {
             result.setOutputData(FileUtils.readFileToString(outputFile));
         }
         Properties stat = new Properties();
