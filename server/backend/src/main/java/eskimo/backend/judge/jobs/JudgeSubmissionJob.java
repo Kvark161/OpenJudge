@@ -99,7 +99,7 @@ public class JudgeSubmissionJob extends JudgeJob {
         if (isJavaLanguage(programmingLanguage)) {
             return "Main";
         }
-        return "source";
+        return "main";
     }
 
     private boolean isJavaLanguage(ProgrammingLanguage programmingLanguage) {
@@ -162,7 +162,6 @@ public class JudgeSubmissionJob extends JudgeJob {
                 submission.setPassedTests(submission.getPassedTests() + 1);
             } else if (ACCEPTED == submission.getStatus()) {
                 submission.setStatus(verdictToStatus(result.getVerdict()));
-                submission.setMessage(result.getMessage());
                 submission.setFirstFailTest(result.getIndex());
             }
         }

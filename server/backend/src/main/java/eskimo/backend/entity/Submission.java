@@ -46,7 +46,9 @@ public class Submission {
         PRESENTATION_ERROR,
         RUNTIME_ERROR,
         TIME_LIMIT_EXCEED,
-        INTERNAL_ERROR
+        INTERNAL_ERROR,
+        MEMORY_LIMIT_EXCEED,
+        CHECKER_ERROR
     }
 
     public enum DashboardStatus {

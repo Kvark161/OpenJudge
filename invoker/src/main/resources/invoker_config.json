@@ -1,7 +1,7 @@
 {
   "serverProtocol": "http",
   "serverHost": "localhost",
-  "serverPort": 8080,
+  "serverPort": 80,
   "serverUrlGetTestData": "api/invoker/test-data",
   "invokerTempPath": "~/eskimo/invoker/temp",
   "invokerStoragePath": "~/eskimo/invoker/storage",

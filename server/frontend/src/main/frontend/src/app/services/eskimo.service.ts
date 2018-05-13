@@ -20,7 +20,7 @@ import {SubmissionResponse} from "../shared/responses/submission-response";
 @Injectable()
 export class EskimoService {
 
-    private urlHost = 'http://localhost:8080/api/';
+    private urlHost = 'http://eskimo.mmcs.sfedu.ru:80/api/';
     private urlContests = this.urlHost + 'contests';
     private urlContestCreate = this.urlHost + 'contest/create';
     private urlGetUsers = this.urlHost + "users";

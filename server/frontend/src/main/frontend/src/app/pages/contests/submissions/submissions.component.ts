@@ -58,6 +58,10 @@ export class SubmissionsComponent {
             'color': 'darkblue',
             'name': 'Time limit exceed'
         },
+        'MEMORY_LIMIT_EXCEED': {
+            'color': 'darkblue',
+            'name': 'Memory limit exceed'
+        },
         'INTERNAL_ERROR': {
             'color': 'red',
             'name': 'Internal error'
@@ -85,7 +89,7 @@ export class SubmissionsComponent {
     getStatusShowName(submission: Submission) {
         let status = submission.status;
         let result = this.Statuses[status].name;
-        if (status == 'WRONG_ANSWER' || status == 'PRESENTATION_ERROR' || status == 'RUNTIME_ERROR' || status == 'TIME_LIMIT_EXCEED') {
+        if (status == 'WRONG_ANSWER' || status == 'PRESENTATION_ERROR' || status == 'RUNTIME_ERROR' || status == 'TIME_LIMIT_EXCEED' || status == 'MEMORY_LIMIT_EXCEED') {
             result += ' on test ' + (submission.firstFailTest);
         }
         return result;

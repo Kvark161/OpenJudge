@@ -152,7 +152,7 @@ public class TesterWindows implements Tester {
                 stderrFile,
                 statFile,
                 testParams.getTimeLimit(),
-                testParams.getMemoryLimit(),
+                testParams.getMemoryLimit() / 1024,
                 workingFolder,
                 false);
     }
@@ -201,7 +201,7 @@ public class TesterWindows implements Tester {
             logger.error("Can't load stats for submissionId=" + testParams.getSubmissionId(), e);
             return result;
         }
-        if (result.getUsedMemory() > testParams.getMemoryLimit()) {
+        if (result.getUsedMemory() > testParams.getMemoryLimit() / 1024) {
             result.setVerdict(TestVerdict.MEMORY_LIMIT_EXCEED);
             result.setMessage("Used " + result.getUsedMemory() + "Kb");
         } else if (result.getUsedTime() > testParams.getTimeLimit()) {
