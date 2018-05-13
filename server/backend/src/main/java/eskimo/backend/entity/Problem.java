@@ -14,6 +14,7 @@ public class Problem implements Serializable {
     private long timeLimit;
     private long memoryLimit;
     private int testsCount;
+    private boolean hidden;
     private GenerationStatus answersGenerationStatus;
     private String answersGenerationMessage;
     private GenerationStatus checkerCompilationStatus;

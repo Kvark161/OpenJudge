@@ -1,5 +1,6 @@
 package eskimo.backend.rest;
 
+import eskimo.backend.entity.Problem;
 import eskimo.backend.entity.Submission;
 import eskimo.backend.entity.User;
 import eskimo.backend.entity.enums.ContestStatus;
@@ -12,6 +13,8 @@ import eskimo.backend.rest.response.SubmitParametersResponse;
 import eskimo.backend.services.ProblemService;
 import eskimo.backend.services.ProgrammingLanguageService;
 import eskimo.backend.services.SubmissionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api")
 public class SubmissionController {
+    private static final Logger logger = LoggerFactory.getLogger(SubmissionController.class);
 
     private final ProblemService problemService;
     private final SubmissionService submissionService;
@@ -43,7 +47,12 @@ public class SubmissionController {
 
     @PostMapping("contest/submit")
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.RUNNING)
-    public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) {
+    public void submitProblem(@RequestBody SubmitProblemWebRequest submitProblemWebRequest) throws IllegalAccessException {
+        Role role = authenticationHolder.getUser().getRole();
+        Problem problem = problemService.getProblem(submitProblemWebRequest.getContestId(), submitProblemWebRequest.getProblemIndex());
+        if (problem.isHidden() && role != Role.ADMIN) {
+            throw new IllegalAccessException("User can't submit to hidden problem");
+        }
         submissionService.submit(submitProblemWebRequest);
     }
 
@@ -68,7 +77,9 @@ public class SubmissionController {
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public SubmitParametersResponse getSubmitParameters(@PathVariable Long contestId) {
         SubmitParametersResponse result = new SubmitParametersResponse();
-        result.setProblems(problemService.getContestProblems(contestId));
+        Role role = authenticationHolder.getUser().getRole();
+        boolean withHidden = role == Role.ADMIN;
+        result.setProblems(problemService.getContestProblems(contestId, withHidden));
         result.setLanguages(programmingLanguageService.getAllProgrammingLanguages());
         return result;
     }

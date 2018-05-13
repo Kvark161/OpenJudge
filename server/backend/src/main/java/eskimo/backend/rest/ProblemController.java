@@ -5,6 +5,7 @@ import eskimo.backend.entity.enums.ContestStatus;
 import eskimo.backend.entity.enums.Role;
 import eskimo.backend.exceptions.AddEskimoEntityException;
 import eskimo.backend.rest.annotations.AccessLevel;
+import eskimo.backend.rest.holder.AuthenticationHolder;
 import eskimo.backend.rest.request.AddProblemCustomRequest;
 import eskimo.backend.rest.request.EditProblemRequest;
 import eskimo.backend.rest.response.*;
@@ -37,24 +38,31 @@ public class ProblemController {
     private final ProblemService problemService;
     private final StorageService storageService;
     private final FileUtils fileUtils;
+    private final AuthenticationHolder authenticationHolder;
 
-    public ProblemController(ProblemService problemService, StorageService storageService, FileUtils fileUtils) {
+    public ProblemController(ProblemService problemService, StorageService storageService, FileUtils fileUtils,
+                             AuthenticationHolder authenticationHolder) {
         this.problemService = problemService;
         this.storageService = storageService;
         this.fileUtils = fileUtils;
+        this.authenticationHolder = authenticationHolder;
     }
 
     @GetMapping("contest/{id}/problems")
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public List<ProblemInfoResponse> getProblems(@PathVariable("id") Long contestId) {
-        return problemService.getContestProblems(contestId);
+        Role role = authenticationHolder.getUser().getRole();
+        boolean withHidden = role == Role.ADMIN;
+        return problemService.getContestProblems(contestId, withHidden);
     }
 
     @GetMapping("contest/{id}/problem/{index}")
     @AccessLevel(role = Role.USER, contestStatus = ContestStatus.STARTED)
     public StatementsResponse getStatements(@PathVariable("id") Long contestId,
                                             @PathVariable("index") Long problemIndex) {
-        return problemService.getStatements(contestId, problemIndex);
+        Role role = authenticationHolder.getUser().getRole();
+        boolean withHidden = role == Role.ADMIN;
+        return problemService.getStatements(contestId, problemIndex, withHidden);
     }
 
     @GetMapping("contest/{id}/problem/{index}/pdf")
@@ -141,13 +149,13 @@ public class ProblemController {
     @GetMapping("contest/{id}/problem/{index}/hide")
     @AccessLevel(role = Role.ADMIN)
     public void hideProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
-        problemService.hideProblem(contestId, problemIndex);
+        problemService.changeHiddenness(contestId, problemIndex, true);
     }
 
     @GetMapping("contest/{id}/problem/{index}/show")
     @AccessLevel(role = Role.ADMIN)
     public void showProblem(@PathVariable("id") Long contestId, @PathVariable("index") Long problemIndex) {
-        problemService.showProblem(contestId, problemIndex);
+        problemService.changeHiddenness(contestId, problemIndex, false);
     }
 
     @GetMapping("contest/{id}/problem/{index}/checker")

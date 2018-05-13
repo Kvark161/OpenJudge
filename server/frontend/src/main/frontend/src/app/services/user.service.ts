@@ -7,7 +7,7 @@ import {CurrentUserInfo} from "../shared/current-user-info";
 @Injectable()
 export class UserService implements CanActivate {
 
-    private urlHost = 'http://eskimo.mmcs.sfedu.ru:80/api/';
+    private urlHost = 'http://localhost:8080/api/';
     private urlCurrentUser = this.urlHost + "current-user";
     private urlLogIn = this.urlHost + "log-in";
     private urlLogOut = this.urlHost + "log-out";

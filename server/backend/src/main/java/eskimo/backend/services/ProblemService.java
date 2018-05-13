@@ -83,15 +83,13 @@ public class ProblemService {
         }
     }
 
-    public List<ProblemInfoResponse> getContestProblems(Long contestId) {
+    public List<ProblemInfoResponse> getContestProblems(Long contestId, boolean withHidden) {
         checkAccess(contestId);
         List<Problem> contestProblems = problemDao.getContestProblems(contestId);
         Map<Long, String> problemNames = problemDao.getProblemNames(contestId);
         return contestProblems.stream()
-                .map(problem -> {
-                    ProblemInfoResponse response = new ProblemInfoResponse(problem, problemNames.get(problem.getId()));
-                    return response;
-                })
+                .filter(p -> withHidden || !p.isHidden())
+                .map(problem -> new ProblemInfoResponse(problem, problemNames.get(problem.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -236,16 +234,19 @@ public class ProblemService {
         return validationResult;
     }
 
-    public StatementsResponse getStatements(Long contestId, Long problemIndex) {
+    public StatementsResponse getStatements(Long contestId, Long problemIndex, boolean withHidden) {
         Problem problem = problemDao.getContestProblem(contestId, problemIndex);
         if (problem == null) {
             logger.info("Problem is not exists contestId={} problemIndex={}", contestId, problemIndex);
-            throw new RuntimeException("Problem doesn't exist");
+            return null;
+        }
+        if (problem.isHidden() && !withHidden) {
+            return null;
         }
         Statement statement = statementsDao.getStatements(problem.getId());
         if (statement == null) {
             logger.info("Not found statement for contestId={} problemIndex={}", contestId, problemIndex);
-            throw new RuntimeException("Statement doesn't exist");
+            return null;
         }
         List<Test> sampleTests = getTests(contestId, problemIndex, statement.getSampleTestIndexes());
         sampleTests.forEach(test -> test.setSample(true));
@@ -409,13 +410,8 @@ public class ProblemService {
         return orders;
     }
 
-    public void hideProblem(Long contestId, Long problemIndex) {
-        problemDao.hideProblem(contestId, problemIndex);
-        dashboardService.rebuild(contestId);
-    }
-
-    public void showProblem(Long contestId, Long problemIndex) {
-        problemDao.showProblem(contestId, problemIndex);
+    public void changeHiddenness(Long contestId, Long problemIndex, boolean hidden) {
+        problemDao.changeHiddenness(contestId, problemIndex, hidden);
         dashboardService.rebuild(contestId);
     }
 

@@ -3,6 +3,7 @@ package eskimo.backend;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.rest.interceptor.AuthenticationInterceptor;
+import eskimo.backend.rest.interceptor.NotFoundInterceptor;
 import eskimo.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -31,8 +32,13 @@ public class BackendApp extends WebMvcConfigurerAdapter {
     private UserService userService;
 
     @Bean
-    public AuthenticationInterceptor interceptor(UserService userService) {
+    public AuthenticationInterceptor authenticationInterceptor(UserService userService) {
         return new AuthenticationInterceptor(userService);
+    }
+
+    @Bean
+    public NotFoundInterceptor notFoundInterceptor() {
+        return new NotFoundInterceptor();
     }
 
     @Bean
@@ -42,7 +48,8 @@ public class BackendApp extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(interceptor(userService));
+        registry.addInterceptor(authenticationInterceptor(userService));
+        registry.addInterceptor(notFoundInterceptor());
     }
 
     @Bean

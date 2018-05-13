@@ -3,9 +3,11 @@ package eskimo.backend;
 import eskimo.backend.config.AppSettingsProvider;
 import eskimo.backend.entity.Contest;
 import eskimo.backend.entity.Problem;
+import eskimo.backend.entity.User;
 import eskimo.backend.entity.enums.ScoringSystem;
 import eskimo.backend.services.ContestService;
 import eskimo.backend.services.ProblemService;
+import eskimo.backend.services.UserService;
 import org.apache.commons.io.FileUtils;
 import org.flywaydb.core.Flyway;
 import org.junit.Before;
@@ -37,6 +39,8 @@ public class BaseTest {
     private ContestService contestService;
     @Autowired
     private ProblemService problemService;
+    @Autowired
+    private UserService userService;
 
     @Before
     public void clean() throws IOException {
@@ -72,6 +76,20 @@ public class BaseTest {
         }
         String zipPath = testZip.getFile();
         return problemService.addProblemFromZip(contest.getId(), new File(zipPath));
+    }
+
+    public Problem createHiddenProblem() {
+        Problem problem = createProblem();
+        problemService.changeHiddenness(problem.getContestId(), problem.getIndex(), true);
+        return problemService.getProblem(problem.getContestId(), problem.getIndex());
+    }
+
+    public User getUserWithUserRole() {
+        return userService.getUserByName("user");
+    }
+
+    public User getUserWithAdminRole() {
+        return userService.getUserByName("admin");
     }
 
 }

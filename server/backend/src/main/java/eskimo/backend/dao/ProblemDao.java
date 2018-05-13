@@ -148,21 +148,12 @@ public class ProblemDao {
     }
 
     @Transactional
-    public void hideProblem(Long contestId, Long problemIndex) {
+    public void changeHiddenness(Long contestId, Long problemIndex, boolean hidden) {
         String sql = "UPDATE problems " +
                 "SET " +
-                "hidden = true " +
+                "hidden = ? " +
                 "WHERE contest_id = ? AND contest_index = ?";
-        jdbcTemplate.update(sql, contestId, problemIndex);
-    }
-
-    @Transactional
-    public void showProblem(Long contestId, Long problemIndex) {
-        String sql = "UPDATE problems " +
-                "SET " +
-                "hidden = false " +
-                "WHERE contest_id = ? AND contest_index = ?";
-        jdbcTemplate.update(sql, contestId, problemIndex);
+        jdbcTemplate.update(sql, hidden, contestId, problemIndex);
     }
 
     private static class ProblemRowMapper implements RowMapper<Problem> {
@@ -174,6 +165,7 @@ public class ProblemDao {
             problem.setTimeLimit(rs.getLong("time_limit"));
             problem.setMemoryLimit(rs.getLong("memory_limit"));
             problem.setContestId(rs.getLong("contest_id"));
+            problem.setHidden(rs.getBoolean("hidden"));
             problem.setAnswersGenerationStatus(GenerationStatus.valueOf(rs.getString("answers_generation_status")));
             problem.setAnswersGenerationMessage(rs.getString("answers_generation_message"));
             problem.setTestsCount(rs.getInt("tests_count"));

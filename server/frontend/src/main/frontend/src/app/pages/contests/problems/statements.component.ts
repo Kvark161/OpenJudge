@@ -15,18 +15,25 @@ export class StatementsComponent {
     statements: StatementsResponse;
     memoryUnits: string = "";
 
-    constructor(private route: ActivatedRoute, private eskimoService: EskimoService){
+    notFound: boolean = false;
+
+    constructor(private route: ActivatedRoute, private eskimoService: EskimoService) {
         this.contestId = +this.route.snapshot.paramMap.get('contestId');
         this.problemIndex = +this.route.snapshot.paramMap.get('problemIndex');
         eskimoService.getStatements(this.contestId, this.problemIndex)
             .subscribe(statements => {
-                this.statements = statements;
-                if (!statements.error || statements.error == '') {
-                    let optimized = Utils.getMemoryInOptimalUnits(statements.memoryLimit);
-                    this.statements.memoryLimit = optimized.count;
-                    this.memoryUnits = optimized.units;
-                }
-            });
+                    this.statements = statements;
+                    if (!statements.error || statements.error == '') {
+                        let optimized = Utils.getMemoryInOptimalUnits(statements.memoryLimit);
+                        this.statements.memoryLimit = optimized.count;
+                        this.memoryUnits = optimized.units;
+                    }
+                },
+                error => {
+                    if (error.status == 404) {
+                        this.notFound  = true;
+                    }
+                });
     }
 
     openProblemPdf() {
