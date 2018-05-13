@@ -29,13 +29,13 @@ public class InvokeController {
 
     @PostMapping(value = "/invoke/test")
     public TestResult[] test(@RequestBody TestParams testParams) {
-        logger.info("test request for submissionId=" + testParams.getSubmissionId());
+        logger.info("submissionId={}; test request", testParams.getSubmissionId());
         return executeService.test(testParams);
     }
 
     @PostMapping(value = "/invoke/test-lazy")
     public TestResult[] test(@RequestBody TestLazyParams testParams) {
-        logger.info("test-lazy request for submissionId=" + testParams.getSubmissionId());
+        logger.info("submissionId={}; test-lazy request", testParams.getSubmissionId());
         testParams.setServerService(serverService);
         return executeService.test(testParams);
     }

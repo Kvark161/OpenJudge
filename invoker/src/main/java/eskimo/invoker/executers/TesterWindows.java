@@ -30,7 +30,9 @@ public class TesterWindows implements Tester {
 
     private static final Logger logger = LoggerFactory.getLogger(TesterWindows.class);
 
-    public static final List<String> DEFAULT_CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE, AbstractTestParams.INPUT_FILE, AbstractTestParams.OUTPUT_FILE, AbstractTestParams.ANSWER_FILE, AbstractTestParams.CHECKER_REPORT_FILE, "-appes");
+    public static final List<String> DEFAULT_CHECK_COMMAND = Arrays.asList(AbstractTestParams.CHECKER_EXE,
+            AbstractTestParams.INPUT_FILE, AbstractTestParams.OUTPUT_FILE, AbstractTestParams.ANSWER_FILE,
+            AbstractTestParams.CHECKER_REPORT_FILE, "-appes");
 
     private final String STAT_FILE = "stat.stat";
     private final String STDERR_FILE = "stderr.err";
@@ -38,9 +40,9 @@ public class TesterWindows implements Tester {
 
     private final InvokerUtils invokerUtils;
     private final InvokerSettingsProvider invokerSettings;
-    private AbstractTestParams testParams;
+    private final AbstractTestParams testParams;
+
     private File workingFolder;
-    private File executableFile;
     private File checkerFile;
     private File inputFile;
     private File outputFile;
@@ -62,8 +64,9 @@ public class TesterWindows implements Tester {
     @Override
     public TestResult[] test() {
         final long submissionId = testParams.getSubmissionId();
-        logger.info("begin testing submissionId=" + submissionId);
+        logger.info("submissionId={}; begin testing", submissionId);
         if (testParams.getNumberTests() <= 0) {
+            logger.info("submissionId={}; zero number of tests", submissionId);
             return new TestResult[0];
         }
         TestResult[] testResults = new TestResult[testParams.getNumberTests()];
@@ -73,44 +76,39 @@ public class TesterWindows implements Tester {
             testResults[i].setIndex(i + 1);
         }
         try {
-            logger.info("initialize files for testing submissionId=" + submissionId);
             init();
-            logger.info("working folder for submissionId=" + submissionId + " is \"" + workingFolder.getAbsolutePath() + "\"");
+            logger.info("submissionId={}; working folder is \"{}\"", submissionId, workingFolder.getAbsolutePath());
             for (int i = 0; i < testParams.getNumberTests(); ++i) {
                 try {
                     TestData testData = testParams.getTestData(i, !testParams.isCheckerDisabled());
-                    logger.info("prepare test data for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                     prepareToTest(testData);
-                    logger.info("run solution on testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
-                    runTest();
+                    runTest(testData.getIndex());
                     if (!testParams.isCheckerDisabled()) {
-                        logger.info("prepare checker for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
                         prepareToCheck(testData);
-                        logger.info("run checker for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
-                        runCheck();
+                        runCheck(testData.getIndex());
                     }
-                    logger.info("prepare test result for testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
+                    logger.info("submissionId={}; prepare test result for testIndex={}", submissionId, testData.getIndex());
                     testResults[i] = prepareTestResult();
                     testResults[i].setIndex(i + 1);
                     if (TestVerdict.ACCEPTED != testResults[i].getVerdict() &&
                             TestVerdict.CHECKER_DISABLED != testResults[i].getVerdict() &&
                             testParams.isStopOnFirstFail()) {
-                        logger.info("stop testing on first fail on testIndex=" + testData.getIndex() + " submissionId=" + submissionId);
+                        logger.info("submissionId={}; stop testing on first fail on testIndex={}", submissionId, testData.getIndex());
                         return testResults;
                     }
                     releaseAfterTest();
                 } catch (Throwable e) {
                     testResults[i].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-                    logger.error("Error during testing submissionId=" + submissionId, e);
+                    logger.error("submissionId=" + submissionId + "; error during testing", e);
                     return testResults;
                 }
             }
         } catch (IOException e) {
             testResults[0].setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
-            logger.error("Can't initialize environment to test submissionId=" + submissionId, e);
+            logger.error("submissionId=" + submissionId + "; can't initialize environment to test", e);
             return testResults;
         } finally {
-            logger.info("finish testing submissionId=" + submissionId);
+            logger.info("submissionId={}; finish testing", submissionId);
             if (workingFolder != null && invokerSettings.deleteTempFiles()) {
                 try {
                     FileUtils.deleteDirectory(workingFolder);
@@ -123,8 +121,9 @@ public class TesterWindows implements Tester {
     }
 
     private void init() throws IOException {
+        logger.info("submissionId={}; initialize files for testing", testParams.getSubmissionId());
         workingFolder = invokerUtils.createRunnerTempFolder("test-");
-        executableFile = getFile(testParams.getExecutableName());
+        File executableFile = getFile(testParams.getExecutableName());
         checkerFile = getFile(testParams.getCheckerName());
         inputFile = getFile(testParams.getInputName());
         answerFile = getFile(testParams.getAnswerName());
@@ -132,19 +131,23 @@ public class TesterWindows implements Tester {
         stderrFile = getFile(STDERR_FILE);
         statFile = getFile(STAT_FILE);
         checkerReportFile = getFile(CHECKER_REPORT_FILE);
-        commandTest = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+        commandTest = testParams.prepareRunCommand(executableFile.getAbsolutePath(), inputFile.getAbsolutePath(),
+                outputFile.getAbsolutePath());
         if (testParams.getCheckCommand() == null) {
             testParams.setCheckCommand(DEFAULT_CHECK_COMMAND);
         }
-        commandCheck = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(), outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), checkerReportFile.getAbsolutePath());
+        commandCheck = testParams.prepareCheckCommand(checkerFile.getAbsolutePath(), inputFile.getAbsolutePath(),
+                outputFile.getAbsolutePath(), answerFile.getAbsolutePath(), checkerReportFile.getAbsolutePath());
         FileUtils.writeByteArrayToFile(executableFile, testParams.getExecutable());
     }
 
     private void prepareToTest(TestData testData) throws IOException {
+        logger.info("submissionId={}; prepare test data for testIndex={}", testParams.getSubmissionId(), testData.getIndex());
         FileUtils.writeStringToFile(inputFile, testData.getInputData());
     }
 
-    private void runTest() throws IOException, InterruptedException {
+    private void runTest(int testIndex) throws IOException, InterruptedException {
+        logger.info("submissionId={}; run solution on testIndex={}", testParams.getSubmissionId(), testIndex);
         executionTestResult = invokerUtils.executeRunner(
                 commandTest,
                 testParams.isFileInputOutput() ? null : inputFile,
@@ -158,11 +161,13 @@ public class TesterWindows implements Tester {
     }
 
     private void prepareToCheck(TestData testData) throws IOException {
+        logger.info("submissionId={}; prepare checker for testIndex={}", testParams.getSubmissionId(), testData.getIndex());
         FileUtils.writeByteArrayToFile(checkerFile, testParams.getChecker());
         FileUtils.writeStringToFile(answerFile, testData.getAnswerData());
     }
 
-    private void runCheck() throws IOException, InterruptedException {
+    private void runCheck(int testIndex) throws IOException, InterruptedException {
+        logger.info("submissionId={}; run checker for testIndex={}", testParams.getSubmissionId(), testIndex);
         if (executionTestResult.getExitCode() == 0 && outputFile.exists()) {
             executionCheckResult = invokerUtils.executeRunner(
                     commandCheck,
@@ -187,7 +192,7 @@ public class TesterWindows implements Tester {
         if (!statFile.exists()) {
             result.setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
             result.setMessage("Stat file is not exist");
-            logger.error("Stats file is not exist for submissionId=" + testParams.getSubmissionId());
+            logger.error("submissionId={}; stats file is not exist", testParams.getSubmissionId());
             return result;
         }
         try (InputStream is = new FileInputStream(statFile)) {
@@ -199,7 +204,7 @@ public class TesterWindows implements Tester {
         } catch (Throwable e) {
             result.setVerdict(TestVerdict.INTERNAL_INVOKER_ERROR);
             result.setMessage("Can't load stats");
-            logger.error("Can't load stats for submissionId=" + testParams.getSubmissionId(), e);
+            logger.error("submissionId=" + testParams.getSubmissionId() + "; can't load stats", e);
             return result;
         }
         if (result.getUsedMemory() > testParams.getMemoryLimit() / 1024) {
@@ -231,7 +236,7 @@ public class TesterWindows implements Tester {
                     checkerMessage = el.getFirstChild().getNodeValue();
                 }
             } catch (ParserConfigurationException | SAXException e) {
-                logger.error("Can't parse checker report for submissionId=" + testParams.getSubmissionId(), e);
+                logger.error("submissionId=" + testParams.getSubmissionId() + "; can't parse checker report", e);
                 result.setVerdict(TestVerdict.CHECKER_ERROR);
                 result.setMessage("Incorrect checker result");
                 return result;
