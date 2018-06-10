@@ -64,6 +64,10 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        if (request.getMethod().equals("OPTIONS")) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return false;
+        }
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
